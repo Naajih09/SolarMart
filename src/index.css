@@ -1,0 +1,36 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  color: #2c2c2c;
+  background:
+    radial-gradient(circle at top, rgba(245, 194, 69, 0.14), transparent 20%),
+    #f9f7f1;
+}
+
+@layer components {
+  .section-shell {
+    @apply mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8;
+  }
+
+  .section-card {
+    @apply rounded-[2rem] border border-white/60 bg-white/90 shadow-soft backdrop-blur;
+  }
+
+  .button-primary {
+    @apply inline-flex items-center justify-center rounded-full bg-brand-green px-6 py-3 text-sm font-semibold text-white transition hover:bg-brand-deep;
+  }
+
+  .button-secondary {
+    @apply inline-flex items-center justify-center rounded-full border border-brand-slate/20 bg-white px-6 py-3 text-sm font-semibold text-brand-slate transition hover:border-brand-green hover:text-brand-green;
+  }
+
+  .eyebrow {
+    @apply inline-flex items-center rounded-full border border-brand-green/15 bg-brand-green/10 px-4 py-2 text-xs font-semibold uppercase tracking-[0.18em] text-brand-green;
+  }
+}
