@@ -13,6 +13,7 @@ import {
   CalculatorPage,
   CartPage,
   CheckoutPage,
+  CheckoutSuccessPage,
   DashboardPage,
   HomePage,
   ProductDetailPage,
@@ -33,6 +34,7 @@ function App() {
             <Route path="/products/:slug" element={<ProductDetailPage />} />
             <Route path="/cart" element={<CartPage />} />
             <Route path="/checkout" element={<CheckoutPage />} />
+            <Route path="/checkout/success" element={<CheckoutSuccessPage />} />
             <Route path="/dashboard" element={<DashboardPage />} />
             <Route path="/affiliate" element={<AffiliatePage />} />
             <Route path="/login" element={<AuthPage mode="login" />} />

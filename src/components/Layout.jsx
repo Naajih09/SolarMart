@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link, NavLink, useLocation } from "react-router-dom";
 import { useStore } from "../context/StoreContext";
+import { apiFetch } from "../lib/api";
 import { company, whatsappMessage } from "../site";
 
 const navItems = [
@@ -39,6 +40,10 @@ export function Navbar() {
     const ref = params.get("ref");
     if (ref) {
       captureReferral(ref, setReferralCode);
+      apiFetch("/api/referral/track", {
+        method: "POST",
+        body: JSON.stringify({ code: ref }),
+      }).catch(() => null);
     }
   }, [location.search, setReferralCode]);
 

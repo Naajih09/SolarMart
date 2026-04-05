@@ -9,10 +9,11 @@ SolarMart has pivoted into an e-commerce and affiliate marketplace MVP built wit
 - Product detail pages
 - Client-side cart
 - Guest checkout flow
+- Paystack checkout initialization and verification
 - Affiliate dashboard and referral capture
 - NEPA bill calculator with product recommendation
 - Lead email endpoint
-- Checkout initialization endpoint
+- Auth and admin endpoints
 
 ## Routes
 
@@ -21,6 +22,7 @@ SolarMart has pivoted into an e-commerce and affiliate marketplace MVP built wit
 - `/products/:slug`
 - `/cart`
 - `/checkout`
+- `/checkout/success`
 - `/dashboard`
 - `/affiliate`
 - `/login`
@@ -34,8 +36,17 @@ SolarMart has pivoted into an e-commerce and affiliate marketplace MVP built wit
 - `/api/products/:id`
 - `/api/cart`
 - `/api/checkout`
+- `/api/checkout/verify`
 - `/api/affiliate`
 - `/api/affiliate/:code`
+- `/api/auth/register`
+- `/api/auth/login`
+- `/api/auth/me`
+- `/api/auth/logout`
+- `/api/admin/products`
+- `/api/admin/orders`
+- `/api/admin/affiliates`
+- `/api/referral/track`
 - `/api/lead`
 
 ## Local Development
@@ -62,4 +73,31 @@ SolarMart has pivoted into an e-commerce and affiliate marketplace MVP built wit
 
 - `DATABASE_URL`
 
-`DATABASE_URL` is reserved for the PostgreSQL-backed production phase. The current MVP uses shared catalog data and client-side cart state so the UI and serverless routes are already wired while payment and persistence credentials are still being completed.
+### Auth and admin bootstrap
+
+- `AUTH_SECRET`
+- `ADMIN_EMAIL`
+- `ADMIN_PASSWORD`
+
+## Production Store Notes
+
+- Product records are synced from [src/store/catalog.js](/c:/Users/DELL/OneDrive/Desktop/Naajih_code_space/SolarMart/src/store/catalog.js) into PostgreSQL the first time the product APIs run.
+- Successful payment verification creates the order and order items in PostgreSQL through `/api/checkout/verify`.
+- Order notification emails are sent to `LEAD_NOTIFICATION_EMAIL` using Resend after verified checkout.
+- Guest checkout is allowed, with optional account creation at checkout.
+- If `ADMIN_EMAIL` and `ADMIN_PASSWORD` are provided, the admin account is auto-created in the database.
+
+## Deployment Checklist
+
+1. Add all environment variables to the `solar-mart` Vercel project.
+2. Provision a PostgreSQL database and set `DATABASE_URL`.
+3. Add Paystack production credentials and set `PAYSTACK_CALLBACK_URL` to `https://your-domain.com/checkout/success`.
+4. Add Resend credentials for order notifications.
+5. Set `AUTH_SECRET` to a strong random value.
+6. Optionally set `ADMIN_EMAIL` and `ADMIN_PASSWORD` to bootstrap the first admin account.
+7. Deploy and test:
+   - product listing -> cart -> checkout
+   - payment -> `/checkout/success`
+   - order persistence in PostgreSQL
+   - affiliate referral checkout
+   - Resend order notification email

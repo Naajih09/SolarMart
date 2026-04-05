@@ -1,3 +1,5 @@
+import { ensureSchema, hashPassword, query } from "./_lib/db.js";
+
 const paystackUrl = "https://api.paystack.co/transaction/initialize";
 
 function validateCheckout(body = {}) {
@@ -41,11 +43,7 @@ async function initializePaystackOrder(payload) {
   const secretKey = process.env.PAYSTACK_SECRET_KEY;
 
   if (!secretKey) {
-    return {
-      configured: false,
-      message:
-        "Checkout is ready but Paystack is not configured yet. Add PAYSTACK_SECRET_KEY and PAYSTACK_CALLBACK_URL.",
-    };
+    throw new Error("PAYSTACK_SECRET_KEY is not configured.");
   }
 
   const response = await fetch(paystackUrl, {
@@ -64,7 +62,6 @@ async function initializePaystackOrder(payload) {
   }
 
   return {
-    configured: true,
     paymentUrl: data.data.authorization_url,
     reference: data.data.reference,
   };
@@ -77,15 +74,44 @@ export default async function handler(req, res) {
   }
 
   try {
+    await ensureSchema();
     const validationError = validateCheckout(req.body);
 
     if (validationError) {
       return res.status(400).json({ message: validationError });
     }
 
-    const { customer, items, referralCode } = req.body;
+    const { customer, items, referralCode, createAccount, password } = req.body;
     const totals = computeTotals(items);
-    const callbackUrl = process.env.PAYSTACK_CALLBACK_URL || "https://solar-mart.vercel.app/dashboard";
+    const callbackUrl =
+      process.env.PAYSTACK_CALLBACK_URL || "https://solar-mart.vercel.app/checkout/success";
+
+    if (createAccount) {
+      if (!password || String(password).length < 8) {
+        return res.status(400).json({
+          message: "Use at least 8 characters for the account password.",
+        });
+      }
+
+      const existing = await query("SELECT id FROM users WHERE email = $1 LIMIT 1", [
+        String(customer.email).toLowerCase(),
+      ]);
+
+      if (!existing.rows.length) {
+        const passwordHash = await hashPassword(password);
+        await query(
+          `INSERT INTO users (full_name, email, phone, password_hash, role)
+           VALUES ($1, $2, $3, $4, 'customer')`,
+          [
+            customer.fullName,
+            String(customer.email).toLowerCase(),
+            customer.phone,
+            passwordHash,
+          ],
+        );
+      }
+    }
+
     const paystack = await initializePaystackOrder({
       email: customer.email,
       amount: totals.total * 100,
@@ -94,20 +120,10 @@ export default async function handler(req, res) {
         customer,
         items,
         referralCode: referralCode || null,
+        createAccount: Boolean(createAccount),
+        totals,
       },
     });
-
-    if (!paystack.configured) {
-      return res.status(503).json({
-        message: paystack.message,
-        orderPreview: {
-          customer,
-          items,
-          totals,
-          referralCode: referralCode || null,
-        },
-      });
-    }
 
     return res.status(200).json({
       message: "Checkout initialized successfully.",

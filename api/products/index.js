@@ -1,4 +1,4 @@
-import { products } from "../../src/store/catalog.js";
+import { ensureSchema, mapProductRow, query, syncSeedProducts } from "../_lib/db.js";
 
 export default async function handler(req, res) {
   if (req.method !== "GET") {
@@ -6,30 +6,41 @@ export default async function handler(req, res) {
     return res.status(405).json({ message: "Method not allowed" });
   }
 
-  const { category, q, sort } = req.query || {};
-  let items = [...products];
+  try {
+    await ensureSchema();
+    await syncSeedProducts();
 
-  if (category) {
-    items = items.filter((product) => product.category.toLowerCase() === String(category).toLowerCase());
-  }
+    const { category, q, sort } = req.query || {};
+    const params = [];
+    const conditions = [];
 
-  if (q) {
-    const term = String(q).toLowerCase();
-    items = items.filter(
-      (product) =>
-        product.name.toLowerCase().includes(term) ||
-        product.brand.toLowerCase().includes(term) ||
-        product.category.toLowerCase().includes(term),
+    if (category) {
+      params.push(String(category));
+      conditions.push(`category = $${params.length}`);
+    }
+
+    if (q) {
+      params.push(`%${String(q)}%`);
+      conditions.push(`(name ILIKE $${params.length} OR brand ILIKE $${params.length} OR category ILIKE $${params.length})`);
+    }
+
+    const orderBy =
+      sort === "price-low"
+        ? "price ASC"
+        : sort === "price-high"
+          ? "price DESC"
+          : sort === "rating"
+            ? "rating DESC"
+            : "created_at DESC";
+
+    const whereClause = conditions.length ? `WHERE ${conditions.join(" AND ")}` : "";
+    const result = await query(
+      `SELECT * FROM products ${whereClause} ORDER BY ${orderBy}`,
+      params,
     );
-  }
 
-  if (sort === "price-low") {
-    items.sort((a, b) => a.price - b.price);
-  } else if (sort === "price-high") {
-    items.sort((a, b) => b.price - a.price);
-  } else if (sort === "rating") {
-    items.sort((a, b) => b.rating - a.rating);
+    return res.status(200).json({ products: result.rows.map(mapProductRow) });
+  } catch (error) {
+    return res.status(500).json({ message: "Could not fetch products.", error: error.message });
   }
-
-  return res.status(200).json({ products: items });
 }
