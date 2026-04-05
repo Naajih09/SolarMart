@@ -25,3 +25,18 @@ Responsive React + Tailwind marketing website for SolarMart, built around lead g
 2. Start the app with `npm run dev`
 
 For local API testing, run the project with `vercel dev` or deploy to Vercel so the `/api/lead` endpoint is available.
+
+## Lead engine setup
+
+The form endpoint is production-oriented now and will only return success when a real delivery target is configured.
+
+Use one of these options:
+
+- Email delivery with Resend:
+  - `RESEND_API_KEY`
+  - `LEAD_NOTIFICATION_EMAIL`
+  - Optional: `LEAD_FROM_EMAIL`
+- Webhook delivery:
+  - `LEAD_WEBHOOK_URL`
+
+Copy `.env.example` into `.env.local` for local testing, or add the same variables in your Vercel project settings.
