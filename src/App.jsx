@@ -1,4 +1,5 @@
 import { Route, Routes } from "react-router-dom";
+import { StoreProvider } from "./context/StoreContext";
 import {
   Footer,
   MobileStickyBar,
@@ -7,35 +8,44 @@ import {
   WhatsAppFloat,
 } from "./components/Layout";
 import {
-  AboutPage,
+  AffiliatePage,
+  AuthPage,
   CalculatorPage,
-  ContactPage,
+  CartPage,
+  CheckoutPage,
+  DashboardPage,
   HomePage,
-  HowItWorksPage,
-  PackagesPage,
-  QuotePage,
-} from "./components/PageSections";
+  ProductDetailPage,
+  ProductsPage,
+  ReferralLandingPage,
+} from "./components/MarketplacePages";
 
 function App() {
   return (
-    <div className="min-h-screen bg-brand-cream pb-24 text-brand-slate md:pb-0">
-      <ScrollToTop />
-      <Navbar />
-      <main>
-        <Routes>
-          <Route path="/" element={<HomePage />} />
-          <Route path="/about" element={<AboutPage />} />
-          <Route path="/packages" element={<PackagesPage />} />
-          <Route path="/how-it-works" element={<HowItWorksPage />} />
-          <Route path="/calculator" element={<CalculatorPage />} />
-          <Route path="/contact" element={<ContactPage />} />
-          <Route path="/quote" element={<QuotePage />} />
-        </Routes>
-      </main>
-      <Footer />
-      <MobileStickyBar />
-      <WhatsAppFloat />
-    </div>
+    <StoreProvider>
+      <div className="min-h-screen bg-brand-cream pb-24 text-brand-slate md:pb-0">
+        <ScrollToTop />
+        <Navbar />
+        <main>
+          <Routes>
+            <Route path="/" element={<HomePage />} />
+            <Route path="/products" element={<ProductsPage />} />
+            <Route path="/products/:slug" element={<ProductDetailPage />} />
+            <Route path="/cart" element={<CartPage />} />
+            <Route path="/checkout" element={<CheckoutPage />} />
+            <Route path="/dashboard" element={<DashboardPage />} />
+            <Route path="/affiliate" element={<AffiliatePage />} />
+            <Route path="/login" element={<AuthPage mode="login" />} />
+            <Route path="/register" element={<AuthPage mode="register" />} />
+            <Route path="/calculator" element={<CalculatorPage />} />
+            <Route path="/ref/:affiliateCode" element={<ReferralLandingPage />} />
+          </Routes>
+        </main>
+        <Footer />
+        <MobileStickyBar />
+        <WhatsAppFloat />
+      </div>
+    </StoreProvider>
   );
 }
 

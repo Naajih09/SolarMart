@@ -1,49 +1,65 @@
 # SolarMart
 
-Responsive React + Tailwind marketing website for SolarMart, built around lead generation for solar installations.
+SolarMart has pivoted into an e-commerce and affiliate marketplace MVP built with React, Vite, Tailwind CSS, and Vercel serverless APIs.
 
-## Stack
+## Current MVP Surface
 
-- React
-- Vite
-- Tailwind CSS
-- Vercel-ready API endpoint for lead submissions
+- Storefront homepage
+- Product catalogue with filters
+- Product detail pages
+- Client-side cart
+- Guest checkout flow
+- Affiliate dashboard and referral capture
+- NEPA bill calculator with product recommendation
+- Lead email endpoint
+- Checkout initialization endpoint
 
-## Pages
+## Routes
 
-- Home
-- About
-- Solar Packages
-- How It Works
-- Calculator
-- Contact
-- Quote Request
+- `/`
+- `/products`
+- `/products/:slug`
+- `/cart`
+- `/checkout`
+- `/dashboard`
+- `/affiliate`
+- `/login`
+- `/register`
+- `/calculator`
+- `/ref/:affiliateCode`
 
-## Local development
+## API Routes
+
+- `/api/products`
+- `/api/products/:id`
+- `/api/cart`
+- `/api/checkout`
+- `/api/affiliate`
+- `/api/affiliate/:code`
+- `/api/lead`
+
+## Local Development
 
 1. Install dependencies with `npm install`
-2. Start the app with `npm run dev`
+2. Start the storefront with `npm run dev`
+3. Use `npm run vercel:dev` for local serverless route testing
 
-For local API testing, run the project with `vercel dev` or deploy to Vercel so the `/api/lead` endpoint is available.
+## Environment Variables
 
-## Lead engine setup
+### Email and lead delivery
 
-The form endpoint is production-oriented now and will only return success when a real delivery target is configured.
+- `RESEND_API_KEY`
+- `LEAD_NOTIFICATION_EMAIL`
+- `LEAD_FROM_EMAIL`
+- `LEAD_WEBHOOK_URL`
 
-Use one of these options:
+### Checkout
 
-- Email delivery with Resend:
-  - `RESEND_API_KEY`
-  - `LEAD_NOTIFICATION_EMAIL`
-  - Optional: `LEAD_FROM_EMAIL`
-- Webhook delivery:
-  - `LEAD_WEBHOOK_URL`
+- `PAYSTACK_SECRET_KEY`
+- `PAYSTACK_CALLBACK_URL`
 
-Current SolarMart public contact values are wired into the frontend, and local lead notifications are set to `Naajihibnsiraj@gmail.com`.
+### Database
 
-Before production submissions will work, add one of these:
+- `DATABASE_URL`
 
-- `RESEND_API_KEY` for direct email delivery through Resend
-- `LEAD_WEBHOOK_URL` for delivery to Zapier, Make, n8n, or your own backend
-
-Copy `.env.example` into `.env.local` for local testing, or add the same variables in your Vercel project settings.
+`DATABASE_URL` is reserved for the PostgreSQL-backed production phase. The current MVP uses shared catalog data and client-side cart state so the UI and serverless routes are already wired while payment and persistence credentials are still being completed.

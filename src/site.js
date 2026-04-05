@@ -1,9 +1,10 @@
 export const company = {
   name: "SolarMart",
-  tagline: "Reliable Solar Power Solutions",
+  tagline: "Solar Products, Systems, and Affiliate Earnings in One Marketplace",
   phone: "09074260871",
   email: "Naajihibnsiraj@gmail.com",
   whatsappNumber: "2349074260871",
+  address: "Lagos, Nigeria",
 };
 
 export const currency = new Intl.NumberFormat("en-NG", {
@@ -13,7 +14,7 @@ export const currency = new Intl.NumberFormat("en-NG", {
 });
 
 export const whatsappMessage = encodeURIComponent(
-  "Hello SolarMart, I calculated my electricity cost and I want a solar quote.",
+  "Hello SolarMart, I want to place an order and get support on the best solar product for my needs.",
 );
 
 export function formatNaira(value) {
@@ -22,16 +23,32 @@ export function formatNaira(value) {
 
 export function getRecommendation(monthlyBill) {
   if (!monthlyBill || monthlyBill <= 0) {
-    return "Enter your monthly bill to see the right solar recommendation.";
+    return {
+      title: "Enter your monthly bill",
+      copy: "We will estimate your energy spend and suggest a matching solar product setup.",
+      suggestion: "Start with a product consultation.",
+    };
   }
 
   if (monthlyBill < 40000) {
-    return "The 3kVA package is a strong starting point for smaller homes with essential appliances.";
+    return {
+      title: "Starter home setup",
+      copy: "A 3kVA home kit or inverter-plus-battery bundle should cover essential appliances.",
+      suggestion: "Recommended product: 3kVA Home Solar Kit",
+    };
   }
 
   if (monthlyBill < 120000) {
-    return "The 5kVA package is likely the best fit for a family home or small business with moderate daily use.";
+    return {
+      title: "Family or small business setup",
+      copy: "A 5kVA inverter or complete family kit is the strongest fit for moderate daily demand.",
+      suggestion: "Recommended product: 5kVA Family Solar Kit",
+    };
   }
 
-  return "The 10kVA package is the best fit for heavier energy demand, offices, and businesses that need reliable all-day power.";
+  return {
+    title: "Business-grade setup",
+    copy: "You likely need a larger inverter, more battery storage, and a complete commercial-ready solar kit.",
+    suggestion: "Recommended product: 10kVA Business Solar Kit",
+  };
 }
