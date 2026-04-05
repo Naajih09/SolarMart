@@ -39,4 +39,11 @@ Use one of these options:
 - Webhook delivery:
   - `LEAD_WEBHOOK_URL`
 
+Current SolarMart public contact values are wired into the frontend, and local lead notifications are set to `Naajihibnsiraj@gmail.com`.
+
+Before production submissions will work, add one of these:
+
+- `RESEND_API_KEY` for direct email delivery through Resend
+- `LEAD_WEBHOOK_URL` for delivery to Zapier, Make, n8n, or your own backend
+
 Copy `.env.example` into `.env.local` for local testing, or add the same variables in your Vercel project settings.

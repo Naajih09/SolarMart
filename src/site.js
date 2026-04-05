@@ -1,9 +1,9 @@
 export const company = {
   name: "SolarMart",
   tagline: "Reliable Solar Power Solutions",
-  phone: "+234 801 234 5678",
-  email: "hello@solarmart.energy",
-  whatsappNumber: "2348012345678",
+  phone: "09074260871",
+  email: "Naajihibnsiraj@gmail.com",
+  whatsappNumber: "2349074260871",
 };
 
 export const currency = new Intl.NumberFormat("en-NG", {
