@@ -1,21 +1,21 @@
-# SolarMart
+# SolarMart Monorepo
 
-SolarMart has pivoted into an e-commerce and affiliate marketplace MVP built with React, Vite, Tailwind CSS, and Vercel serverless APIs.
+SolarMart now uses a `pnpm` workspace monorepo with separate frontend apps for the customer storefront and the admin workspace, plus shared Vercel serverless APIs at the repository root.
 
-## Current MVP Surface
+## Workspace Layout
 
-- Storefront homepage
-- Product catalogue with filters
-- Product detail pages
-- Client-side cart
-- Guest checkout flow
-- Paystack checkout initialization and verification
-- Affiliate dashboard and referral capture
-- NEPA bill calculator with product recommendation
-- Lead email endpoint
-- Auth and admin endpoints
+- `apps/user-web`
+  Customer storefront for products, cart, checkout, calculator, affiliate flow, and customer account access.
+- `apps/admin-web`
+  Admin-facing workspace for product management, affiliate approvals, and order oversight.
+- `packages/shared`
+  Shared React components, pages, contexts, styles, utilities, and site constants used by both frontends.
+- `api`
+  Shared backend endpoints for auth, store, admin actions, affiliate flow, checkout, and lead notifications.
 
-## Routes
+## Frontend Routes
+
+### User web
 
 - `/`
 - `/products`
@@ -29,6 +29,12 @@ SolarMart has pivoted into an e-commerce and affiliate marketplace MVP built wit
 - `/register`
 - `/calculator`
 - `/ref/:affiliateCode`
+
+### Admin web
+
+- `/`
+- `/dashboard`
+- `/login`
 
 ## API Routes
 
@@ -49,55 +55,114 @@ SolarMart has pivoted into an e-commerce and affiliate marketplace MVP built wit
 - `/api/admin?action=affiliates`
 - `/api/lead`
 
+## Package Manager
+
+Use `pnpm` from the repo root:
+
+```bash
+pnpm install
+```
+
 ## Local Development
 
-1. Install dependencies with `npm install`
-2. Start the storefront with `npm run dev`
-3. Use `npm run vercel:dev` for local serverless route testing
+### Backend and server env
 
-## Environment Variables
+Copy the root env file and set the server-side secrets:
 
-### Email and lead delivery
+```bash
+cp .env.example .env.local
+```
+
+Root env variables:
 
 - `RESEND_API_KEY`
 - `LEAD_NOTIFICATION_EMAIL`
 - `LEAD_FROM_EMAIL`
 - `LEAD_WEBHOOK_URL`
-
-### Checkout
-
 - `PAYSTACK_SECRET_KEY`
 - `PAYSTACK_CALLBACK_URL`
-
-### Database
-
 - `DATABASE_URL`
-
-### Auth and admin bootstrap
-
 - `AUTH_SECRET`
 - `ADMIN_EMAIL`
 - `ADMIN_PASSWORD`
 
-## Production Store Notes
+### Frontend env
 
-- Product records are synced from [src/store/catalog.js](/c:/Users/DELL/OneDrive/Desktop/Naajih_code_space/SolarMart/src/store/catalog.js) into PostgreSQL the first time the product APIs run.
-- Successful payment verification creates the order and order items in PostgreSQL through `/api/store?action=verify`.
+The frontend apps only need the API origin:
+
+`apps/user-web/.env.local`
+
+```env
+VITE_API_BASE_URL=http://localhost:3000
+```
+
+`apps/admin-web/.env.local`
+
+```env
+VITE_API_BASE_URL=http://localhost:3000
+```
+
+If you run a frontend on the same domain as the API, `VITE_API_BASE_URL` can be left empty.
+
+### Run the apps
+
+Customer storefront:
+
+```bash
+pnpm dev:user
+```
+
+Admin workspace:
+
+```bash
+pnpm dev:admin
+```
+
+To exercise the Vercel serverless routes locally, run Vercel from the root repo:
+
+```bash
+npx vercel dev
+```
+
+## Build Commands
+
+Build both apps:
+
+```bash
+pnpm build
+```
+
+Build only the customer storefront:
+
+```bash
+pnpm build:user
+```
+
+Build only the admin workspace:
+
+```bash
+pnpm build:admin
+```
+
+## Production Deployment Shape
+
+Recommended Vercel project split:
+
+1. `solarmart-api`
+   Root directory: repository root
+   Purpose: serverless API routes and shared backend env
+2. `solarmart-user-web`
+   Root directory: `apps/user-web`
+   Env: `VITE_API_BASE_URL=https://your-api-domain.com`
+3. `solarmart-admin-web`
+   Root directory: `apps/admin-web`
+   Env: `VITE_API_BASE_URL=https://your-api-domain.com`
+
+## Production Notes
+
+- Products are now database-only and no longer auto-sync from demo seed data at runtime.
+- Admin users add and delete products from the admin dashboard.
+- Successful payment verification creates orders and order items in PostgreSQL through `/api/store?action=verify`.
 - Order notification emails are sent to `LEAD_NOTIFICATION_EMAIL` using Resend after verified checkout.
 - Guest checkout is allowed, with optional account creation at checkout.
-- If `ADMIN_EMAIL` and `ADMIN_PASSWORD` are provided, the admin account is auto-created in the database.
-
-## Deployment Checklist
-
-1. Add all environment variables to the `solar-mart` Vercel project.
-2. Provision a PostgreSQL database and set `DATABASE_URL`.
-3. Add Paystack production credentials and set `PAYSTACK_CALLBACK_URL` to `https://your-domain.com/checkout/success`.
-4. Add Resend credentials for order notifications.
-5. Set `AUTH_SECRET` to a strong random value.
-6. Optionally set `ADMIN_EMAIL` and `ADMIN_PASSWORD` to bootstrap the first admin account.
-7. Deploy and test:
-   - product listing -> cart -> checkout
-   - payment -> `/checkout/success`
-   - order persistence in PostgreSQL
-   - affiliate referral checkout
-   - Resend order notification email
+- If `ADMIN_EMAIL` and `ADMIN_PASSWORD` are provided, the first admin account is auto-created in the database.
