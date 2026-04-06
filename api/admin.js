@@ -1,5 +1,14 @@
 import { requireAdmin } from "./_lib/auth.js";
-import { ensureSchema, mapProductRow, query, syncSeedProducts } from "./_lib/db.js";
+import { ensureSchema, mapProductRow, query } from "./_lib/db.js";
+
+function slugify(value = "") {
+  return String(value)
+    .trim()
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "")
+    .slice(0, 80);
+}
 
 export default async function handler(req, res) {
   const action = String(req.query.action || "");
@@ -7,7 +16,6 @@ export default async function handler(req, res) {
   try {
     await requireAdmin(req);
     await ensureSchema();
-    await syncSeedProducts();
 
     if (req.method === "GET" && action === "orders") {
       const result = await query(
@@ -67,6 +75,37 @@ export default async function handler(req, res) {
         relatedIds,
       } = req.body || {};
 
+      if (!name || !category || !price) {
+        return res.status(400).json({ message: "Name, category, and price are required." });
+      }
+
+      const safeSlug = slugify(slug || name);
+      if (!safeSlug) {
+        return res.status(400).json({ message: "Provide a valid product name or slug." });
+      }
+
+      const safeExternalId = externalId || `sm-${safeSlug}`;
+      const safeSku = sku || `SM-${safeSlug.toUpperCase().replace(/-/g, "-")}`;
+      const imageList = Array.isArray(images)
+        ? images.filter(Boolean)
+        : String(images || "")
+            .split(",")
+            .map((item) => item.trim())
+            .filter(Boolean);
+
+      const featureList = Array.isArray(features)
+        ? features.filter(Boolean)
+        : String(features || "")
+            .split("\n")
+            .map((item) => item.trim())
+            .filter(Boolean);
+
+      const numericPrice = Number(price);
+      const numericStock = Number(stock || 0);
+      if (!Number.isFinite(numericPrice) || numericPrice <= 0) {
+        return res.status(400).json({ message: "Price must be greater than zero." });
+      }
+
       const result = await query(
         `INSERT INTO products (
           external_id, slug, name, category, brand, sku, price, rating, availability, stock,
@@ -78,20 +117,20 @@ export default async function handler(req, res) {
         )
         RETURNING *`,
         [
-          externalId,
-          slug,
+          safeExternalId,
+          safeSlug,
           name,
           category,
-          brand,
-          sku,
-          price,
+          brand || "SolarMart",
+          safeSku,
+          numericPrice,
           rating || 0,
           availability || "In stock",
-          stock || 0,
-          JSON.stringify(images || []),
-          shortDescription || "",
-          description || "",
-          JSON.stringify(features || []),
+          numericStock,
+          JSON.stringify(imageList),
+          shortDescription || "Added from the SolarMart admin dashboard.",
+          description || shortDescription || "A new SolarMart product is now available in the marketplace.",
+          JSON.stringify(featureList),
           JSON.stringify(variants || []),
           JSON.stringify(relatedIds || []),
         ],
@@ -100,7 +139,28 @@ export default async function handler(req, res) {
       return res.status(201).json({ product: mapProductRow(result.rows[0]) });
     }
 
-    res.setHeader("Allow", "GET, POST, PATCH");
+    if (req.method === "DELETE" && action === "products") {
+      const { id } = req.query || {};
+      if (!id) {
+        return res.status(400).json({ message: "Product id is required." });
+      }
+
+      const deleted = await query(
+        "DELETE FROM products WHERE id = $1 OR external_id = $1 OR slug = $1 RETURNING id, name",
+        [String(id)],
+      );
+
+      if (!deleted.rows.length) {
+        return res.status(404).json({ message: "Product not found." });
+      }
+
+      return res.status(200).json({
+        message: "Product deleted.",
+        product: deleted.rows[0],
+      });
+    }
+
+    res.setHeader("Allow", "GET, POST, PATCH, DELETE");
     return res.status(405).json({ message: "Method not allowed" });
   } catch (error) {
     const status = error.message === "Forbidden" ? 403 : error.message === "Unauthorized" ? 401 : 500;

@@ -1,6 +1,5 @@
 import crypto from "node:crypto";
 import pg from "pg";
-import { products as seedProducts } from "../../src/store/catalog.js";
 
 const { Pool } = pg;
 
@@ -199,58 +198,6 @@ export async function ensureAdminUser() {
   }
 
   adminReady = true;
-}
-
-export async function syncSeedProducts() {
-  await ensureSchema();
-
-  for (const product of seedProducts) {
-    await query(
-      `INSERT INTO products (
-        slug, external_id, name, category, brand, sku, price, rating, availability, stock,
-        images, short_description, description, features, variants, related_ids
-      )
-      VALUES (
-        $1, $2, $3, $4, $5, $6, $7, $8, $9, $10,
-        $11::jsonb, $12, $13, $14::jsonb, $15::jsonb, $16::jsonb
-      )
-      ON CONFLICT (external_id) DO UPDATE SET
-        slug = EXCLUDED.slug,
-        name = EXCLUDED.name,
-        category = EXCLUDED.category,
-        brand = EXCLUDED.brand,
-        sku = EXCLUDED.sku,
-        price = EXCLUDED.price,
-        rating = EXCLUDED.rating,
-        availability = EXCLUDED.availability,
-        stock = EXCLUDED.stock,
-        images = EXCLUDED.images,
-        short_description = EXCLUDED.short_description,
-        description = EXCLUDED.description,
-        features = EXCLUDED.features,
-        variants = EXCLUDED.variants,
-        related_ids = EXCLUDED.related_ids,
-        updated_at = NOW()`,
-      [
-        product.slug,
-        product.id,
-        product.name,
-        product.category,
-        product.brand,
-        product.sku,
-        product.price,
-        product.rating,
-        product.availability,
-        product.stock,
-        JSON.stringify(product.images || []),
-        product.shortDescription,
-        product.description,
-        JSON.stringify(product.features || []),
-        JSON.stringify(product.variants || []),
-        JSON.stringify(product.relatedIds || []),
-      ],
-    );
-  }
 }
 
 export function mapProductRow(row) {

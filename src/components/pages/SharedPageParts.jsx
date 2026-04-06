@@ -15,18 +15,38 @@ export function CheckoutField({ label, onChange, ...props }) {
   );
 }
 
-export function ProductGrid({ items, loading }) {
+export function ProductGrid({
+  items,
+  loading,
+  emptyTitle = "No products yet",
+  emptyCopy = "The marketplace is now database-driven. Add products from the admin dashboard and they will appear here automatically.",
+}) {
   const { addToCart } = useStore();
 
   if (loading) {
     return <EmptyState title="Loading products" copy="Fetching the latest catalogue from the store." />;
   }
 
+  if (!items.length) {
+    return (
+      <div className="section-card p-8 text-center">
+        <h2 className="text-2xl font-bold text-brand-deep">{emptyTitle}</h2>
+        <p className="mt-3 text-base leading-7 text-brand-slate/75">{emptyCopy}</p>
+      </div>
+    );
+  }
+
   return (
     <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-4">
       {items.map((product) => (
         <article key={product.id} className="section-card overflow-hidden">
-          <img src={product.images?.[0]} alt={product.name} className="h-52 w-full object-cover" />
+          {product.images?.[0] ? (
+            <img src={product.images[0]} alt={product.name} className="h-52 w-full object-cover" />
+          ) : (
+            <div className="flex h-52 items-center justify-center bg-brand-cream px-6 text-center text-sm font-semibold text-brand-slate/65">
+              Product image coming soon
+            </div>
+          )}
           <div className="space-y-4 p-5">
             <div className="flex items-start justify-between gap-3">
               <div>

@@ -1,5 +1,5 @@
 import { sendOrderNotification } from "./_lib/mail.js";
-import { createOrderNumber, ensureSchema, hashPassword, mapProductRow, query, syncSeedProducts } from "./_lib/db.js";
+import { createOrderNumber, ensureSchema, hashPassword, mapProductRow, query } from "./_lib/db.js";
 
 const paystackInitUrl = "https://api.paystack.co/transaction/initialize";
 const paystackVerifyUrl = "https://api.paystack.co/transaction/verify/";
@@ -92,7 +92,6 @@ export default async function handler(req, res) {
 
   try {
     await ensureSchema();
-    await syncSeedProducts();
 
     if (req.method === "GET" && action === "products") {
       const { category, q, sort, id } = req.query || {};

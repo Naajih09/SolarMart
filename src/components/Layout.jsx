@@ -10,7 +10,6 @@ const navItems = [
   { label: "Products", to: "/products" },
   { label: "Calculator", to: "/calculator" },
   { label: "Affiliate", to: "/affiliate" },
-  { label: "Account", to: "/dashboard" },
 ];
 
 export function ScrollToTop() {
@@ -76,6 +75,16 @@ export function Navbar() {
               {item.label}
             </NavLink>
           ))}
+          <NavLink
+            to="/dashboard"
+            className={({ isActive }) =>
+              `text-sm font-medium transition ${
+                isActive ? "text-brand-green" : "text-brand-slate hover:text-brand-green"
+              }`
+            }
+          >
+            {user?.role === "admin" ? "Admin" : "Account"}
+          </NavLink>
           {isAuthenticated ? (
             <button
               type="button"
@@ -135,6 +144,13 @@ export function Navbar() {
                 {item.label}
               </NavLink>
             ))}
+            <NavLink
+              to="/dashboard"
+              onClick={() => setOpen(false)}
+              className="rounded-2xl px-4 py-3 text-sm font-medium text-brand-slate hover:bg-brand-cream"
+            >
+              {user?.role === "admin" ? "Admin" : "Account"}
+            </NavLink>
             <NavLink
               to="/cart"
               onClick={() => setOpen(false)}

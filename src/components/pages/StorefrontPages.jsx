@@ -32,7 +32,7 @@ function useProducts(filters = {}) {
 }
 
 export function HomePage() {
-  const { items } = useProducts({});
+  const { items, loading } = useProducts({});
   const featuredProducts = items.slice(0, 4);
   const [metrics, setMetrics] = useState({
     products: 0,
@@ -114,7 +114,12 @@ export function HomePage() {
               View all products
             </Link>
           </div>
-          <ProductGrid items={featuredProducts} loading={!featuredProducts.length} />
+          <ProductGrid
+            items={featuredProducts}
+            loading={loading}
+            emptyTitle="No featured products yet"
+            emptyCopy="Your store is now using only database products. Add inventory from the admin dashboard to populate the storefront."
+          />
         </div>
       </section>
 
@@ -134,7 +139,7 @@ export function HomePage() {
             </Link>
           </div>
           <div className="grid gap-4 sm:grid-cols-3">
-            <StatsCard label="Products listed" value={metrics.products || items.length} />
+            <StatsCard label="Products listed" value={metrics.products} />
             <StatsCard label="Paid orders" value={metrics.paidOrders} />
             <StatsCard label="Approved affiliates" value={metrics.approvedAffiliates} />
           </div>
@@ -191,7 +196,12 @@ export function ProductsPage() {
           </select>
         </div>
 
-        <ProductGrid items={items} loading={loading} />
+        <ProductGrid
+          items={items}
+          loading={loading}
+          emptyTitle="No products in the catalogue yet"
+          emptyCopy="An admin needs to add the first real SolarMart product before shoppers can browse this catalogue."
+        />
       </div>
     </section>
   );
@@ -267,7 +277,12 @@ export function ProductDetailPage() {
 
         <div className="space-y-6">
           <h2 className="text-2xl font-bold text-brand-deep">Related products</h2>
-          <ProductGrid items={related} loading={false} />
+          <ProductGrid
+            items={related}
+            loading={false}
+            emptyTitle="No related products yet"
+            emptyCopy="This product is live, but no related items have been linked yet."
+          />
         </div>
       </div>
     </section>

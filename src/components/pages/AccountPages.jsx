@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
 import { apiFetch } from "../../lib/api";
 import { formatNaira } from "../../site";
+import { brands, categories } from "../../store/catalog";
 import { AdminTable, CheckoutField, EmptyState, StatsCard } from "./SharedPageParts";
 
 export function DashboardPage() {
@@ -12,13 +13,15 @@ export function DashboardPage() {
   const [adminProducts, setAdminProducts] = useState([]);
   const [adminMessage, setAdminMessage] = useState("");
   const [productForm, setProductForm] = useState({
-    externalId: "",
-    slug: "",
     name: "",
     category: "Kits",
     brand: "SolarMart",
     sku: "",
     price: "",
+    stock: "",
+    imageUrl: "",
+    shortDescription: "",
+    description: "",
   });
 
   useEffect(() => {
@@ -29,7 +32,7 @@ export function DashboardPage() {
     Promise.all([
         apiFetch("/api/admin?action=orders"),
         apiFetch("/api/admin?action=affiliates"),
-        apiFetch("/api/admin?action=products"),
+                apiFetch("/api/admin?action=products"),
     ])
       .then(([ordersData, affiliatesData, productsData]) => {
         setOrders(ordersData.orders || []);
@@ -62,11 +65,9 @@ export function DashboardPage() {
         body: JSON.stringify({
           ...productForm,
           price: Number(productForm.price),
-          availability: "In stock",
-          stock: 1,
-          images: [],
-          shortDescription: "New product added from admin dashboard.",
-          description: "Update this description in the database-backed product admin flow.",
+          stock: Number(productForm.stock || 0),
+          availability: Number(productForm.stock || 0) > 0 ? "In stock" : "Out of stock",
+          images: productForm.imageUrl ? [productForm.imageUrl] : [],
           features: [],
           variants: [],
           relatedIds: [],
@@ -75,14 +76,28 @@ export function DashboardPage() {
       setAdminProducts((current) => [data.product, ...current]);
       setAdminMessage("Product created.");
       setProductForm({
-        externalId: "",
-        slug: "",
         name: "",
         category: "Kits",
         brand: "SolarMart",
         sku: "",
         price: "",
+        stock: "",
+        imageUrl: "",
+        shortDescription: "",
+        description: "",
       });
+    } catch (error) {
+      setAdminMessage(error.message);
+    }
+  }
+
+  async function deleteProduct(productId) {
+    try {
+      await apiFetch(`/api/admin?action=products&id=${encodeURIComponent(productId)}`, {
+        method: "DELETE",
+      });
+      setAdminProducts((current) => current.filter((item) => item.dbId !== productId && item.id !== productId));
+      setAdminMessage("Product deleted.");
     } catch (error) {
       setAdminMessage(error.message);
     }
@@ -136,20 +151,100 @@ export function DashboardPage() {
               formatNaira(item.total_commission || 0),
             ])}
           />
-          <div className="grid gap-8 lg:grid-cols-[1fr_1fr]">
+          <div className="grid gap-8 xl:grid-cols-3">
             <div className="section-card p-6">
               <p className="text-lg font-semibold text-brand-deep">Add product</p>
+              <p className="mt-2 text-sm leading-6 text-brand-slate/70">
+                Products now come only from the database. Add real inventory here and it will
+                appear in the storefront immediately after save.
+              </p>
               <form className="mt-4 space-y-4" onSubmit={addProduct}>
-                <CheckoutField label="External ID" value={productForm.externalId} onChange={(value) => setProductForm((current) => ({ ...current, externalId: value }))} required />
-                <CheckoutField label="Slug" value={productForm.slug} onChange={(value) => setProductForm((current) => ({ ...current, slug: value }))} required />
                 <CheckoutField label="Name" value={productForm.name} onChange={(value) => setProductForm((current) => ({ ...current, name: value }))} required />
-                <CheckoutField label="SKU" value={productForm.sku} onChange={(value) => setProductForm((current) => ({ ...current, sku: value }))} required />
-                <CheckoutField label="Price" type="number" value={productForm.price} onChange={(value) => setProductForm((current) => ({ ...current, price: value }))} required />
+                <label className="block">
+                  <span className="mb-2 block text-sm font-semibold text-brand-slate">Category</span>
+                  <select
+                    value={productForm.category}
+                    onChange={(event) => setProductForm((current) => ({ ...current, category: event.target.value }))}
+                    className="w-full rounded-2xl border border-brand-slate/10 bg-brand-cream px-4 py-3 outline-none focus:border-brand-green"
+                  >
+                    {categories.map((item) => (
+                      <option key={item} value={item}>
+                        {item}
+                      </option>
+                    ))}
+                  </select>
+                </label>
+                <label className="block">
+                  <span className="mb-2 block text-sm font-semibold text-brand-slate">Brand</span>
+                  <select
+                    value={productForm.brand}
+                    onChange={(event) => setProductForm((current) => ({ ...current, brand: event.target.value }))}
+                    className="w-full rounded-2xl border border-brand-slate/10 bg-brand-cream px-4 py-3 outline-none focus:border-brand-green"
+                  >
+                    {brands.map((item) => (
+                      <option key={item} value={item}>
+                        {item}
+                      </option>
+                    ))}
+                  </select>
+                </label>
+                <CheckoutField label="SKU" value={productForm.sku} onChange={(value) => setProductForm((current) => ({ ...current, sku: value }))} />
+                <div className="grid gap-4 sm:grid-cols-2">
+                  <CheckoutField label="Price" type="number" value={productForm.price} onChange={(value) => setProductForm((current) => ({ ...current, price: value }))} required />
+                  <CheckoutField label="Stock" type="number" value={productForm.stock} onChange={(value) => setProductForm((current) => ({ ...current, stock: value }))} required />
+                </div>
+                <CheckoutField label="Image URL" value={productForm.imageUrl} onChange={(value) => setProductForm((current) => ({ ...current, imageUrl: value }))} />
+                <label className="block">
+                  <span className="mb-2 block text-sm font-semibold text-brand-slate">Short description</span>
+                  <textarea
+                    value={productForm.shortDescription}
+                    onChange={(event) => setProductForm((current) => ({ ...current, shortDescription: event.target.value }))}
+                    rows={3}
+                    className="w-full rounded-2xl border border-brand-slate/10 bg-brand-cream px-4 py-3 outline-none focus:border-brand-green"
+                  />
+                </label>
+                <label className="block">
+                  <span className="mb-2 block text-sm font-semibold text-brand-slate">Full description</span>
+                  <textarea
+                    value={productForm.description}
+                    onChange={(event) => setProductForm((current) => ({ ...current, description: event.target.value }))}
+                    rows={5}
+                    className="w-full rounded-2xl border border-brand-slate/10 bg-brand-cream px-4 py-3 outline-none focus:border-brand-green"
+                  />
+                </label>
                 {adminMessage ? <p className="text-sm text-brand-green">{adminMessage}</p> : null}
                 <button type="submit" className="button-primary w-full">
                   Save product
                 </button>
               </form>
+            </div>
+            <div className="section-card p-6">
+              <p className="text-lg font-semibold text-brand-deep">Current catalogue</p>
+              <div className="mt-4 space-y-3">
+                {adminProducts.length ? (
+                  adminProducts.map((item) => (
+                    <div key={item.dbId || item.id} className="flex flex-col gap-3 rounded-2xl bg-brand-cream p-4 sm:flex-row sm:items-center sm:justify-between">
+                      <div>
+                        <p className="font-semibold text-brand-deep">{item.name}</p>
+                        <p className="text-sm text-brand-slate/70">
+                          {item.category} · {formatNaira(item.price)}
+                        </p>
+                      </div>
+                      <button
+                        type="button"
+                        onClick={() => deleteProduct(item.dbId || item.id)}
+                        className="rounded-full border border-brand-slate/10 px-4 py-2 text-sm font-semibold text-brand-deep"
+                      >
+                        Delete
+                      </button>
+                    </div>
+                  ))
+                ) : (
+                  <p className="text-sm leading-7 text-brand-slate/75">
+                    No products in the database yet. Add your first real item from the form.
+                  </p>
+                )}
+              </div>
             </div>
             <div className="section-card p-6">
               <p className="text-lg font-semibold text-brand-deep">Approve affiliates</p>
