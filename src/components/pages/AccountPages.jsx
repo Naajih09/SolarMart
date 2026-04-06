@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 import { apiFetch, getToken } from "../../lib/api";
-import { sampleAffiliateStats } from "../../store/catalog";
 import { formatNaira } from "../../site";
 import { AdminTable, CheckoutField, EmptyState, StatsCard } from "./SharedPageParts";
 
@@ -213,9 +212,37 @@ export function DashboardPage() {
 }
 
 export function AffiliatePage() {
-  const [stats, setStats] = useState(sampleAffiliateStats);
+  const [stats, setStats] = useState({
+    affiliateCode: "",
+    totalReferrals: 0,
+    commissionEarned: 0,
+    clicks: 0,
+    conversions: 0,
+    pendingPayouts: 0,
+    transactions: [],
+  });
   const [form, setForm] = useState({ name: "", email: "", phone: "" });
   const [message, setMessage] = useState("");
+  const [lookupCode, setLookupCode] = useState("");
+
+  async function loadAffiliateStats(code) {
+    try {
+      const data = await apiFetch(`/api/affiliate?action=stats&code=${encodeURIComponent(code)}`);
+      setStats({
+        affiliateCode: data.affiliateCode,
+        totalReferrals: data.stats.totalReferrals || 0,
+        commissionEarned: data.stats.commissionEarned || 0,
+        clicks: data.stats.clicks || 0,
+        conversions: data.stats.conversions || 0,
+        pendingPayouts: data.stats.pendingPayouts || 0,
+        transactions: data.stats.transactions || [],
+      });
+      setLookupCode(data.affiliateCode);
+      setMessage("");
+    } catch (error) {
+      setMessage(error.message);
+    }
+  }
 
   async function handleSignup(event) {
     event.preventDefault();
@@ -224,10 +251,17 @@ export function AffiliatePage() {
         method: "POST",
         body: JSON.stringify(form),
       });
-      setStats((current) => ({
-        ...current,
-        affiliateCode: data.affiliate.code,
-      }));
+      const code = data.affiliate.code;
+      setStats({
+        affiliateCode: code,
+        totalReferrals: data.affiliate.total_clicks || 0,
+        commissionEarned: data.affiliate.total_commission || 0,
+        clicks: data.affiliate.total_clicks || 0,
+        conversions: data.affiliate.total_conversions || 0,
+        pendingPayouts: 0,
+        transactions: [],
+      });
+      setLookupCode(code);
       setMessage(`Affiliate signup received. Your code is ${data.affiliate.code}.`);
     } catch (error) {
       setMessage(error.message);
@@ -235,8 +269,8 @@ export function AffiliatePage() {
   }
 
   const shareLink = typeof window === "undefined"
-    ? `/products?ref=${stats.affiliateCode}`
-    : `${window.location.origin}/products?ref=${stats.affiliateCode}`;
+    ? `/products?ref=${stats.affiliateCode || "YOURCODE"}`
+    : `${window.location.origin}/products?ref=${stats.affiliateCode || "YOURCODE"}`;
 
   return (
     <section className="py-12 lg:py-16">
@@ -265,8 +299,8 @@ export function AffiliatePage() {
         <div className="grid gap-6 lg:grid-cols-4">
           <StatsCard label="Total referrals" value={stats.totalReferrals} />
           <StatsCard label="Conversions" value={stats.conversions} />
-          <StatsCard label="Pending payouts" value="1" />
-          <StatsCard label="Affiliate code" value={stats.affiliateCode} />
+          <StatsCard label="Pending payouts" value={stats.pendingPayouts} />
+          <StatsCard label="Affiliate code" value={stats.affiliateCode || "Not created yet"} />
         </div>
 
         <div className="grid gap-8 lg:grid-cols-[1fr_1fr]">
@@ -281,17 +315,39 @@ export function AffiliatePage() {
                 Create affiliate account
               </button>
             </form>
+            <div className="mt-8 border-t border-brand-slate/10 pt-6">
+              <p className="text-lg font-semibold text-brand-deep">Load existing affiliate data</p>
+              <div className="mt-4 space-y-4">
+                <CheckoutField label="Affiliate code" value={lookupCode} onChange={setLookupCode} />
+                <button
+                  type="button"
+                  onClick={() => loadAffiliateStats(lookupCode)}
+                  className="button-secondary w-full"
+                >
+                  Load affiliate stats
+                </button>
+              </div>
+            </div>
           </div>
-          <AdminTable
-            title="Sample transaction history"
-            headers={["Date", "Product", "Commission", "Status"]}
-            rows={sampleAffiliateStats.transactions.map((item) => [
-              item.date,
-              item.product,
-              formatNaira(item.commission),
-              item.status,
-            ])}
-          />
+          {stats.transactions.length ? (
+            <AdminTable
+              title="Affiliate transaction history"
+              headers={["Date", "Product", "Commission", "Status"]}
+              rows={stats.transactions.map((item) => [
+                new Date(item.date).toLocaleDateString(),
+                item.product,
+                formatNaira(item.commission),
+                item.status,
+              ])}
+            />
+          ) : (
+            <div className="section-card p-6">
+              <p className="text-lg font-semibold text-brand-deep">Affiliate transaction history</p>
+              <p className="mt-4 text-sm leading-7 text-brand-slate/75">
+                No real affiliate transactions yet. Once a referred order is paid, it will appear here.
+              </p>
+            </div>
+          )}
         </div>
       </div>
     </section>

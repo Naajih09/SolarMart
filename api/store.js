@@ -124,6 +124,22 @@ export default async function handler(req, res) {
       return res.status(200).json({ products: result.rows.map(mapProductRow) });
     }
 
+    if (req.method === "GET" && action === "metrics") {
+      const [productCount, orderCount, affiliateCount] = await Promise.all([
+        query("SELECT COUNT(*)::int AS count FROM products"),
+        query("SELECT COUNT(*)::int AS count FROM orders WHERE payment_status = 'paid'"),
+        query("SELECT COUNT(*)::int AS count FROM affiliates WHERE status = 'approved'"),
+      ]);
+
+      return res.status(200).json({
+        metrics: {
+          products: productCount.rows[0].count,
+          paidOrders: orderCount.rows[0].count,
+          approvedAffiliates: affiliateCount.rows[0].count,
+        },
+      });
+    }
+
     if (req.method === "POST" && action === "checkout") {
       const validationError = validateCheckout(req.body);
       if (validationError) {

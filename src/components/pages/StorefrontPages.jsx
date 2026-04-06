@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import { useStore } from "../../context/StoreContext";
 import { apiFetch } from "../../lib/api";
-import { categories, sampleAffiliateStats } from "../../store/catalog";
+import { categories } from "../../store/catalog";
 import { company, formatNaira, getRecommendation, whatsappMessage } from "../../site";
 import { DetailCard, EmptyState, OrderSummary, ProductGrid, StatsCard } from "./SharedPageParts";
 
@@ -34,6 +34,17 @@ function useProducts(filters = {}) {
 export function HomePage() {
   const { items } = useProducts({});
   const featuredProducts = items.slice(0, 4);
+  const [metrics, setMetrics] = useState({
+    products: 0,
+    paidOrders: 0,
+    approvedAffiliates: 0,
+  });
+
+  useEffect(() => {
+    apiFetch("/api/store?action=metrics")
+      .then((data) => setMetrics(data.metrics || { products: 0, paidOrders: 0, approvedAffiliates: 0 }))
+      .catch(() => setMetrics({ products: 0, paidOrders: 0, approvedAffiliates: 0 }));
+  }, []);
 
   return (
     <>
@@ -123,9 +134,9 @@ export function HomePage() {
             </Link>
           </div>
           <div className="grid gap-4 sm:grid-cols-3">
-            <StatsCard label="Products listed" value={items.length || 7} />
-            <StatsCard label="Affiliate clicks" value={sampleAffiliateStats.clicks} />
-            <StatsCard label="Commission earned" value={formatNaira(sampleAffiliateStats.commissionEarned)} />
+            <StatsCard label="Products listed" value={metrics.products || items.length} />
+            <StatsCard label="Paid orders" value={metrics.paidOrders} />
+            <StatsCard label="Approved affiliates" value={metrics.approvedAffiliates} />
           </div>
         </div>
       </section>
