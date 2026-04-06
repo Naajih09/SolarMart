@@ -1,29 +1,12 @@
 import { useEffect, useState } from "react";
-import { apiFetch, getToken } from "../../lib/api";
+import { Link } from "react-router-dom";
+import { useAuth } from "../../context/AuthContext";
+import { apiFetch } from "../../lib/api";
 import { formatNaira } from "../../site";
 import { AdminTable, CheckoutField, EmptyState, StatsCard } from "./SharedPageParts";
 
-function useCurrentUser() {
-  const [user, setUser] = useState(null);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    if (!getToken()) {
-      setLoading(false);
-      return;
-    }
-
-    apiFetch("/api/auth?action=me")
-      .then((data) => setUser(data.user))
-      .catch(() => setUser(null))
-      .finally(() => setLoading(false));
-  }, []);
-
-  return { user, loading };
-}
-
 export function DashboardPage() {
-  const { user, loading } = useCurrentUser();
+  const { user, loading, logout } = useAuth();
   const [orders, setOrders] = useState([]);
   const [affiliates, setAffiliates] = useState([]);
   const [adminProducts, setAdminProducts] = useState([]);
@@ -205,6 +188,22 @@ export function DashboardPage() {
           <StatsCard label="Role" value={user.role} />
           <StatsCard label="Email" value={user.email} />
           <StatsCard label="Phone" value={user.phone || "Not set"} />
+        </div>
+        <div className="section-card flex flex-col gap-3 p-6 sm:flex-row sm:items-center sm:justify-between">
+          <div>
+            <p className="text-lg font-semibold text-brand-deep">Account actions</p>
+            <p className="mt-1 text-sm text-brand-slate/70">
+              Continue shopping or end your current session.
+            </p>
+          </div>
+          <div className="flex flex-col gap-3 sm:flex-row">
+            <Link to="/products" className="button-secondary">
+              Browse products
+            </Link>
+            <button type="button" onClick={logout} className="button-primary">
+              Logout
+            </button>
+          </div>
         </div>
       </div>
     </section>

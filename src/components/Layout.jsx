@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link, NavLink, useLocation } from "react-router-dom";
+import { useAuth } from "../context/AuthContext";
 import { useStore } from "../context/StoreContext";
 import { apiFetch } from "../lib/api";
 import { company, whatsappMessage } from "../site";
@@ -34,6 +35,7 @@ export function Navbar() {
   const [open, setOpen] = useState(false);
   const location = useLocation();
   const { totals, setReferralCode } = useStore();
+  const { user, isAuthenticated, logout } = useAuth();
 
   useEffect(() => {
     const params = new URLSearchParams(location.search);
@@ -74,9 +76,32 @@ export function Navbar() {
               {item.label}
             </NavLink>
           ))}
+          {isAuthenticated ? (
+            <button
+              type="button"
+              onClick={logout}
+              className="text-sm font-medium text-brand-slate transition hover:text-brand-green"
+            >
+              Logout
+            </button>
+          ) : (
+            <>
+              <NavLink to="/login" className="text-sm font-medium text-brand-slate transition hover:text-brand-green">
+                Login
+              </NavLink>
+              <NavLink to="/register" className="text-sm font-medium text-brand-slate transition hover:text-brand-green">
+                Sign Up
+              </NavLink>
+            </>
+          )}
         </nav>
 
         <div className="flex items-center gap-2">
+          {isAuthenticated ? (
+            <span className="hidden rounded-full bg-brand-green/10 px-4 py-2 text-sm font-semibold text-brand-green sm:inline-flex">
+              {user?.fullName || "Account"}
+            </span>
+          ) : null}
           <Link
             to="/cart"
             className="hidden rounded-full border border-brand-slate/10 bg-white px-4 py-2 text-sm font-semibold text-brand-deep sm:inline-flex"
@@ -117,6 +142,35 @@ export function Navbar() {
             >
               Cart ({totals.count})
             </NavLink>
+            {isAuthenticated ? (
+              <button
+                type="button"
+                onClick={() => {
+                  setOpen(false);
+                  logout();
+                }}
+                className="rounded-2xl px-4 py-3 text-left text-sm font-medium text-brand-slate hover:bg-brand-cream"
+              >
+                Logout
+              </button>
+            ) : (
+              <>
+                <NavLink
+                  to="/login"
+                  onClick={() => setOpen(false)}
+                  className="rounded-2xl px-4 py-3 text-sm font-medium text-brand-slate hover:bg-brand-cream"
+                >
+                  Login
+                </NavLink>
+                <NavLink
+                  to="/register"
+                  onClick={() => setOpen(false)}
+                  className="rounded-2xl px-4 py-3 text-sm font-medium text-brand-slate hover:bg-brand-cream"
+                >
+                  Sign Up
+                </NavLink>
+              </>
+            )}
           </nav>
         </div>
       ) : null}

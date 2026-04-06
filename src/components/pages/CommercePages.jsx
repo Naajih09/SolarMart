@@ -1,8 +1,9 @@
 import { useEffect, useState } from "react";
 import { Link, useNavigate, useParams, useSearchParams } from "react-router-dom";
+import { useAuth } from "../../context/AuthContext";
 import { useStore } from "../../context/StoreContext";
-import { apiFetch, setToken } from "../../lib/api";
-import { DetailCard, EmptyState, OrderSummary, CheckoutField } from "./SharedPageParts";
+import { apiFetch } from "../../lib/api";
+import { EmptyState, OrderSummary, CheckoutField } from "./SharedPageParts";
 
 export function CheckoutPage() {
   const { cart, totals, referralCode } = useStore();
@@ -153,6 +154,7 @@ export function CheckoutSuccessPage() {
 
 export function AuthPage({ mode }) {
   const navigate = useNavigate();
+  const { isAuthenticated, login, register } = useAuth();
   const [form, setForm] = useState({
     fullName: "",
     email: "",
@@ -162,25 +164,24 @@ export function AuthPage({ mode }) {
   const [message, setMessage] = useState("");
   const isRegister = mode === "register";
 
+  useEffect(() => {
+    if (isAuthenticated) {
+      navigate("/dashboard", { replace: true });
+    }
+  }, [isAuthenticated, navigate]);
+
   async function handleSubmit(event) {
     event.preventDefault();
     setMessage("");
 
     try {
-      const data = await apiFetch(`/api/auth?action=${isRegister ? "register" : "login"}`, {
-        method: "POST",
-        body: JSON.stringify(
-          isRegister
-            ? form
-            : {
-                email: form.email,
-                password: form.password,
-              },
-        ),
-      });
-
-      if (data.token) {
-        setToken(data.token);
+      if (isRegister) {
+        await register(form);
+      } else {
+        await login({
+          email: form.email,
+          password: form.password,
+        });
       }
 
       navigate("/dashboard");
@@ -215,6 +216,15 @@ export function AuthPage({ mode }) {
             <button type="submit" className="button-primary w-full">
               {isRegister ? "Create account" : "Login"}
             </button>
+            <p className="text-center text-sm text-brand-slate/70">
+              {isRegister ? "Already have an account?" : "Need an account?"}{" "}
+              <Link
+                to={isRegister ? "/login" : "/register"}
+                className="font-semibold text-brand-green hover:text-brand-deep"
+              >
+                {isRegister ? "Login here" : "Sign up here"}
+              </Link>
+            </p>
           </form>
         </div>
       </div>
