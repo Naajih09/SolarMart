@@ -32,21 +32,21 @@ SolarMart has pivoted into an e-commerce and affiliate marketplace MVP built wit
 
 ## API Routes
 
-- `/api/products`
-- `/api/products/:id`
-- `/api/cart`
-- `/api/checkout`
-- `/api/checkout/verify`
-- `/api/affiliate`
-- `/api/affiliate/:code`
-- `/api/auth/register`
-- `/api/auth/login`
-- `/api/auth/me`
-- `/api/auth/logout`
-- `/api/admin/products`
-- `/api/admin/orders`
-- `/api/admin/affiliates`
-- `/api/referral/track`
+- `/api/store?action=products`
+- `/api/store?action=products&id=<slug-or-id>`
+- `/api/store?action=cart`
+- `/api/store?action=checkout`
+- `/api/store?action=verify`
+- `/api/affiliate?action=signup`
+- `/api/affiliate?action=stats&code=<affiliate-code>`
+- `/api/affiliate?action=track`
+- `/api/auth?action=register`
+- `/api/auth?action=login`
+- `/api/auth?action=me`
+- `/api/auth?action=logout`
+- `/api/admin?action=products`
+- `/api/admin?action=orders`
+- `/api/admin?action=affiliates`
 - `/api/lead`
 
 ## Local Development
@@ -82,7 +82,7 @@ SolarMart has pivoted into an e-commerce and affiliate marketplace MVP built wit
 ## Production Store Notes
 
 - Product records are synced from [src/store/catalog.js](/c:/Users/DELL/OneDrive/Desktop/Naajih_code_space/SolarMart/src/store/catalog.js) into PostgreSQL the first time the product APIs run.
-- Successful payment verification creates the order and order items in PostgreSQL through `/api/checkout/verify`.
+- Successful payment verification creates the order and order items in PostgreSQL through `/api/store?action=verify`.
 - Order notification emails are sent to `LEAD_NOTIFICATION_EMAIL` using Resend after verified checkout.
 - Guest checkout is allowed, with optional account creation at checkout.
 - If `ADMIN_EMAIL` and `ADMIN_PASSWORD` are provided, the admin account is auto-created in the database.

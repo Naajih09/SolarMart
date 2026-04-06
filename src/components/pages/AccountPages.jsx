@@ -14,7 +14,7 @@ function useCurrentUser() {
       return;
     }
 
-    apiFetch("/api/auth/me")
+    apiFetch("/api/auth?action=me")
       .then((data) => setUser(data.user))
       .catch(() => setUser(null))
       .finally(() => setLoading(false));
@@ -45,9 +45,9 @@ export function DashboardPage() {
     }
 
     Promise.all([
-      apiFetch("/api/admin/orders"),
-      apiFetch("/api/admin/affiliates"),
-      apiFetch("/api/admin/products"),
+        apiFetch("/api/admin?action=orders"),
+        apiFetch("/api/admin?action=affiliates"),
+        apiFetch("/api/admin?action=products"),
     ])
       .then(([ordersData, affiliatesData, productsData]) => {
         setOrders(ordersData.orders || []);
@@ -59,7 +59,7 @@ export function DashboardPage() {
 
   async function approveAffiliate(id) {
     try {
-      await apiFetch("/api/admin/affiliates", {
+      await apiFetch("/api/admin?action=affiliates", {
         method: "PATCH",
         body: JSON.stringify({ id, status: "approved" }),
       });
@@ -75,7 +75,7 @@ export function DashboardPage() {
   async function addProduct(event) {
     event.preventDefault();
     try {
-      const data = await apiFetch("/api/admin/products", {
+      const data = await apiFetch("/api/admin?action=products", {
         method: "POST",
         body: JSON.stringify({
           ...productForm,
@@ -220,7 +220,7 @@ export function AffiliatePage() {
   async function handleSignup(event) {
     event.preventDefault();
     try {
-      const data = await apiFetch("/api/affiliate", {
+      const data = await apiFetch("/api/affiliate?action=signup", {
         method: "POST",
         body: JSON.stringify(form),
       });

@@ -24,7 +24,7 @@ export function CheckoutPage() {
     setStatus({ type: "", message: "" });
 
     try {
-      const data = await apiFetch("/api/checkout", {
+      const data = await apiFetch("/api/store?action=checkout", {
         method: "POST",
         body: JSON.stringify({
           customer: form,
@@ -113,7 +113,7 @@ export function CheckoutSuccessPage() {
       return;
     }
 
-    apiFetch("/api/checkout/verify", {
+    apiFetch("/api/store?action=verify", {
       method: "POST",
       body: JSON.stringify({ reference }),
     })
@@ -167,7 +167,7 @@ export function AuthPage({ mode }) {
     setMessage("");
 
     try {
-      const data = await apiFetch(isRegister ? "/api/auth/register" : "/api/auth/login", {
+      const data = await apiFetch(`/api/auth?action=${isRegister ? "register" : "login"}`, {
         method: "POST",
         body: JSON.stringify(
           isRegister

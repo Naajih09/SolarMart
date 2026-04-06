@@ -40,7 +40,7 @@ export function Navbar() {
     const ref = params.get("ref");
     if (ref) {
       captureReferral(ref, setReferralCode);
-      apiFetch("/api/referral/track", {
+      apiFetch("/api/affiliate?action=track", {
         method: "POST",
         body: JSON.stringify({ code: ref }),
       }).catch(() => null);

@@ -23,7 +23,7 @@ function useProducts(filters = {}) {
     }
 
     setLoading(true);
-    apiFetch(`/api/products${params.toString() ? `?${params.toString()}` : ""}`)
+    apiFetch(`/api/store?action=products${params.toString() ? `&${params.toString()}` : ""}`)
       .then((data) => setItems(data.products || []))
       .finally(() => setLoading(false));
   }, [filters.category, filters.q, filters.sort]);
@@ -193,10 +193,10 @@ export function ProductDetailPage() {
   const [related, setRelated] = useState([]);
 
   useEffect(() => {
-    apiFetch(`/api/products/${slug}`)
+    apiFetch(`/api/store?action=products&id=${slug}`)
       .then((data) => {
         setProduct(data.product);
-        return apiFetch("/api/products");
+        return apiFetch("/api/store?action=products");
       })
       .then((data) => {
         setRelated((data.products || []).filter((item) => item.slug !== slug).slice(0, 4));
