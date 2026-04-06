@@ -1,3 +1,5 @@
+import { applyCors } from "./_lib/cors.js";
+
 const resendUrl = "https://api.resend.com/emails";
 
 function normalizeLead(body = {}) {
@@ -92,6 +94,10 @@ async function forwardToWebhook(lead) {
 }
 
 export default async function handler(req, res) {
+  if (applyCors(req, res, "POST, OPTIONS")) {
+    return;
+  }
+
   if (req.method !== "POST") {
     res.setHeader("Allow", "POST");
     return res.status(405).json({ message: "Method not allowed" });

@@ -1,3 +1,4 @@
+import { applyCors } from "./_lib/cors.js";
 import { ensureSchema, query } from "./_lib/db.js";
 
 function generateCode(name = "solar") {
@@ -6,6 +7,10 @@ function generateCode(name = "solar") {
 
 export default async function handler(req, res) {
   const action = String(req.query.action || "");
+
+  if (applyCors(req, res, "GET, POST, OPTIONS")) {
+    return;
+  }
 
   try {
     await ensureSchema();

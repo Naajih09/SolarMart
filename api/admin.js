@@ -1,4 +1,5 @@
 import { requireAdmin } from "./_lib/auth.js";
+import { applyCors } from "./_lib/cors.js";
 import { ensureSchema, mapProductRow, query } from "./_lib/db.js";
 
 function slugify(value = "") {
@@ -12,6 +13,10 @@ function slugify(value = "") {
 
 export default async function handler(req, res) {
   const action = String(req.query.action || "");
+
+  if (applyCors(req, res, "GET, POST, PATCH, DELETE, OPTIONS")) {
+    return;
+  }
 
   try {
     await requireAdmin(req);

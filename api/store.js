@@ -1,4 +1,5 @@
 import { sendOrderNotification } from "./_lib/mail.js";
+import { applyCors } from "./_lib/cors.js";
 import { createOrderNumber, ensureSchema, hashPassword, mapProductRow, query } from "./_lib/db.js";
 
 const paystackInitUrl = "https://api.paystack.co/transaction/initialize";
@@ -89,6 +90,10 @@ async function resolveAffiliate(referralCode) {
 
 export default async function handler(req, res) {
   const action = String(req.query.action || "");
+
+  if (applyCors(req, res, "GET, POST, OPTIONS")) {
+    return;
+  }
 
   try {
     await ensureSchema();

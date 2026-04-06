@@ -1,8 +1,13 @@
 import { clearSessionCookie, createSessionForUser, loginUser, requireUser } from "./_lib/auth.js";
+import { applyCors } from "./_lib/cors.js";
 import { ensureSchema, hashPassword, query } from "./_lib/db.js";
 
 export default async function handler(req, res) {
   const action = String(req.query.action || "");
+
+  if (applyCors(req, res, "GET, POST, OPTIONS")) {
+    return;
+  }
 
   try {
     if (req.method === "POST" && action === "register") {
