@@ -1,6 +1,7 @@
 import { requireAdmin } from "./_lib/auth.js";
 import { applyCors } from "./_lib/cors.js";
 import { ensureSchema, mapProductRow, query } from "./_lib/db.js";
+import { getQueryParam, readJsonBody } from "./_lib/request.js";
 
 function slugify(value = "") {
   return String(value)
@@ -12,7 +13,7 @@ function slugify(value = "") {
 }
 
 export default async function handler(req, res) {
-  const action = String(req.query.action || "");
+  const action = String(getQueryParam(req, "action") || "");
 
   if (applyCors(req, res, "GET, POST, PATCH, DELETE, OPTIONS")) {
     return;
@@ -43,7 +44,7 @@ export default async function handler(req, res) {
     }
 
     if (req.method === "PATCH" && action === "affiliates") {
-      const { id, status } = req.body || {};
+      const { id, status } = await readJsonBody(req);
       if (!id || !status) {
         return res.status(400).json({ message: "Affiliate id and status are required." });
       }
@@ -78,7 +79,7 @@ export default async function handler(req, res) {
         features,
         variants,
         relatedIds,
-      } = req.body || {};
+      } = await readJsonBody(req);
 
       if (!name || !category || !price) {
         return res.status(400).json({ message: "Name, category, and price are required." });
@@ -145,7 +146,7 @@ export default async function handler(req, res) {
     }
 
     if (req.method === "DELETE" && action === "products") {
-      const { id } = req.query || {};
+      const id = getQueryParam(req, "id");
       if (!id) {
         return res.status(400).json({ message: "Product id is required." });
       }

@@ -1,9 +1,10 @@
 import { clearSessionCookie, createSessionForUser, loginUser, requireUser } from "./_lib/auth.js";
 import { applyCors } from "./_lib/cors.js";
 import { ensureSchema, hashPassword, query } from "./_lib/db.js";
+import { getQueryParam, readJsonBody } from "./_lib/request.js";
 
 export default async function handler(req, res) {
-  const action = String(req.query.action || "");
+  const action = String(getQueryParam(req, "action") || "");
 
   if (applyCors(req, res, "GET, POST, OPTIONS")) {
     return;
@@ -12,7 +13,7 @@ export default async function handler(req, res) {
   try {
     if (req.method === "POST" && action === "register") {
       await ensureSchema();
-      const { fullName, email, phone, password } = req.body || {};
+      const { fullName, email, phone, password } = await readJsonBody(req);
 
       if (!fullName || !email || !password) {
         return res.status(400).json({ message: "Full name, email, and password are required." });
@@ -44,7 +45,7 @@ export default async function handler(req, res) {
     }
 
     if (req.method === "POST" && action === "login") {
-      const { email, password } = req.body || {};
+      const { email, password } = await readJsonBody(req);
       if (!email || !password) {
         return res.status(400).json({ message: "Email and password are required." });
       }

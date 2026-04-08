@@ -1,4 +1,5 @@
 import { applyCors } from "./_lib/cors.js";
+import { readJsonBody } from "./_lib/request.js";
 
 const resendUrl = "https://api.resend.com/emails";
 
@@ -104,7 +105,7 @@ export default async function handler(req, res) {
   }
 
   try {
-    const lead = normalizeLead(req.body);
+    const lead = normalizeLead(await readJsonBody(req));
     const validationError = validateLead(lead);
 
     if (validationError) {

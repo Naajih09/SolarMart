@@ -1,6 +1,7 @@
 import { sendOrderNotification } from "./_lib/mail.js";
 import { applyCors } from "./_lib/cors.js";
 import { createOrderNumber, ensureSchema, hashPassword, mapProductRow, query } from "./_lib/db.js";
+import { getQueryParam, readJsonBody } from "./_lib/request.js";
 
 const paystackInitUrl = "https://api.paystack.co/transaction/initialize";
 const paystackVerifyUrl = "https://api.paystack.co/transaction/verify/";
@@ -89,7 +90,7 @@ async function resolveAffiliate(referralCode) {
 }
 
 export default async function handler(req, res) {
-  const action = String(req.query.action || "");
+  const action = String(getQueryParam(req, "action") || "");
 
   if (applyCors(req, res, "GET, POST, OPTIONS")) {
     return;
@@ -99,7 +100,10 @@ export default async function handler(req, res) {
     await ensureSchema();
 
     if (req.method === "GET" && action === "products") {
-      const { category, q, sort, id } = req.query || {};
+      const category = getQueryParam(req, "category");
+      const q = getQueryParam(req, "q");
+      const sort = getQueryParam(req, "sort");
+      const id = getQueryParam(req, "id");
       if (id) {
         const result = await query("SELECT * FROM products WHERE external_id = $1 OR slug = $1 LIMIT 1", [String(id)]);
         if (!result.rows.length) {
@@ -145,12 +149,13 @@ export default async function handler(req, res) {
     }
 
     if (req.method === "POST" && action === "checkout") {
-      const validationError = validateCheckout(req.body);
+      const body = await readJsonBody(req);
+      const validationError = validateCheckout(body);
       if (validationError) {
         return res.status(400).json({ message: validationError });
       }
 
-      const { customer, items, referralCode, createAccount, password } = req.body;
+      const { customer, items, referralCode, createAccount, password } = body;
       const totals = computeTotals(items);
       const callbackUrl = process.env.PAYSTACK_CALLBACK_URL || "https://solar-mart.vercel.app/checkout/success";
 
@@ -180,7 +185,7 @@ export default async function handler(req, res) {
     }
 
     if (req.method === "POST" && action === "verify") {
-      const { reference } = req.body || {};
+      const { reference } = await readJsonBody(req);
       if (!reference) {
         return res.status(400).json({ message: "Payment reference is required." });
       }
@@ -272,7 +277,7 @@ export default async function handler(req, res) {
     }
 
     if (req.method === "POST" && action === "cart") {
-      return res.status(200).json({ message: "Cart payload accepted client-side.", cart: req.body || {} });
+      return res.status(200).json({ message: "Cart payload accepted client-side.", cart: await readJsonBody(req) });
     }
 
     res.setHeader("Allow", "GET, POST");

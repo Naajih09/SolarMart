@@ -1,12 +1,13 @@
 import { applyCors } from "./_lib/cors.js";
 import { ensureSchema, query } from "./_lib/db.js";
+import { getQueryParam, readJsonBody } from "./_lib/request.js";
 
 function generateCode(name = "solar") {
   return String(name).replace(/[^a-z0-9]/gi, "").slice(0, 8).toUpperCase() || "SOLARNEW";
 }
 
 export default async function handler(req, res) {
-  const action = String(req.query.action || "");
+  const action = String(getQueryParam(req, "action") || "");
 
   if (applyCors(req, res, "GET, POST, OPTIONS")) {
     return;
@@ -16,7 +17,7 @@ export default async function handler(req, res) {
     await ensureSchema();
 
     if (req.method === "POST" && action === "signup") {
-      const { name, email, phone } = req.body || {};
+      const { name, email, phone } = await readJsonBody(req);
       if (!name || !email) {
         return res.status(400).json({ message: "Name and email are required." });
       }
@@ -52,7 +53,7 @@ export default async function handler(req, res) {
     }
 
     if (req.method === "GET" && action === "stats") {
-      const code = String(req.query.code || "").toUpperCase();
+      const code = String(getQueryParam(req, "code") || "").toUpperCase();
       const result = await query(
         `SELECT a.*, u.full_name, u.email
          FROM affiliates a
@@ -105,7 +106,7 @@ export default async function handler(req, res) {
     }
 
     if (req.method === "POST" && action === "track") {
-      const { code } = req.body || {};
+      const { code } = await readJsonBody(req);
       if (!code) {
         return res.status(400).json({ message: "Referral code is required." });
       }

@@ -2,11 +2,15 @@
   "name": "solarmart-monorepo",
   "private": true,
   "packageManager": "pnpm@9.15.0",
+  "type": "module",
   "scripts": {
     "dev:user": "pnpm --filter @solarmart/user-web dev",
     "dev:admin": "pnpm --filter @solarmart/admin-web dev",
     "build": "pnpm -r build",
     "build:user": "pnpm --filter @solarmart/user-web build",
     "build:admin": "pnpm --filter @solarmart/admin-web build"
+  },
+  "dependencies": {
+    "pg": "^8.13.1"
   }
 }
