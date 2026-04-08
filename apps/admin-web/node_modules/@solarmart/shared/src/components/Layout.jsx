@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link, NavLink, useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
+import { useTheme } from "../context/ThemeContext";
 import { useStore } from "../context/StoreContext";
 import { apiFetch } from "../lib/api";
 import { storeCategories } from "./commerce-ui";
@@ -22,6 +23,23 @@ export function captureReferral(code, setReferralCode) {
   }
 
   setReferralCode(code);
+}
+
+export function ThemeToggle({ compact = false }) {
+  const { theme, toggleTheme } = useTheme();
+
+  return (
+    <button
+      type="button"
+      onClick={toggleTheme}
+      aria-label={`Switch to ${theme === "dark" ? "light" : "dark"} mode`}
+      className={`inline-flex items-center justify-center rounded-full border border-white/80 bg-white/80 font-semibold text-brand-deep shadow-[0_10px_24px_rgba(15,23,42,0.08)] transition hover:border-brand-green hover:text-brand-green ${
+        compact ? "h-11 w-11 text-xs" : "px-4 py-2 text-sm"
+      }`}
+    >
+      {compact ? (theme === "dark" ? "☀" : "☾") : theme === "dark" ? "Light mode" : "Dark mode"}
+    </button>
+  );
 }
 
 export function Navbar({ onOpenCart = () => {} }) {
@@ -84,6 +102,7 @@ export function Navbar({ onOpenCart = () => {} }) {
         </form>
 
         <div className="ml-auto flex items-center gap-2 lg:hidden">
+          <ThemeToggle compact />
           <Link
             to="/affiliate"
             className="flex h-11 w-11 items-center justify-center rounded-full border border-white/80 bg-white/80 text-brand-green shadow-[0_10px_24px_rgba(15,23,42,0.08)]"
@@ -109,6 +128,7 @@ export function Navbar({ onOpenCart = () => {} }) {
         </div>
 
         <div className="ml-auto hidden items-center gap-2 lg:flex">
+          <ThemeToggle />
           <Link
             to="/affiliate"
             className="inline-flex items-center gap-2 rounded-full border border-white/80 bg-white/80 px-4 py-2 text-sm font-semibold text-brand-deep shadow-[0_10px_24px_rgba(15,23,42,0.08)] transition hover:border-brand-green hover:text-brand-green"

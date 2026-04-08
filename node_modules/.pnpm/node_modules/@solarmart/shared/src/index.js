@@ -3,6 +3,7 @@ export {
   MobileStickyBar,
   Navbar,
   ScrollToTop,
+  ThemeToggle,
   WhatsAppFloat,
 } from "./components/Layout";
 export {
@@ -14,6 +15,7 @@ export {
   HorizontalScroller,
   ProductCard,
   MiniCartDrawer,
+  SplashCard,
   SectionHeader,
   TrustBadge,
   storeCategories,
@@ -33,6 +35,7 @@ export {
 } from "./components/MarketplacePages";
 export { EmptyState } from "./components/pages/SharedPageParts";
 export { AuthProvider, useAuth } from "./context/AuthContext";
+export { ThemeProvider, useTheme } from "./context/ThemeContext";
 export { StoreProvider, useStore } from "./context/StoreContext";
 export { apiFetch, getToken, setToken } from "./lib/api";
 export { company, formatNaira, getRecommendation, whatsappMessage } from "./site";

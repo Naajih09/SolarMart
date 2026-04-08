@@ -6,6 +6,8 @@ import {
   EmptyState,
   ScrollToTop,
   company,
+  ThemeProvider,
+  ThemeToggle,
   useAuth,
 } from "@solarmart/shared";
 
@@ -20,6 +22,7 @@ function AdminNavbar() {
           <p className="text-sm text-white/70">Products, orders, and partner operations in one workspace.</p>
         </div>
         <nav className="flex items-center gap-3">
+          <ThemeToggle compact />
           <Link to="/dashboard" className="rounded-full border border-white/15 bg-white/5 px-4 py-2 text-sm font-semibold">
             Dashboard
           </Link>
@@ -84,19 +87,21 @@ function AdminGate() {
 
 function App() {
   return (
-    <AuthProvider>
-      <div className="min-h-screen bg-brand-cream bg-hero-grid text-brand-slate">
-        <ScrollToTop />
-        <AdminNavbar />
-        <main>
-          <Routes>
-            <Route path="/" element={<Navigate to="/dashboard" replace />} />
-            <Route path="/dashboard" element={<AdminGate />} />
-            <Route path="/login" element={<AuthPage mode="login" context="admin" />} />
-          </Routes>
-        </main>
-      </div>
-    </AuthProvider>
+    <ThemeProvider>
+      <AuthProvider>
+        <div className="min-h-screen bg-brand-cream bg-hero-grid text-brand-slate">
+          <ScrollToTop />
+          <AdminNavbar />
+          <main>
+            <Routes>
+              <Route path="/" element={<Navigate to="/dashboard" replace />} />
+              <Route path="/dashboard" element={<AdminGate />} />
+              <Route path="/login" element={<AuthPage mode="login" context="admin" />} />
+            </Routes>
+          </main>
+        </div>
+      </AuthProvider>
+    </ThemeProvider>
   );
 }
 

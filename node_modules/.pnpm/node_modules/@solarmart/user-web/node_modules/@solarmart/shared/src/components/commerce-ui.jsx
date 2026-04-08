@@ -597,3 +597,70 @@ export function BottomNavigation() {
     </nav>
   );
 }
+
+export function SplashCard({ open, onClose }) {
+  if (!open) {
+    return null;
+  }
+
+  return (
+    <div className="fixed inset-0 z-[70] flex items-center justify-center px-4 py-6">
+      <button
+        type="button"
+        aria-label="Close splash card"
+        className="absolute inset-0 bg-brand-deep/55 backdrop-blur-sm"
+        onClick={onClose}
+      />
+      <div className="relative w-full max-w-4xl overflow-hidden rounded-[2.5rem] border border-white/60 bg-white shadow-soft">
+        <div className="grid lg:grid-cols-[0.95fr_1.05fr]">
+          <div className="relative min-h-[220px] bg-brand-deep lg:min-h-full">
+            <img
+              src="/solarmart-hero-1.svg"
+              alt="SolarMart storefront welcome"
+              className="h-full w-full object-cover"
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-brand-deep/90 via-brand-deep/20 to-transparent" />
+            <div className="absolute bottom-5 left-5 right-5 space-y-2 text-white">
+              <span className="eyebrow w-fit border-white/10 bg-white/10 text-brand-yellow">Welcome to SolarMart</span>
+              <p className="max-w-md text-sm leading-6 text-white/80">
+                Modern solar products, clean pricing, and partner referrals built for Nigeria.
+              </p>
+            </div>
+          </div>
+          <div className="space-y-5 p-6 sm:p-8">
+            <div className="flex items-start justify-between gap-4">
+              <div>
+                <p className="text-sm font-semibold uppercase tracking-[0.18em] text-brand-green">SolarMart splash card</p>
+                <h2 className="mt-2 text-3xl font-extrabold text-brand-deep">Your power store is ready</h2>
+              </div>
+              <button
+                type="button"
+                onClick={onClose}
+                className="rounded-full border border-brand-slate/10 px-4 py-2 text-sm font-semibold text-brand-slate hover:border-brand-green hover:text-brand-green"
+              >
+                Close
+              </button>
+            </div>
+            <p className="max-w-xl text-sm leading-7 text-brand-slate/75 sm:text-base">
+              Shop home and business solar kits, compare savings, and move faster with approved partner support.
+            </p>
+            <div className="grid gap-3 sm:grid-cols-2">
+              <TrustBadge title="Installation available" copy="Book system setup with your order." />
+              <TrustBadge title="Nationwide delivery" copy="Reach customers across Nigeria." />
+              <TrustBadge title="Warranty included" copy="Buy with clearer after-sales confidence." />
+              <TrustBadge title="Paystack secure payment" copy="Checkout safely with trusted payments." />
+            </div>
+            <div className="flex flex-col gap-3 pt-2 sm:flex-row">
+              <Link to="/products" onClick={onClose} className="button-primary w-full sm:w-auto">
+                Browse solar products
+              </Link>
+              <Link to="/calculator" onClick={onClose} className="button-secondary w-full sm:w-auto">
+                Estimate my savings
+              </Link>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
