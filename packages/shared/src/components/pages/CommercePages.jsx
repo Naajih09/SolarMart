@@ -152,7 +152,7 @@ export function CheckoutSuccessPage() {
   );
 }
 
-export function AuthPage({ mode }) {
+export function AuthPage({ mode, context = "store" }) {
   const navigate = useNavigate();
   const { isAuthenticated, login, register } = useAuth();
   const [form, setForm] = useState({
@@ -163,6 +163,7 @@ export function AuthPage({ mode }) {
   });
   const [message, setMessage] = useState("");
   const isRegister = mode === "register";
+  const isAdminContext = context === "admin";
 
   useEffect(() => {
     if (isAuthenticated) {
@@ -194,14 +195,22 @@ export function AuthPage({ mode }) {
     <section className="py-12 lg:py-16">
       <div className="section-shell">
         <div className="mx-auto max-w-xl section-card p-6 sm:p-8">
-          <span className="eyebrow">{isRegister ? "Register" : "Login"}</span>
+          <span className="eyebrow">
+            {isRegister ? "Customer Register" : isAdminContext ? "Admin Login" : "Customer Login"}
+          </span>
           <h1 className="mt-4 text-3xl font-bold text-brand-deep">
-            {isRegister ? "Create your SolarMart account" : "Sign in to SolarMart"}
+            {isRegister
+              ? "Create your SolarMart customer account"
+              : isAdminContext
+                ? "Sign in to the SolarMart admin workspace"
+                : "Sign in to your SolarMart account"}
           </h1>
           <p className="mt-3 text-base leading-7 text-brand-slate/75">
             {isRegister
-              ? "Create an account to manage orders and referrals."
-              : "Access your orders, account details, and admin tools."}
+              ? "Create an account to manage orders, speed up checkout, and track your purchases."
+              : isAdminContext
+                ? "Use your approved admin account to manage products, orders, and partner applications."
+                : "Access your orders, account details, and store activity."}
           </p>
           <form className="mt-6 space-y-4" onSubmit={handleSubmit}>
             {isRegister ? (
@@ -216,15 +225,17 @@ export function AuthPage({ mode }) {
             <button type="submit" className="button-primary w-full">
               {isRegister ? "Create account" : "Login"}
             </button>
-            <p className="text-center text-sm text-brand-slate/70">
-              {isRegister ? "Already have an account?" : "Need an account?"}{" "}
-              <Link
-                to={isRegister ? "/login" : "/register"}
-                className="font-semibold text-brand-green hover:text-brand-deep"
-              >
-                {isRegister ? "Login here" : "Sign up here"}
-              </Link>
-            </p>
+            {!isAdminContext ? (
+              <p className="text-center text-sm text-brand-slate/70">
+                {isRegister ? "Already have an account?" : "Need an account?"}{" "}
+                <Link
+                  to={isRegister ? "/login" : "/register"}
+                  className="font-semibold text-brand-green hover:text-brand-deep"
+                >
+                  {isRegister ? "Login here" : "Sign up here"}
+                </Link>
+              </p>
+            ) : null}
           </form>
         </div>
       </div>

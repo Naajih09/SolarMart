@@ -92,7 +92,7 @@ function App() {
           <Routes>
             <Route path="/" element={<Navigate to="/dashboard" replace />} />
             <Route path="/dashboard" element={<AdminGate />} />
-            <Route path="/login" element={<AuthPage mode="login" />} />
+            <Route path="/login" element={<AuthPage mode="login" context="admin" />} />
           </Routes>
         </main>
       </div>

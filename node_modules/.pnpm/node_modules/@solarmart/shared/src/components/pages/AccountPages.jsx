@@ -123,13 +123,17 @@ export function DashboardPage() {
       <section className="py-12 lg:py-16">
         <div className="section-shell space-y-8">
           <div>
-            <span className="eyebrow">Admin dashboard</span>
-            <h1 className="mt-4 text-4xl font-extrabold text-brand-deep">Store management</h1>
+            <span className="eyebrow">Admin workspace</span>
+            <h1 className="mt-4 text-4xl font-extrabold text-brand-deep">Official store operations</h1>
+            <p className="mt-3 max-w-3xl text-base leading-7 text-brand-slate/75">
+              Manage official SolarMart products, monitor customer orders, and approve partner
+              applications from one internal dashboard.
+            </p>
           </div>
           <div className="grid gap-6 lg:grid-cols-3">
             <StatsCard label="Products" value={adminProducts.length} />
             <StatsCard label="Orders" value={orders.length} />
-            <StatsCard label="Affiliates" value={affiliates.length} />
+            <StatsCard label="Partners" value={affiliates.length} />
           </div>
           <AdminTable
             title="Recent orders"
@@ -142,7 +146,7 @@ export function DashboardPage() {
             ])}
           />
           <AdminTable
-            title="Affiliates"
+            title="Partner applications"
             headers={["Code", "Name", "Status", "Commission"]}
             rows={affiliates.map((item) => [
               item.code,
@@ -153,10 +157,10 @@ export function DashboardPage() {
           />
           <div className="grid gap-8 xl:grid-cols-3">
             <div className="section-card p-6">
-              <p className="text-lg font-semibold text-brand-deep">Add product</p>
+              <p className="text-lg font-semibold text-brand-deep">Add official product</p>
               <p className="mt-2 text-sm leading-6 text-brand-slate/70">
-                Products now come only from the database. Add real inventory here and it will
-                appear in the storefront immediately after save.
+                Products now come only from the database. Add official store inventory here and it
+                will appear in the storefront immediately after save.
               </p>
               <form className="mt-4 space-y-4" onSubmit={addProduct}>
                 <CheckoutField label="Name" value={productForm.name} onChange={(value) => setProductForm((current) => ({ ...current, name: value }))} required />
@@ -247,7 +251,11 @@ export function DashboardPage() {
               </div>
             </div>
             <div className="section-card p-6">
-              <p className="text-lg font-semibold text-brand-deep">Approve affiliates</p>
+              <p className="text-lg font-semibold text-brand-deep">Approve partner applications</p>
+              <p className="mt-2 text-sm leading-6 text-brand-slate/70">
+                Partners are referral sellers, not ordinary customer accounts. Approve them before
+                they begin earning commission.
+              </p>
               <div className="mt-4 space-y-3">
                 {affiliates.slice(0, 5).map((item) => (
                   <div key={item.id} className="flex items-center justify-between rounded-2xl bg-brand-cream p-4">
@@ -276,8 +284,11 @@ export function DashboardPage() {
     <section className="py-12 lg:py-16">
       <div className="section-shell space-y-8">
         <div>
-          <span className="eyebrow">User dashboard</span>
+          <span className="eyebrow">Customer dashboard</span>
           <h1 className="mt-4 text-4xl font-extrabold text-brand-deep">Welcome back, {user.fullName}</h1>
+          <p className="mt-3 max-w-2xl text-base leading-7 text-brand-slate/75">
+            Review your customer account details and continue shopping from the official SolarMart store.
+          </p>
         </div>
         <div className="grid gap-6 lg:grid-cols-3">
           <StatsCard label="Role" value={user.role} />
@@ -371,16 +382,16 @@ export function AffiliatePage() {
       <div className="section-shell space-y-8">
         <div className="grid gap-8 lg:grid-cols-[0.95fr_1.05fr]">
           <div className="space-y-4">
-            <span className="eyebrow">Affiliate dashboard</span>
-            <h1 className="text-4xl font-extrabold text-brand-deep">Earn commission on every converted order</h1>
+            <span className="eyebrow">Partner program</span>
+            <h1 className="text-4xl font-extrabold text-brand-deep">Join SolarMart as a referral partner</h1>
             <p className="text-base leading-8 text-brand-slate/75">
-              Share your referral link, drive product purchases, and monitor commission
-              performance in one place.
+              SolarMart sells the products directly. Approved partners promote the store, share
+              referral links, and earn commission when referred orders convert.
             </p>
           </div>
           <div className="section-card space-y-4 p-6">
             <p className="text-sm font-semibold uppercase tracking-[0.18em] text-brand-green">
-              Shareable link
+              Partner link
             </p>
             <div className="rounded-2xl bg-brand-cream p-4 text-sm text-brand-slate">{shareLink}</div>
             <div className="grid gap-4 sm:grid-cols-2">
@@ -391,41 +402,45 @@ export function AffiliatePage() {
         </div>
 
         <div className="grid gap-6 lg:grid-cols-4">
-          <StatsCard label="Total referrals" value={stats.totalReferrals} />
+          <StatsCard label="Referral clicks" value={stats.totalReferrals} />
           <StatsCard label="Conversions" value={stats.conversions} />
           <StatsCard label="Pending payouts" value={stats.pendingPayouts} />
-          <StatsCard label="Affiliate code" value={stats.affiliateCode || "Not created yet"} />
+          <StatsCard label="Partner code" value={stats.affiliateCode || "Not created yet"} />
         </div>
 
         <div className="grid gap-8 lg:grid-cols-[1fr_1fr]">
           <div className="section-card p-6">
-            <p className="text-lg font-semibold text-brand-deep">Become an affiliate</p>
+            <p className="text-lg font-semibold text-brand-deep">Apply as a partner</p>
+            <p className="mt-2 text-sm leading-7 text-brand-slate/75">
+              This creates a partner application for SolarMart&apos;s approval workflow. It is not
+              the same as a normal customer account.
+            </p>
             <form className="mt-4 space-y-4" onSubmit={handleSignup}>
               <CheckoutField label="Full name" value={form.name} onChange={(value) => setForm((current) => ({ ...current, name: value }))} required />
               <CheckoutField label="Email" type="email" value={form.email} onChange={(value) => setForm((current) => ({ ...current, email: value }))} required />
               <CheckoutField label="Phone" value={form.phone} onChange={(value) => setForm((current) => ({ ...current, phone: value }))} />
               {message ? <p className="text-sm text-brand-green">{message}</p> : null}
               <button type="submit" className="button-primary w-full">
-                Create affiliate account
+                Submit partner application
               </button>
             </form>
             <div className="mt-8 border-t border-brand-slate/10 pt-6">
-              <p className="text-lg font-semibold text-brand-deep">Load existing affiliate data</p>
+              <p className="text-lg font-semibold text-brand-deep">Load existing partner data</p>
               <div className="mt-4 space-y-4">
-                <CheckoutField label="Affiliate code" value={lookupCode} onChange={setLookupCode} />
+                <CheckoutField label="Partner code" value={lookupCode} onChange={setLookupCode} />
                 <button
                   type="button"
                   onClick={() => loadAffiliateStats(lookupCode)}
                   className="button-secondary w-full"
                 >
-                  Load affiliate stats
+                  Load partner stats
                 </button>
               </div>
             </div>
           </div>
           {stats.transactions.length ? (
             <AdminTable
-              title="Affiliate transaction history"
+              title="Partner transaction history"
               headers={["Date", "Product", "Commission", "Status"]}
               rows={stats.transactions.map((item) => [
                 new Date(item.date).toLocaleDateString(),
@@ -436,9 +451,9 @@ export function AffiliatePage() {
             />
           ) : (
             <div className="section-card p-6">
-              <p className="text-lg font-semibold text-brand-deep">Affiliate transaction history</p>
+              <p className="text-lg font-semibold text-brand-deep">Partner transaction history</p>
               <p className="mt-4 text-sm leading-7 text-brand-slate/75">
-                No real affiliate transactions yet. Once a referred order is paid, it will appear here.
+                No partner transactions yet. Once a referred order is paid, it will appear here.
               </p>
             </div>
           )}

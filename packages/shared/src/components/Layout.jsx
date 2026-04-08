@@ -9,7 +9,7 @@ const navItems = [
   { label: "Home", to: "/" },
   { label: "Products", to: "/products" },
   { label: "Calculator", to: "/calculator" },
-  { label: "Affiliate", to: "/affiliate" },
+  { label: "Partners", to: "/affiliate" },
 ];
 
 export function ScrollToTop() {
@@ -225,7 +225,7 @@ export function Footer() {
             Browse catalogue
           </Link>
           <Link className="block hover:text-brand-green" to="/affiliate">
-            Become an affiliate
+            Partner program
           </Link>
           <Link className="block hover:text-brand-green" to="/checkout">
             Checkout

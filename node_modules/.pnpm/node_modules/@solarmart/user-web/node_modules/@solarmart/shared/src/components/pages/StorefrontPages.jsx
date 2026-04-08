@@ -51,14 +51,14 @@ export function HomePage() {
       <section className="overflow-hidden bg-hero-grid">
         <div className="section-shell grid gap-10 py-12 lg:grid-cols-[1.08fr_0.92fr] lg:py-20">
           <div className="space-y-7">
-            <span className="eyebrow">Solar commerce platform</span>
+            <span className="eyebrow">Official Solar Store</span>
             <div className="space-y-4">
               <h1 className="max-w-3xl text-4xl font-extrabold leading-tight text-brand-deep sm:text-5xl lg:text-6xl">
-                Modern solar shopping for homes, offices, and trusted referral partners.
+                Official solar shopping for homes, offices, and approved referral partners.
               </h1>
               <p className="max-w-2xl text-base leading-8 text-brand-slate/80 sm:text-lg">
                 Explore curated solar systems, compare real product options, calculate your
-                power spend, and order with a cleaner storefront built for Nigerian buyers.
+                power spend, and order from a cleaner storefront built for Nigerian buyers.
               </p>
             </div>
             <div className="flex flex-col gap-3 sm:flex-row">
@@ -66,13 +66,13 @@ export function HomePage() {
                 Shop Solar Products
               </Link>
               <Link to="/affiliate" className="button-secondary w-full sm:w-auto">
-                Become an Affiliate
+                Join Partner Program
               </Link>
             </div>
             <div className="grid gap-4 sm:grid-cols-3">
               {[
                 ["Clean checkout", "A streamlined buying flow built for product discovery and conversion."],
-                ["Referral partners", "Approved affiliates can share links and track real commissions."],
+                ["Partner network", "Approved partners can share links and track real commissions."],
                 ["Power planning", "Use the calculator to match your monthly bill to the right setup."],
               ].map(([title, copy]) => (
                 <div key={title} className="glass-panel p-5">
@@ -88,13 +88,13 @@ export function HomePage() {
               <p className="text-sm font-semibold uppercase tracking-[0.22em] text-brand-yellow">Storefront</p>
               <p className="mt-3 text-3xl font-bold text-white">Official solar systems and component sales</p>
               <p className="mt-3 text-sm leading-7 text-white/72">
-                Built to feel closer to a premium electronics storefront than a generic lead page.
+                Built to feel closer to a premium electronics storefront than a generic marketplace.
               </p>
             </div>
             {[
               ["Catalogue", "Browse inverters, panels, batteries, kits, and accessories."],
               ["Cart and checkout", "Add to cart, checkout as guest, and complete payment."],
-              ["Affiliate dashboard", "Track partner performance separately from customer accounts."],
+              ["Partner dashboard", "Track partner performance separately from customer accounts."],
             ].map(([title, copy]) => (
               <div key={title} className="rounded-[1.75rem] border border-white/10 bg-white/5 p-5">
                 <p className="text-sm font-semibold uppercase tracking-[0.18em] text-brand-yellow">
@@ -148,7 +148,7 @@ export function HomePage() {
           <div className="grid gap-4 sm:grid-cols-3">
             <StatsCard label="Products listed" value={metrics.products} />
             <StatsCard label="Paid orders" value={metrics.paidOrders} />
-            <StatsCard label="Approved affiliates" value={metrics.approvedAffiliates} />
+            <StatsCard label="Approved partners" value={metrics.approvedAffiliates} />
           </div>
         </div>
       </section>

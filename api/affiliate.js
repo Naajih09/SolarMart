@@ -41,7 +41,7 @@ export default async function handler(req, res) {
       );
 
       return res.status(200).json({
-        message: "Affiliate account created.",
+        message: "Partner application received.",
         affiliate: {
           ...affiliateResult.rows[0],
           total_clicks: Number(affiliateResult.rows[0].total_clicks || 0),
