@@ -39,7 +39,7 @@ export function ProductGrid({
   return (
     <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-4">
       {items.map((product) => (
-        <article key={product.id} className="section-card overflow-hidden">
+        <article key={product.id} className="section-card overflow-hidden transition duration-300 hover:-translate-y-1">
           {product.images?.[0] ? (
             <img src={product.images[0]} alt={product.name} className="h-52 w-full object-cover" />
           ) : (
@@ -50,10 +50,10 @@ export function ProductGrid({
           <div className="space-y-4 p-5">
             <div className="flex items-start justify-between gap-3">
               <div>
-                <p className="text-sm text-brand-green">{product.category}</p>
+                <p className="text-xs font-semibold uppercase tracking-[0.22em] text-brand-green">{product.category}</p>
                 <h3 className="mt-1 text-xl font-bold text-brand-deep">{product.name}</h3>
               </div>
-              <span className="rounded-full bg-brand-yellow px-3 py-1 text-xs font-semibold text-brand-deep">
+              <span className="rounded-full bg-brand-yellow/15 px-3 py-1 text-xs font-semibold text-brand-deep">
                 {product.rating}/5
               </span>
             </div>
@@ -76,7 +76,7 @@ export function ProductGrid({
 
 export function DetailCard({ label, value }) {
   return (
-    <div className="rounded-2xl border border-brand-slate/10 bg-white p-4">
+    <div className="rounded-[1.5rem] border border-brand-slate/10 bg-white/75 p-4 backdrop-blur">
       <p className="text-xs uppercase tracking-[0.18em] text-brand-slate/60">{label}</p>
       <p className="mt-2 break-words text-lg font-semibold text-brand-deep">{value}</p>
     </div>
@@ -85,16 +85,16 @@ export function DetailCard({ label, value }) {
 
 export function StatsCard({ label, value }) {
   return (
-    <div className="rounded-3xl bg-brand-deep p-5 text-white">
-      <p className="text-sm uppercase tracking-[0.18em] text-brand-yellow">{label}</p>
-      <p className="mt-3 break-words text-2xl font-bold">{value}</p>
+    <div className="surface-dark p-5">
+      <p className="text-sm uppercase tracking-[0.18em] text-brand-yellow/90">{label}</p>
+      <p className="mt-3 break-words text-2xl font-bold text-white">{value}</p>
     </div>
   );
 }
 
 export function OrderSummary({ subtotal, delivery, total }) {
   return (
-    <aside className="section-card h-fit p-6">
+    <aside className="glass-panel h-fit p-6">
       <p className="text-xl font-bold text-brand-deep">Order summary</p>
       <div className="mt-5 space-y-3 text-sm text-brand-slate/75">
         <div className="flex items-center justify-between">
@@ -119,7 +119,7 @@ export function OrderSummary({ subtotal, delivery, total }) {
 
 export function AdminTable({ title, headers, rows }) {
   return (
-    <div className="section-card p-6">
+    <div className="glass-panel p-6">
       <p className="text-lg font-semibold text-brand-deep">{title}</p>
       <div className="mt-4 overflow-x-auto">
         <table className="min-w-full text-left text-sm">
@@ -153,7 +153,7 @@ export function EmptyState({ title, copy, actionLabel, actionTo }) {
   return (
     <section className="py-16">
       <div className="section-shell">
-        <div className="mx-auto max-w-2xl section-card p-8 text-center">
+        <div className="mx-auto max-w-2xl glass-panel p-8 text-center">
           <h1 className="text-3xl font-bold text-brand-deep">{title}</h1>
           <p className="mt-4 text-base leading-7 text-brand-slate/75">{copy}</p>
           {actionLabel && actionTo ? (

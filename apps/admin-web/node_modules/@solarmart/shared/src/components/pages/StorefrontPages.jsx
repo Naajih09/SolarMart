@@ -49,16 +49,16 @@ export function HomePage() {
   return (
     <>
       <section className="overflow-hidden bg-hero-grid">
-        <div className="section-shell grid gap-10 py-12 lg:grid-cols-[1.1fr_0.9fr] lg:py-20">
+        <div className="section-shell grid gap-10 py-12 lg:grid-cols-[1.08fr_0.92fr] lg:py-20">
           <div className="space-y-7">
-            <span className="eyebrow">Solar marketplace and affiliate platform</span>
+            <span className="eyebrow">Solar commerce platform</span>
             <div className="space-y-4">
               <h1 className="max-w-3xl text-4xl font-extrabold leading-tight text-brand-deep sm:text-5xl lg:text-6xl">
-                Buy trusted solar products online and earn by referring customers.
+                Modern solar shopping for homes, offices, and trusted referral partners.
               </h1>
               <p className="max-w-2xl text-base leading-8 text-brand-slate/80 sm:text-lg">
-                SolarMart now combines product shopping, secure checkout, affiliate
-                referrals, and the NEPA calculator in one storefront built for Nigeria.
+                Explore curated solar systems, compare real product options, calculate your
+                power spend, and order with a cleaner storefront built for Nigerian buyers.
               </p>
             </div>
             <div className="flex flex-col gap-3 sm:flex-row">
@@ -71,11 +71,11 @@ export function HomePage() {
             </div>
             <div className="grid gap-4 sm:grid-cols-3">
               {[
-                ["Secure checkout", "Paystack-backed transaction initialization"],
-                ["Affiliate income", "Share links and monitor conversions"],
-                ["Smart recommendations", "Use the calculator to match products to spend"],
+                ["Clean checkout", "A streamlined buying flow built for product discovery and conversion."],
+                ["Referral partners", "Approved affiliates can share links and track real commissions."],
+                ["Power planning", "Use the calculator to match your monthly bill to the right setup."],
               ].map(([title, copy]) => (
-                <div key={title} className="section-card p-5">
+                <div key={title} className="glass-panel p-5">
                   <p className="font-semibold text-brand-deep">{title}</p>
                   <p className="mt-2 text-sm leading-6 text-brand-slate/75">{copy}</p>
                 </div>
@@ -83,18 +83,25 @@ export function HomePage() {
             </div>
           </div>
 
-          <div className="section-card grid gap-4 p-6 sm:p-8">
+          <div className="surface-dark grid gap-4 p-6 sm:p-8">
+            <div className="rounded-[1.75rem] border border-white/10 bg-white/5 p-5">
+              <p className="text-sm font-semibold uppercase tracking-[0.22em] text-brand-yellow">Storefront</p>
+              <p className="mt-3 text-3xl font-bold text-white">Official solar systems and component sales</p>
+              <p className="mt-3 text-sm leading-7 text-white/72">
+                Built to feel closer to a premium electronics storefront than a generic lead page.
+              </p>
+            </div>
             {[
-              ["Catalogue", "Browse inverters, panels, batteries, kits, and accessories"],
-              ["Cart and checkout", "Add to cart, checkout as guest, and complete payment"],
-              ["Affiliate dashboard", "Use your code, track performance, and earn commissions"],
+              ["Catalogue", "Browse inverters, panels, batteries, kits, and accessories."],
+              ["Cart and checkout", "Add to cart, checkout as guest, and complete payment."],
+              ["Affiliate dashboard", "Track partner performance separately from customer accounts."],
             ].map(([title, copy]) => (
-              <div key={title} className="rounded-3xl bg-brand-cream p-5">
-                <p className="text-sm font-semibold uppercase tracking-[0.18em] text-brand-green">
-                  Platform
+              <div key={title} className="rounded-[1.75rem] border border-white/10 bg-white/5 p-5">
+                <p className="text-sm font-semibold uppercase tracking-[0.18em] text-brand-yellow">
+                  Module
                 </p>
-                <p className="mt-3 text-xl font-bold text-brand-deep">{title}</p>
-                <p className="mt-2 text-sm leading-6 text-brand-slate/75">{copy}</p>
+                <p className="mt-3 text-xl font-bold text-white">{title}</p>
+                <p className="mt-2 text-sm leading-6 text-white/72">{copy}</p>
               </div>
             ))}
           </div>
@@ -124,7 +131,7 @@ export function HomePage() {
       </section>
 
       <section className="py-10 lg:py-14">
-        <div className="section-shell section-card grid gap-8 p-6 sm:p-8 lg:grid-cols-[0.95fr_1.05fr] lg:p-12">
+        <div className="section-shell glass-panel grid gap-8 p-6 sm:p-8 lg:grid-cols-[0.95fr_1.05fr] lg:p-12">
           <div className="space-y-4">
             <span className="eyebrow">Conversion tool</span>
             <h2 className="text-3xl font-bold text-brand-deep sm:text-4xl">
@@ -165,17 +172,17 @@ export function ProductsPage() {
           </h1>
         </div>
 
-        <div className="section-card grid gap-4 p-5 lg:grid-cols-[1.2fr_0.8fr_0.8fr]">
+        <div className="glass-panel grid gap-4 p-5 lg:grid-cols-[1.2fr_0.8fr_0.8fr]">
           <input
             value={query}
             onChange={(event) => setQuery(event.target.value)}
             placeholder="Search by product, brand, or category"
-            className="rounded-2xl border border-brand-slate/10 bg-brand-cream px-4 py-3 outline-none focus:border-brand-green"
+            className="rounded-2xl border border-brand-slate/10 bg-white/80 px-4 py-3 outline-none transition focus:border-brand-green focus:bg-white"
           />
           <select
             value={category}
             onChange={(event) => setCategory(event.target.value)}
-            className="rounded-2xl border border-brand-slate/10 bg-brand-cream px-4 py-3 outline-none focus:border-brand-green"
+            className="rounded-2xl border border-brand-slate/10 bg-white/80 px-4 py-3 outline-none transition focus:border-brand-green focus:bg-white"
           >
             <option value="All">All categories</option>
             {categories.map((item) => (
@@ -187,7 +194,7 @@ export function ProductsPage() {
           <select
             value={sort}
             onChange={(event) => setSort(event.target.value)}
-            className="rounded-2xl border border-brand-slate/10 bg-brand-cream px-4 py-3 outline-none focus:border-brand-green"
+            className="rounded-2xl border border-brand-slate/10 bg-white/80 px-4 py-3 outline-none transition focus:border-brand-green focus:bg-white"
           >
             <option value="featured">Featured</option>
             <option value="price-low">Price: low to high</option>
@@ -236,7 +243,7 @@ export function ProductDetailPage() {
     <section className="py-12 lg:py-16">
       <div className="section-shell space-y-10">
         <div className="grid gap-8 lg:grid-cols-[1fr_0.95fr]">
-          <div className="section-card overflow-hidden">
+          <div className="glass-panel overflow-hidden">
             <img src={product.images?.[0]} alt={product.name} className="h-full min-h-[340px] w-full object-cover" />
           </div>
           <div className="space-y-5">
@@ -251,7 +258,7 @@ export function ProductDetailPage() {
               <DetailCard label="SKU" value={product.sku} />
               <DetailCard label="Rating" value={`${product.rating}/5`} />
             </div>
-            <div className="rounded-3xl bg-brand-cream p-5">
+            <div className="glass-panel p-5">
               <p className="font-semibold text-brand-deep">Included features</p>
               <ul className="mt-3 space-y-2 text-sm text-brand-slate/75">
                 {(product.features || []).map((feature) => (

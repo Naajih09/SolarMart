@@ -13,28 +13,28 @@ function AdminNavbar() {
   const { user, isAuthenticated, logout } = useAuth();
 
   return (
-    <header className="sticky top-0 z-50 border-b border-brand-slate/10 bg-brand-deep/95 text-white backdrop-blur">
+    <header className="sticky top-0 z-50 border-b border-white/10 bg-brand-deep/95 text-white backdrop-blur-2xl">
       <div className="section-shell flex items-center justify-between gap-4 py-4">
         <div>
-          <p className="text-lg font-bold">{company.name} Admin</p>
-          <p className="text-sm text-white/70">Orders, products, and affiliates in one workspace.</p>
+          <p className="text-lg font-bold tracking-tight">{company.name} Admin</p>
+          <p className="text-sm text-white/70">Products, orders, and partner operations in one workspace.</p>
         </div>
         <nav className="flex items-center gap-3">
-          <Link to="/dashboard" className="rounded-full border border-white/15 px-4 py-2 text-sm font-semibold">
+          <Link to="/dashboard" className="rounded-full border border-white/15 bg-white/5 px-4 py-2 text-sm font-semibold">
             Dashboard
           </Link>
           {isAuthenticated ? (
             <button
               type="button"
               onClick={logout}
-              className="rounded-full bg-brand-yellow px-4 py-2 text-sm font-semibold text-brand-deep"
+              className="rounded-full bg-brand-yellow px-4 py-2 text-sm font-semibold text-brand-deep transition hover:-translate-y-0.5"
             >
               Logout
             </button>
           ) : (
             <Link
               to="/login"
-              className="rounded-full bg-brand-yellow px-4 py-2 text-sm font-semibold text-brand-deep"
+              className="rounded-full bg-brand-yellow px-4 py-2 text-sm font-semibold text-brand-deep transition hover:-translate-y-0.5"
             >
               Login
             </Link>
@@ -85,7 +85,7 @@ function AdminGate() {
 function App() {
   return (
     <AuthProvider>
-      <div className="min-h-screen bg-brand-cream text-brand-slate">
+      <div className="min-h-screen bg-brand-cream bg-hero-grid text-brand-slate">
         <ScrollToTop />
         <AdminNavbar />
         <main>
