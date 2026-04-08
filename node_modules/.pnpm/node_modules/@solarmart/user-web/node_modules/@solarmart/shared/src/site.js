@@ -1,6 +1,6 @@
 export const company = {
   name: "SolarMart",
-  tagline: "Solar Products, Systems, and Affiliate Earnings in One Marketplace",
+  tagline: "Modern solar store for homes, offices, and approved partners",
   phone: "09074260871",
   email: "Naajihibnsiraj@gmail.com",
   whatsappNumber: "2349074260871",
@@ -14,7 +14,7 @@ export const currency = new Intl.NumberFormat("en-NG", {
 });
 
 export const whatsappMessage = encodeURIComponent(
-  "Hello SolarMart, I want to place an order and get support on the best solar product for my needs.",
+  "Hello SolarMart, I want help choosing the right solar product and placing an order.",
 );
 
 export function formatNaira(value) {

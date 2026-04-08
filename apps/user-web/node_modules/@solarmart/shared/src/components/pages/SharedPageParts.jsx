@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
-import { useStore } from "../../context/StoreContext";
 import { formatNaira } from "../../site";
+import { ProductCard } from "../commerce-ui";
 
 export function CheckoutField({ label, onChange, ...props }) {
   return (
@@ -20,11 +20,10 @@ export function ProductGrid({
   loading,
   emptyTitle = "No products yet",
   emptyCopy = "The marketplace is now database-driven. Add products from the admin dashboard and they will appear here automatically.",
+  gridClassName = "grid gap-4 sm:grid-cols-2 xl:grid-cols-4",
 }) {
-  const { addToCart } = useStore();
-
   if (loading) {
-    return <EmptyState title="Loading products" copy="Fetching the latest catalogue from the store." />;
+    return <ProductSkeletonGrid gridClassName={gridClassName} />;
   }
 
   if (!items.length) {
@@ -37,41 +36,31 @@ export function ProductGrid({
   }
 
   return (
-    <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+    <div className={gridClassName}>
       {items.map((product) => (
-        <article
-          key={product.id}
-          className="section-card flex h-full flex-col overflow-hidden transition duration-300 md:hover:-translate-y-1"
+        <ProductCard key={product.id} product={product} />
+      ))}
+    </div>
+  );
+}
+
+function ProductSkeletonGrid({ gridClassName }) {
+  return (
+    <div className={gridClassName}>
+      {Array.from({ length: 8 }).map((_, index) => (
+        <div
+          key={index}
+          className="overflow-hidden rounded-[2rem] border border-white/70 bg-white/80 shadow-soft"
         >
-          {product.images?.[0] ? (
-            <img src={product.images[0]} alt={product.name} className="aspect-[4/3] w-full object-cover" />
-          ) : (
-            <div className="flex aspect-[4/3] items-center justify-center bg-brand-cream px-6 text-center text-sm font-semibold text-brand-slate/65">
-              Product image coming soon
-            </div>
-          )}
-          <div className="flex flex-1 flex-col space-y-4 p-4 sm:p-5">
-            <div className="flex items-start justify-between gap-3">
-              <div>
-                <p className="text-xs font-semibold uppercase tracking-[0.22em] text-brand-green">{product.category}</p>
-                <h3 className="mt-1 text-lg font-bold text-brand-deep sm:text-xl">{product.name}</h3>
-              </div>
-              <span className="rounded-full bg-brand-yellow/15 px-3 py-1 text-xs font-semibold text-brand-deep">
-                {product.rating}/5
-              </span>
-            </div>
-            <p className="text-sm leading-6 text-brand-slate/75">{product.shortDescription}</p>
-            <p className="text-base font-bold text-brand-deep sm:text-lg">{formatNaira(product.price)}</p>
-            <div className="mt-auto flex flex-col gap-3">
-              <Link to={`/products/${product.slug}`} className="button-secondary w-full">
-                View details
-              </Link>
-              <button type="button" onClick={() => addToCart(product)} className="button-primary w-full">
-                Add to cart
-              </button>
-            </div>
+          <div className="aspect-[4/3] animate-pulse bg-brand-cream" />
+          <div className="space-y-4 p-5">
+            <div className="h-3 w-24 animate-pulse rounded-full bg-brand-cream" />
+            <div className="h-5 w-4/5 animate-pulse rounded-full bg-brand-cream" />
+            <div className="h-4 w-full animate-pulse rounded-full bg-brand-cream" />
+            <div className="h-4 w-2/3 animate-pulse rounded-full bg-brand-cream" />
+            <div className="h-10 rounded-full bg-brand-cream animate-pulse" />
           </div>
-        </article>
+        </div>
       ))}
     </div>
   );

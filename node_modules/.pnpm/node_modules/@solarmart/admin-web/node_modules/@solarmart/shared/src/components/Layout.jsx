@@ -1,16 +1,10 @@
 import { useEffect, useState } from "react";
-import { Link, NavLink, useLocation } from "react-router-dom";
+import { Link, NavLink, useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import { useStore } from "../context/StoreContext";
 import { apiFetch } from "../lib/api";
+import { storeCategories } from "./commerce-ui";
 import { company, whatsappMessage } from "../site";
-
-const navItems = [
-  { label: "Home", to: "/" },
-  { label: "Products", to: "/products" },
-  { label: "Calculator", to: "/calculator" },
-  { label: "Partners", to: "/affiliate" },
-];
 
 export function ScrollToTop() {
   const location = useLocation();
@@ -30,9 +24,10 @@ export function captureReferral(code, setReferralCode) {
   setReferralCode(code);
 }
 
-export function Navbar() {
-  const [open, setOpen] = useState(false);
+export function Navbar({ onOpenCart = () => {} }) {
+  const [query, setQuery] = useState("");
   const location = useLocation();
+  const navigate = useNavigate();
   const { totals, setReferralCode } = useStore();
   const { user, isAuthenticated, logout } = useAuth();
 
@@ -48,10 +43,22 @@ export function Navbar() {
     }
   }, [location.search, setReferralCode]);
 
+  useEffect(() => {
+    const params = new URLSearchParams(location.search);
+    setQuery(params.get("q") || "");
+  }, [location.search]);
+
+  function submitSearch(event) {
+    event.preventDefault();
+    const term = query.trim();
+    navigate(term ? `/products?q=${encodeURIComponent(term)}` : "/products");
+  }
+
   return (
     <header className="sticky top-0 z-50 border-b border-white/40 bg-brand-cream/80 backdrop-blur-2xl">
-      <div className="section-shell flex items-center justify-between gap-3 py-3">
-        <Link to="/" className="flex min-w-0 items-center gap-3" onClick={() => setOpen(false)}>
+      <div className="section-shell py-3 sm:py-4">
+        <div className="flex items-center gap-3">
+        <Link to="/" className="flex min-w-0 items-center gap-3">
           <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-[1.25rem] bg-brand-deep font-bold text-white shadow-[0_16px_30px_rgba(15,23,42,0.2)]">
             SM
           </div>
@@ -61,30 +68,66 @@ export function Navbar() {
           </div>
         </Link>
 
-        <nav className="hidden items-center gap-2 rounded-full border border-white/70 bg-white/70 px-3 py-2 shadow-[0_10px_30px_rgba(15,23,42,0.06)] lg:flex">
-          {navItems.map((item) => (
-            <NavLink
-              key={item.to}
-              to={item.to}
-              className={({ isActive }) =>
-                `rounded-full px-4 py-2 text-sm font-medium transition ${
-                  isActive ? "bg-brand-deep text-white" : "text-brand-slate hover:bg-brand-green/10 hover:text-brand-green"
-                }`
-              }
-            >
-              {item.label}
-            </NavLink>
-          ))}
-          <NavLink
-            to="/dashboard"
-            className={({ isActive }) =>
-              `rounded-full px-4 py-2 text-sm font-medium transition ${
-                isActive ? "bg-brand-deep text-white" : "text-brand-slate hover:bg-brand-green/10 hover:text-brand-green"
-              }`
-            }
+        <form onSubmit={submitSearch} className="hidden flex-1 lg:block">
+          <label className="flex items-center gap-3 rounded-full border border-white/80 bg-white/90 px-4 py-3 shadow-[0_10px_24px_rgba(15,23,42,0.08)]">
+            <span className="text-lg text-brand-slate/50">⌕</span>
+            <input
+              value={query}
+              onChange={(event) => setQuery(event.target.value)}
+              placeholder="Search products, kits, brands..."
+              className="w-full bg-transparent text-sm outline-none placeholder:text-brand-slate/45"
+            />
+            <button type="submit" className="button-primary px-4 py-2 text-sm">
+              Search
+            </button>
+          </label>
+        </form>
+
+        <div className="ml-auto flex items-center gap-2 lg:hidden">
+          <Link
+            to="/affiliate"
+            className="flex h-11 w-11 items-center justify-center rounded-full border border-white/80 bg-white/80 text-brand-green shadow-[0_10px_24px_rgba(15,23,42,0.08)]"
+            aria-label="Partner program"
           >
-            {user?.role === "admin" ? "Admin" : "Account"}
-          </NavLink>
+            ⟡
+          </Link>
+          <Link
+            to="/dashboard"
+            className="flex h-11 w-11 items-center justify-center rounded-full border border-white/80 bg-white/80 text-brand-deep shadow-[0_10px_24px_rgba(15,23,42,0.08)]"
+            aria-label="Account"
+          >
+            ◌
+          </Link>
+          <button
+            type="button"
+            onClick={onOpenCart}
+            className="flex h-11 w-11 items-center justify-center rounded-full border border-white/80 bg-white/80 text-brand-deep shadow-[0_10px_24px_rgba(15,23,42,0.08)]"
+            aria-label="Open cart"
+          >
+            🛒
+          </button>
+        </div>
+
+        <div className="ml-auto hidden items-center gap-2 lg:flex">
+          <Link
+            to="/affiliate"
+            className="inline-flex items-center gap-2 rounded-full border border-white/80 bg-white/80 px-4 py-2 text-sm font-semibold text-brand-deep shadow-[0_10px_24px_rgba(15,23,42,0.08)] transition hover:border-brand-green hover:text-brand-green"
+          >
+            ⟡ Partner
+          </Link>
+          <Link
+            to="/dashboard"
+            className="inline-flex items-center gap-2 rounded-full border border-white/80 bg-white/80 px-4 py-2 text-sm font-semibold text-brand-deep shadow-[0_10px_24px_rgba(15,23,42,0.08)] transition hover:border-brand-green hover:text-brand-green"
+          >
+            ◌ {user?.role === "admin" ? "Admin" : "Account"}
+          </Link>
+          <button
+            type="button"
+            onClick={onOpenCart}
+            className="inline-flex items-center gap-2 rounded-full border border-brand-deep/10 bg-brand-deep px-4 py-2 text-sm font-semibold text-white shadow-[0_10px_24px_rgba(15,23,42,0.08)] transition hover:bg-brand-green"
+          >
+            🛒 Cart ({totals.count})
+          </button>
           {isAuthenticated ? (
             <button
               type="button"
@@ -103,93 +146,77 @@ export function Navbar() {
               </NavLink>
             </>
           )}
-        </nav>
+        </div>
+        </div>
 
-        <div className="flex items-center gap-2">
-          {isAuthenticated ? (
-            <span className="hidden rounded-full border border-brand-green/10 bg-brand-green/10 px-4 py-2 text-sm font-semibold text-brand-green sm:inline-flex">
-              {user?.fullName || "Account"}
-            </span>
-          ) : null}
-          <Link
-            to="/cart"
-            className="hidden rounded-full border border-white/80 bg-white/80 px-4 py-2 text-sm font-semibold text-brand-deep shadow-[0_10px_24px_rgba(15,23,42,0.08)] sm:inline-flex"
-          >
-            Cart ({totals.count})
-          </Link>
-          <button
-            type="button"
-            onClick={() => setOpen((value) => !value)}
-            className="inline-flex rounded-full border border-white/80 bg-white/80 px-4 py-2 text-sm font-semibold text-brand-deep shadow-[0_10px_24px_rgba(15,23,42,0.08)] lg:hidden"
-          >
-            {open ? "Close" : "Menu"}
+        <form onSubmit={submitSearch} className="mt-3 flex gap-2 lg:hidden">
+          <label className="flex w-full items-center gap-3 rounded-full border border-white/80 bg-white/90 px-4 py-3 shadow-[0_10px_24px_rgba(15,23,42,0.08)]">
+            <span className="text-lg text-brand-slate/50">⌕</span>
+            <input
+              value={query}
+              onChange={(event) => setQuery(event.target.value)}
+              placeholder="Search products, kits, brands..."
+              className="w-full bg-transparent text-sm outline-none placeholder:text-brand-slate/45"
+            />
+          </label>
+          <button type="submit" className="button-primary shrink-0 px-4 py-3 text-sm">
+            Go
           </button>
+        </form>
+
+        <div className="hide-scrollbar mt-3 flex items-center gap-2 overflow-x-auto pb-1">
+          <NavLink
+            to="/"
+            className={({ isActive }) =>
+              `rounded-full px-4 py-2 text-sm font-semibold transition ${
+                isActive ? "bg-brand-deep text-white" : "border border-white/80 bg-white/80 text-brand-slate hover:border-brand-green hover:text-brand-green"
+              }`
+            }
+          >
+            Home
+          </NavLink>
+          <NavLink
+            to="/products"
+            className={({ isActive }) =>
+              `rounded-full px-4 py-2 text-sm font-semibold transition ${
+                isActive ? "bg-brand-deep text-white" : "border border-white/80 bg-white/80 text-brand-slate hover:border-brand-green hover:text-brand-green"
+              }`
+            }
+          >
+            Shop All
+          </NavLink>
+          <NavLink
+            to="/calculator"
+            className={({ isActive }) =>
+              `rounded-full px-4 py-2 text-sm font-semibold transition ${
+                isActive ? "bg-brand-deep text-white" : "border border-white/80 bg-white/80 text-brand-slate hover:border-brand-green hover:text-brand-green"
+              }`
+            }
+          >
+            Calculator
+          </NavLink>
+          <NavLink
+            to="/affiliate"
+            className={({ isActive }) =>
+              `rounded-full px-4 py-2 text-sm font-semibold transition ${
+                isActive ? "bg-brand-deep text-white" : "border border-white/80 bg-white/80 text-brand-slate hover:border-brand-green hover:text-brand-green"
+              }`
+            }
+          >
+            Partners
+          </NavLink>
+          {storeCategories.map((item) => (
+            <Link
+              key={item.label}
+              to={item.to}
+              className="rounded-full border border-white/80 bg-white/80 px-4 py-2 text-sm font-semibold text-brand-slate transition hover:border-brand-green hover:text-brand-green"
+            >
+              {item.label}
+            </Link>
+          ))}
         </div>
       </div>
 
-      {open ? (
-        <div className="section-shell pb-4 lg:hidden">
-          <nav className="glass-panel grid gap-2 p-3">
-            {navItems.map((item) => (
-              <NavLink
-                key={item.to}
-                to={item.to}
-                onClick={() => setOpen(false)}
-                className={({ isActive }) =>
-                  `rounded-2xl px-4 py-3 text-sm font-medium ${
-                    isActive ? "bg-brand-deep text-white" : "text-brand-slate hover:bg-brand-green/10"
-                  }`
-                }
-              >
-                {item.label}
-              </NavLink>
-            ))}
-            <NavLink
-              to="/dashboard"
-              onClick={() => setOpen(false)}
-              className="rounded-2xl px-4 py-3 text-sm font-medium text-brand-slate hover:bg-brand-green/10"
-            >
-              {user?.role === "admin" ? "Admin" : "Account"}
-            </NavLink>
-            <NavLink
-              to="/cart"
-              onClick={() => setOpen(false)}
-              className="rounded-2xl px-4 py-3 text-sm font-medium text-brand-slate hover:bg-brand-green/10"
-            >
-              Cart ({totals.count})
-            </NavLink>
-            {isAuthenticated ? (
-              <button
-                type="button"
-                onClick={() => {
-                  setOpen(false);
-                  logout();
-                }}
-                className="rounded-2xl px-4 py-3 text-left text-sm font-medium text-brand-slate hover:bg-brand-green/10"
-              >
-                Logout
-              </button>
-            ) : (
-              <>
-                <NavLink
-                  to="/login"
-                  onClick={() => setOpen(false)}
-                  className="rounded-2xl px-4 py-3 text-sm font-medium text-brand-slate hover:bg-brand-green/10"
-                >
-                  Login
-                </NavLink>
-                <NavLink
-                  to="/register"
-                  onClick={() => setOpen(false)}
-                  className="rounded-2xl px-4 py-3 text-sm font-medium text-brand-slate hover:bg-brand-green/10"
-                >
-                  Sign Up
-                </NavLink>
-              </>
-            )}
-          </nav>
-        </div>
-      ) : null}
     </header>
   );
 }
@@ -236,26 +263,7 @@ export function Footer() {
   );
 }
 
-export function MobileStickyBar() {
-  const { totals } = useStore();
-  const { isAuthenticated, user } = useAuth();
-
-  return (
-    <div className="fixed inset-x-0 bottom-0 z-40 border-t border-white/60 bg-white/80 px-4 py-3 backdrop-blur-2xl md:hidden">
-      <div className="mx-auto grid max-w-7xl grid-cols-3 gap-2">
-        <Link to="/products" className="button-secondary w-full px-3 py-3 text-xs sm:text-sm">
-          Shop
-        </Link>
-        <Link to="/cart" className="button-primary w-full px-3 py-3 text-xs sm:text-sm">
-          Cart ({totals.count})
-        </Link>
-        <Link to={isAuthenticated ? "/dashboard" : "/login"} className="button-secondary w-full px-3 py-3 text-xs sm:text-sm">
-          {user?.role === "admin" ? "Admin" : isAuthenticated ? "Account" : "Login"}
-        </Link>
-      </div>
-    </div>
-  );
-}
+export { BottomNavigation as MobileStickyBar } from "./commerce-ui";
 
 export function WhatsAppFloat() {
   return (

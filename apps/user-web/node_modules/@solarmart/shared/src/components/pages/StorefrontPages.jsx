@@ -1,154 +1,177 @@
-import { useEffect, useState } from "react";
-import { Link, useParams } from "react-router-dom";
+import { useEffect, useMemo, useState } from "react";
+import { Link, useNavigate, useParams, useLocation } from "react-router-dom";
 import { useStore } from "../../context/StoreContext";
 import { apiFetch } from "../../lib/api";
-import { categories } from "../../store/catalog";
+import { brands } from "../../store/catalog";
 import { company, formatNaira, getRecommendation, whatsappMessage } from "../../site";
-import { DetailCard, EmptyState, OrderSummary, ProductGrid, StatsCard } from "./SharedPageParts";
+import {
+  CategoryIcon,
+  FilterSidebar,
+  HeroCarousel,
+  HorizontalScroller,
+  ProductCard,
+  SectionHeader,
+  TrustBadge,
+  storeCategories,
+} from "../commerce-ui";
+import { DetailCard, EmptyState, OrderSummary, ProductGrid } from "./SharedPageParts";
 
-function useProducts(filters = {}) {
+function useProducts() {
   const [items, setItems] = useState([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const params = new URLSearchParams();
-    if (filters.category && filters.category !== "All") {
-      params.set("category", filters.category);
-    }
-    if (filters.q) {
-      params.set("q", filters.q);
-    }
-    if (filters.sort && filters.sort !== "featured") {
-      params.set("sort", filters.sort);
-    }
-
     setLoading(true);
-    apiFetch(`/api/store?action=products${params.toString() ? `&${params.toString()}` : ""}`)
+    apiFetch("/api/store?action=products")
       .then((data) => setItems(data.products || []))
       .finally(() => setLoading(false));
-  }, [filters.category, filters.q, filters.sort]);
+  }, []);
 
   return { items, loading };
 }
 
-export function HomePage() {
-  const { items, loading } = useProducts({});
-  const featuredProducts = items.slice(0, 4);
-  const [metrics, setMetrics] = useState({
-    products: 0,
-    paidOrders: 0,
-    approvedAffiliates: 0,
+function normalize(text) {
+  return String(text || "").toLowerCase();
+}
+
+function inferPowerRating(product) {
+  const value = normalize(`${product.name} ${product.sku}`);
+  if (value.includes("10kva")) return "10kVA";
+  if (value.includes("5kva")) return "5kVA";
+  if (value.includes("3kva")) return "3kVA";
+  if (value.includes("550w")) return "550W";
+  if (value.includes("410w")) return "410W";
+  return "All";
+}
+
+function buildVisibleProducts(items, filters) {
+  const query = normalize(filters.q).trim();
+  const filtered = items.filter((product) => {
+    const haystack = normalize(
+      [product.name, product.shortDescription, product.description, product.brand, product.category, product.sku].join(" "),
+    );
+
+    const matchesQuery = !query || haystack.includes(query);
+    const matchesCategory = filters.category === "All" || product.category === filters.category;
+    const matchesBrand = filters.brand === "All" || product.brand === filters.brand;
+    const matchesPower = filters.powerRating === "All" || inferPowerRating(product) === filters.powerRating;
+    const matchesPrice = Number(product.price || 0) <= Number(filters.maxPrice || 0);
+
+    return matchesQuery && matchesCategory && matchesBrand && matchesPower && matchesPrice;
   });
 
-  useEffect(() => {
-    apiFetch("/api/store?action=metrics")
-      .then((data) => setMetrics(data.metrics || { products: 0, paidOrders: 0, approvedAffiliates: 0 }))
-      .catch(() => setMetrics({ products: 0, paidOrders: 0, approvedAffiliates: 0 }));
-  }, []);
+  const sorted = [...filtered];
+  if (filters.sort === "price-low") {
+    sorted.sort((a, b) => Number(a.price || 0) - Number(b.price || 0));
+  } else if (filters.sort === "price-high") {
+    sorted.sort((a, b) => Number(b.price || 0) - Number(a.price || 0));
+  } else if (filters.sort === "popular") {
+    sorted.sort((a, b) => Number(b.rating || 0) - Number(a.rating || 0) || Number(b.stock || 0) - Number(a.stock || 0));
+  }
+
+  return sorted;
+}
+
+export function HomePage() {
+  const { items, loading } = useProducts();
+  const featuredProducts = items.slice(0, 8);
+  const bestDeals = useMemo(
+    () => [...items].sort((a, b) => Number(a.price || 0) - Number(b.price || 0)).slice(0, 8),
+    [items],
+  );
+  const recommendedKits = items.filter((item) => item.category === "Solar Kits").slice(0, 8);
 
   return (
     <>
-      <section className="overflow-hidden bg-hero-grid">
-        <div className="section-shell grid gap-8 py-10 sm:py-12 lg:grid-cols-[1.08fr_0.92fr] lg:py-20">
-          <div className="space-y-7">
-            <span className="eyebrow">Official Solar Store</span>
-            <div className="space-y-4">
-              <h1 className="max-w-3xl text-3xl font-extrabold leading-tight text-brand-deep sm:text-5xl lg:text-6xl">
-                Official solar shopping for homes, offices, and approved referral partners.
-              </h1>
-              <p className="max-w-2xl text-base leading-8 text-brand-slate/80 sm:text-lg">
-                Explore curated solar systems, compare real product options, calculate your
-                power spend, and order from a cleaner storefront built for Nigerian buyers.
-              </p>
-            </div>
-            <div className="flex flex-col gap-3 sm:flex-row">
-              <Link to="/products" className="button-primary w-full sm:w-auto">
-                Shop Solar Products
-              </Link>
-              <Link to="/affiliate" className="button-secondary w-full sm:w-auto">
-                Join Partner Program
-              </Link>
-            </div>
-            <div className="grid gap-4 sm:grid-cols-3">
-              {[
-                ["Clean checkout", "A streamlined buying flow built for product discovery and conversion."],
-                ["Partner network", "Approved partners can share links and track real commissions."],
-                ["Power planning", "Use the calculator to match your monthly bill to the right setup."],
-              ].map(([title, copy]) => (
-                <div key={title} className="glass-panel p-5">
-                  <p className="font-semibold text-brand-deep">{title}</p>
-                  <p className="mt-2 text-sm leading-6 text-brand-slate/75">{copy}</p>
-                </div>
-              ))}
-            </div>
-          </div>
+      <HeroCarousel />
 
-          <div className="surface-dark grid gap-4 p-5 sm:p-8">
-            <div className="rounded-[1.75rem] border border-white/10 bg-white/5 p-5">
-              <p className="text-sm font-semibold uppercase tracking-[0.22em] text-brand-yellow">Storefront</p>
-              <p className="mt-3 text-2xl font-bold text-white sm:text-3xl">Official solar systems and component sales</p>
-              <p className="mt-3 text-sm leading-7 text-white/72">
-                Built to feel closer to a premium electronics storefront than a generic marketplace.
-              </p>
-            </div>
-            {[
-              ["Catalogue", "Browse inverters, panels, batteries, kits, and accessories."],
-              ["Cart and checkout", "Add to cart, checkout as guest, and complete payment."],
-              ["Partner dashboard", "Track partner performance separately from customer accounts."],
-            ].map(([title, copy]) => (
-              <div key={title} className="rounded-[1.75rem] border border-white/10 bg-white/5 p-5">
-                <p className="text-sm font-semibold uppercase tracking-[0.18em] text-brand-yellow">
-                  Module
-                </p>
-                <p className="mt-3 text-xl font-bold text-white">{title}</p>
-                <p className="mt-2 text-sm leading-6 text-white/72">{copy}</p>
-              </div>
+      <section className="py-4 sm:py-6">
+        <div className="section-shell space-y-5">
+          <SectionHeader
+            eyebrow="Browse fast"
+            title="Shop by category"
+            copy="Tap into the solar category that matches your current power need."
+          />
+          <div className="hide-scrollbar flex gap-3 overflow-x-auto pb-2">
+            {storeCategories.map((item) => (
+              <CategoryIcon key={item.label} {...item} />
             ))}
           </div>
         </div>
       </section>
 
-      <section className="py-10 lg:py-14">
-        <div className="section-shell space-y-6">
-          <div className="flex items-end justify-between gap-4">
-            <div>
-              <span className="eyebrow">Featured products</span>
-              <h2 className="mt-4 text-3xl font-bold text-brand-deep sm:text-4xl">
-                Start with our best-selling solar solutions
-              </h2>
-            </div>
-            <Link to="/products" className="button-secondary hidden sm:inline-flex">
-              View all products
-            </Link>
-          </div>
+      <section className="py-4 sm:py-6">
+        <div className="section-shell space-y-5">
+          <SectionHeader
+            eyebrow="Featured products"
+            title="Top picks for homes, offices, and installers"
+            copy="Clear prices, stronger value, and solar-ready options for buyers who want to move fast."
+            actionLabel="View all products"
+            actionTo="/products"
+          />
           <ProductGrid
             items={featuredProducts}
             loading={loading}
             emptyTitle="No featured products yet"
-            emptyCopy="Your store is now using only database products. Add inventory from the admin dashboard to populate the storefront."
+            emptyCopy="Add inventory from the admin dashboard to populate the storefront."
+            gridClassName="grid gap-5 sm:grid-cols-2 2xl:grid-cols-4"
           />
         </div>
       </section>
 
-      <section className="py-10 lg:py-14">
-        <div className="section-shell glass-panel grid gap-8 p-6 sm:p-8 lg:grid-cols-[0.95fr_1.05fr] lg:p-12">
-          <div className="space-y-4">
-            <span className="eyebrow">Conversion tool</span>
-            <h2 className="text-3xl font-bold text-brand-deep sm:text-4xl">
-              Still unsure what to buy? Estimate your bill and get a product path.
+      <HorizontalScroller
+        eyebrow="Best deals"
+        title="Best deals for quick buyers"
+        copy="A fast horizontal rail for the strongest value items."
+        actionLabel="See all products"
+        actionTo="/products"
+        items={bestDeals}
+        renderItem={(item) => <ProductCard product={item} compact />}
+      />
+
+      <HorizontalScroller
+        eyebrow="Recommended solar kits"
+        title="Complete kits that simplify buying"
+        copy="Home and office bundles that make it easy to choose the right system."
+        actionLabel="Open kits"
+        actionTo="/products?category=Solar%20Kits"
+        items={recommendedKits}
+        renderItem={(item) => <ProductCard product={item} compact />}
+      />
+
+      <section className="py-4 sm:py-6">
+        <div className="section-shell grid gap-5 lg:grid-cols-[1.1fr_0.9fr]">
+          <div className="rounded-[2.25rem] bg-brand-deep p-6 text-white shadow-soft sm:p-8">
+            <span className="eyebrow border-white/10 bg-white/10 text-brand-yellow">Partner program</span>
+            <h2 className="mt-4 text-3xl font-extrabold sm:text-4xl">
+              Approved partners earn commission on real SolarMart sales.
             </h2>
-            <p className="text-base leading-7 text-brand-slate/75">
-              The NEPA calculator remains part of the store experience so shoppers can
-              turn monthly electricity spend into a clearer solar recommendation.
+            <p className="mt-4 max-w-2xl text-sm leading-7 text-white/75 sm:text-base">
+              SolarMart keeps selling as the official store while referral partners share links,
+              track conversions, and grow with every order.
             </p>
-            <Link to="/calculator" className="button-primary">
-              Open calculator
-            </Link>
+            <div className="mt-6 flex flex-col gap-3 sm:flex-row">
+              <Link to="/affiliate" className="button-primary w-full sm:w-auto">
+                Join partner program
+              </Link>
+              <Link to="/calculator" className="button-secondary w-full sm:w-auto">
+                Estimate my savings
+              </Link>
+            </div>
           </div>
-          <div className="grid gap-4 sm:grid-cols-3">
-            <StatsCard label="Products listed" value={metrics.products} />
-            <StatsCard label="Paid orders" value={metrics.paidOrders} />
-            <StatsCard label="Approved partners" value={metrics.approvedAffiliates} />
+          <div className="grid gap-4 sm:grid-cols-3 lg:grid-cols-1">
+            <TrustBadge
+              title="Warranty-first shopping"
+              copy="Clear product information and after-sales confidence."
+            />
+            <TrustBadge
+              title="Installation support"
+              copy="We help customers move from quote to setup with less friction."
+            />
+            <TrustBadge
+              title="Delivery and support"
+              copy="A storefront experience built for faster checkout and follow-through."
+            />
           </div>
         </div>
       </section>
@@ -157,58 +180,93 @@ export function HomePage() {
 }
 
 export function ProductsPage() {
-  const [category, setCategory] = useState("All");
-  const [sort, setSort] = useState("featured");
-  const [query, setQuery] = useState("");
-  const { items, loading } = useProducts({ category, q: query, sort });
+  const location = useLocation();
+  const [filters, setFilters] = useState({
+    q: "",
+    category: "All",
+    brand: "All",
+    powerRating: "All",
+    maxPrice: 6000000,
+    sort: "popular",
+  });
+  const { items, loading } = useProducts();
+
+  useEffect(() => {
+    const params = new URLSearchParams(location.search);
+    const query = params.get("q") || "";
+    setFilters((current) => (current.q === query ? current : { ...current, q: query }));
+  }, [location.search]);
+
+  const maxPrice = useMemo(() => {
+    const ceiling = items.reduce((max, item) => Math.max(max, Number(item.price || 0)), 0);
+    return Math.max(ceiling, 6000000);
+  }, [items]);
+
+  useEffect(() => {
+    setFilters((current) =>
+      current.maxPrice === 6000000 && maxPrice !== 6000000
+        ? { ...current, maxPrice }
+        : current,
+    );
+  }, [maxPrice]);
+
+  const visibleProducts = useMemo(() => buildVisibleProducts(items, filters), [filters, items]);
 
   return (
-    <section className="py-12 lg:py-16">
+    <section className="py-10 sm:py-12 lg:py-16">
       <div className="section-shell space-y-8">
         <div className="space-y-4">
           <span className="eyebrow">Product catalogue</span>
-          <h1 className="text-4xl font-extrabold text-brand-deep sm:text-5xl">
-            Browse the SolarMart marketplace
+          <h1 className="text-3xl font-extrabold text-brand-deep sm:text-5xl">
+            Browse the SolarMart store
           </h1>
+          <p className="max-w-3xl text-sm leading-7 text-brand-slate/75 sm:text-base">
+            Use the filters to find the best solar kit, inverter, battery, or accessory for your
+            budget and power demand.
+          </p>
         </div>
 
-        <div className="glass-panel grid gap-3 p-4 sm:p-5 lg:grid-cols-[1.2fr_0.8fr_0.8fr]">
-          <input
-            value={query}
-            onChange={(event) => setQuery(event.target.value)}
-            placeholder="Search by product, brand, or category"
-            className="rounded-2xl border border-brand-slate/10 bg-white/80 px-4 py-3 outline-none transition focus:border-brand-green focus:bg-white"
+        <div className="grid gap-6 xl:grid-cols-[300px_1fr]">
+          <FilterSidebar
+            filters={filters}
+            onChange={(patch) => setFilters((current) => ({ ...current, ...patch }))}
+            brands={brands}
+            maxPrice={maxPrice}
+            powerOptions={["All", "3kVA", "5kVA", "10kVA", "410W", "550W"]}
           />
-          <select
-            value={category}
-            onChange={(event) => setCategory(event.target.value)}
-            className="rounded-2xl border border-brand-slate/10 bg-white/80 px-4 py-3 outline-none transition focus:border-brand-green focus:bg-white"
-          >
-            <option value="All">All categories</option>
-            {categories.map((item) => (
-              <option key={item} value={item}>
-                {item}
-              </option>
-            ))}
-          </select>
-          <select
-            value={sort}
-            onChange={(event) => setSort(event.target.value)}
-            className="rounded-2xl border border-brand-slate/10 bg-white/80 px-4 py-3 outline-none transition focus:border-brand-green focus:bg-white"
-          >
-            <option value="featured">Featured</option>
-            <option value="price-low">Price: low to high</option>
-            <option value="price-high">Price: high to low</option>
-            <option value="rating">Top rated</option>
-          </select>
-        </div>
 
-        <ProductGrid
-          items={items}
-          loading={loading}
-          emptyTitle="No products in the catalogue yet"
-          emptyCopy="An admin needs to add the first real SolarMart product before shoppers can browse this catalogue."
-        />
+          <div className="space-y-5">
+            <div className="flex flex-col gap-3 rounded-[2rem] border border-white/70 bg-white/80 p-4 shadow-soft sm:flex-row sm:items-center sm:justify-between">
+              <label className="flex flex-1 items-center gap-3 rounded-full border border-brand-slate/10 bg-brand-cream px-4 py-3">
+                <span className="text-lg text-brand-slate/50">⌕</span>
+                <input
+                  value={filters.q}
+                  onChange={(event) => setFilters((current) => ({ ...current, q: event.target.value }))}
+                  placeholder="Search products, brands, or SKUs"
+                  className="w-full bg-transparent text-sm outline-none"
+                />
+              </label>
+              <select
+                value={filters.sort}
+                onChange={(event) => setFilters((current) => ({ ...current, sort: event.target.value }))}
+                className="rounded-full border border-brand-slate/10 bg-white px-4 py-3 text-sm font-semibold outline-none"
+              >
+                <option value="popular">Sort: popularity</option>
+                <option value="price-low">Sort: price low to high</option>
+                <option value="price-high">Sort: price high to low</option>
+                <option value="newest">Sort: newest</option>
+              </select>
+            </div>
+
+            <ProductGrid
+              items={visibleProducts}
+              loading={loading}
+              emptyTitle="No products match your filters"
+              emptyCopy="Adjust the filters or add more official SolarMart products from the admin dashboard."
+              gridClassName="grid gap-5 sm:grid-cols-2 2xl:grid-cols-3"
+            />
+          </div>
+        </div>
       </div>
     </section>
   );
@@ -217,8 +275,11 @@ export function ProductsPage() {
 export function ProductDetailPage() {
   const { slug } = useParams();
   const { addToCart } = useStore();
+  const navigate = useNavigate();
   const [product, setProduct] = useState(null);
   const [related, setRelated] = useState([]);
+  const [activeImage, setActiveImage] = useState(0);
+  const [tab, setTab] = useState("description");
 
   useEffect(() => {
     apiFetch(`/api/store?action=products&id=${slug}`)
@@ -239,62 +300,145 @@ export function ProductDetailPage() {
     return <EmptyState title="Product not found" copy="The product you requested is not in the catalogue." />;
   }
 
+  const images = product.images?.length ? product.images : ["https://images.unsplash.com/photo-1509391366360-2e959784a276?auto=format&fit=crop&w=1400&q=80"];
+  const tabs = {
+    description: (
+      <div className="space-y-4 text-sm leading-7 text-brand-slate/75 sm:text-base">
+        <p>{product.description}</p>
+        <div className="rounded-[1.5rem] bg-brand-cream p-5">
+          <p className="font-semibold text-brand-deep">Why it works</p>
+          <p className="mt-2">
+            Built for Nigerian power realities, this product helps reduce generator dependence and
+            gives you a steadier daily power experience.
+          </p>
+        </div>
+      </div>
+    ),
+    specifications: (
+      <div className="grid gap-4 sm:grid-cols-2">
+        {[
+          ["Category", product.category],
+          ["Brand", product.brand],
+          ["SKU", product.sku],
+          ["Availability", product.availability],
+          ["Stock", product.stock],
+          ["Power fit", inferPowerRating(product)],
+        ].map(([label, value]) => (
+          <DetailCard key={label} label={label} value={String(value)} />
+        ))}
+      </div>
+    ),
+    reviews: (
+      <div className="space-y-4">
+        <div className="rounded-[1.5rem] border border-brand-slate/10 bg-brand-cream p-5">
+          <p className="font-semibold text-brand-deep">No reviews yet</p>
+          <p className="mt-2 text-sm leading-7 text-brand-slate/75">
+            Reviews will appear here after verified orders. SolarMart keeps this section clean
+            until real customer feedback starts coming in.
+          </p>
+        </div>
+      </div>
+    ),
+  };
+
   return (
-    <section className="py-12 lg:py-16">
+    <section className="py-10 sm:py-12 lg:py-16">
       <div className="section-shell space-y-10">
-        <div className="grid gap-6 lg:grid-cols-[1fr_0.95fr]">
-          <div className="glass-panel overflow-hidden">
-            <img
-              src={product.images?.[0]}
-              alt={product.name}
-              className="h-full min-h-[260px] w-full object-cover sm:min-h-[340px]"
-            />
+        <div className="grid gap-8 lg:grid-cols-[1fr_0.95fr]">
+          <div className="space-y-4">
+            <div className="glass-panel overflow-hidden">
+              <img
+                src={images[activeImage]}
+                alt={product.name}
+                className="aspect-[4/3] w-full object-cover sm:aspect-[5/4]"
+              />
+            </div>
+            {images.length > 1 ? (
+              <div className="hide-scrollbar flex gap-3 overflow-x-auto pb-1">
+                {images.map((image, index) => (
+                  <button
+                    key={image}
+                    type="button"
+                    onClick={() => setActiveImage(index)}
+                    className={`h-20 w-24 shrink-0 overflow-hidden rounded-2xl border transition ${
+                      activeImage === index
+                        ? "border-brand-green ring-2 ring-brand-green/20"
+                        : "border-brand-slate/10"
+                    }`}
+                  >
+                    <img src={image} alt={`${product.name} thumbnail ${index + 1}`} className="h-full w-full object-cover" />
+                  </button>
+                ))}
+              </div>
+            ) : null}
           </div>
+
           <div className="space-y-5">
             <span className="eyebrow">{product.category}</span>
-            <div>
+            <div className="space-y-3">
               <h1 className="text-3xl font-extrabold text-brand-deep sm:text-4xl">{product.name}</h1>
-              <p className="mt-3 text-sm leading-7 text-brand-slate/75 sm:text-base">{product.description}</p>
+              <p className="text-sm leading-7 text-brand-slate/75 sm:text-base">
+                {product.shortDescription}
+              </p>
+              <div className="rounded-[1.75rem] bg-brand-green/10 p-5">
+                <p className="text-xs font-semibold uppercase tracking-[0.18em] text-brand-green">
+                  Savings highlight
+                </p>
+                <p className="mt-2 text-sm leading-7 text-brand-slate/75">
+                  Designed to reduce generator fuel spend, improve uptime, and make day-to-day power more predictable.
+                </p>
+              </div>
             </div>
             <div className="grid gap-4 sm:grid-cols-2">
               <DetailCard label="Price" value={formatNaira(product.price)} />
               <DetailCard label="Availability" value={product.availability} />
               <DetailCard label="SKU" value={product.sku} />
-              <DetailCard label="Rating" value={`${product.rating}/5`} />
-            </div>
-            <div className="glass-panel p-5">
-              <p className="font-semibold text-brand-deep">Included features</p>
-              <ul className="mt-3 space-y-2 text-sm text-brand-slate/75">
-                {(product.features || []).map((feature) => (
-                  <li key={feature}>{feature}</li>
-                ))}
-              </ul>
+              <DetailCard label="Power fit" value={inferPowerRating(product)} />
             </div>
             <div className="flex flex-col gap-3 sm:flex-row">
               <button onClick={() => addToCart(product)} className="button-primary w-full sm:w-auto">
                 Add to cart
               </button>
-              <a
-                href={`https://wa.me/${company.whatsappNumber}?text=${whatsappMessage}`}
-                target="_blank"
-                rel="noreferrer"
+              <button
+                type="button"
+                onClick={() => {
+                  addToCart(product);
+                  navigate("/checkout");
+                }}
                 className="button-secondary w-full sm:w-auto"
               >
-                Ask on WhatsApp
-              </a>
+                Buy now
+              </button>
+            </div>
+            <div className="rounded-[1.75rem] border border-brand-slate/10 bg-white/80 p-3">
+              <div className="flex flex-wrap gap-2">
+                {["description", "specifications", "reviews"].map((item) => (
+                  <button
+                    key={item}
+                    type="button"
+                    onClick={() => setTab(item)}
+                    className={`rounded-full px-4 py-2 text-sm font-semibold transition ${
+                      tab === item
+                        ? "bg-brand-deep text-white"
+                        : "bg-brand-cream text-brand-slate hover:text-brand-green"
+                    }`}
+                  >
+                    {item}
+                  </button>
+                ))}
+              </div>
+              <div className="mt-4">{tabs[tab]}</div>
             </div>
           </div>
         </div>
 
-        <div className="space-y-6">
-          <h2 className="text-2xl font-bold text-brand-deep">Related products</h2>
-          <ProductGrid
-            items={related}
-            loading={false}
-            emptyTitle="No related products yet"
-            emptyCopy="This product is live, but no related items have been linked yet."
-          />
-        </div>
+        <HorizontalScroller
+          eyebrow="Recommended products"
+          title="More products that fit the same store flow"
+          copy="Continue browsing with related SolarMart options."
+          items={related}
+          renderItem={(item) => <ProductCard product={item} compact />}
+        />
       </div>
     </section>
   );
@@ -315,7 +459,7 @@ export function CartPage() {
   }
 
   return (
-    <section className="py-12 lg:py-16">
+    <section className="py-10 lg:py-16">
       <div className="section-shell grid gap-6 lg:grid-cols-[1.2fr_0.8fr]">
         <div className="space-y-4">
           {cart.map((item) => (
@@ -350,6 +494,17 @@ export function CartPage() {
         </div>
         <OrderSummary subtotal={totals.subtotal} delivery={totals.delivery} total={totals.total} />
       </div>
+      <div className="fixed inset-x-0 bottom-20 z-30 border-t border-white/70 bg-white/90 px-4 py-3 backdrop-blur-2xl md:hidden">
+        <div className="mx-auto flex max-w-7xl items-center gap-3">
+          <div className="flex-1">
+            <p className="text-xs uppercase tracking-[0.18em] text-brand-slate/60">Cart total</p>
+            <p className="text-lg font-bold text-brand-deep">{formatNaira(totals.total)}</p>
+          </div>
+          <Link to="/checkout" className="button-primary flex-1">
+            Checkout
+          </Link>
+        </div>
+      </div>
     </section>
   );
 }
@@ -360,7 +515,7 @@ export function CalculatorPage() {
   const result = getRecommendation(parsed);
 
   return (
-    <section className="py-12 lg:py-16">
+    <section className="py-10 lg:py-16">
       <div className="section-shell grid gap-6 lg:grid-cols-[0.9fr_1.1fr]">
         <div className="space-y-4">
           <span className="eyebrow">Conversion tool</span>
@@ -369,6 +524,11 @@ export function CalculatorPage() {
             Estimate your spend, understand your energy tier, and jump straight into the
             product path that fits.
           </p>
+          <div className="grid gap-4 sm:grid-cols-3 lg:grid-cols-1">
+            <TrustBadge title="Fast results" copy="Get Naira totals and a product path in seconds." />
+            <TrustBadge title="Practical guidance" copy="Built around real Nigerian energy use." />
+            <TrustBadge title="Next step ready" copy="Move directly to products or a quote request." />
+          </div>
         </div>
         <div className="section-card space-y-5 p-5 sm:p-8">
           <label className="block">

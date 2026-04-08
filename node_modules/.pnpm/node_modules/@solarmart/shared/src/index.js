@@ -6,6 +6,19 @@ export {
   WhatsAppFloat,
 } from "./components/Layout";
 export {
+  BottomNavigation,
+  CategoryIcon,
+  CheckoutStepper,
+  FilterSidebar,
+  HeroCarousel,
+  HorizontalScroller,
+  ProductCard,
+  MiniCartDrawer,
+  SectionHeader,
+  TrustBadge,
+  storeCategories,
+} from "./components/commerce-ui";
+export {
   HomePage,
   ProductsPage,
   ProductDetailPage,

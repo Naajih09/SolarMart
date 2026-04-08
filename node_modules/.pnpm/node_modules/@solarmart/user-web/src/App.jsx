@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { Route, Routes } from "react-router-dom";
 import {
   AffiliatePage,
@@ -11,6 +12,7 @@ import {
   Footer,
   HomePage,
   MobileStickyBar,
+  MiniCartDrawer,
   Navbar,
   ProductDetailPage,
   ProductsPage,
@@ -21,12 +23,14 @@ import {
 } from "@solarmart/shared";
 
 function App() {
+  const [cartOpen, setCartOpen] = useState(false);
+
   return (
     <AuthProvider>
       <StoreProvider>
-        <div className="min-h-screen bg-brand-cream pb-24 text-brand-slate md:pb-0">
+        <div className="min-h-screen bg-brand-cream pb-32 text-brand-slate md:pb-0">
           <ScrollToTop />
-          <Navbar />
+          <Navbar onOpenCart={() => setCartOpen(true)} />
           <main>
             <Routes>
               <Route path="/" element={<HomePage />} />
@@ -44,6 +48,7 @@ function App() {
             </Routes>
           </main>
           <Footer />
+          <MiniCartDrawer open={cartOpen} onClose={() => setCartOpen(false)} />
           <MobileStickyBar />
           <WhatsAppFloat />
         </div>

@@ -4,6 +4,7 @@ import { useAuth } from "../../context/AuthContext";
 import { useStore } from "../../context/StoreContext";
 import { apiFetch } from "../../lib/api";
 import { EmptyState, OrderSummary, CheckoutField } from "./SharedPageParts";
+import { CheckoutStepper } from "../commerce-ui";
 
 export function CheckoutPage() {
   const { cart, totals, referralCode } = useStore();
@@ -57,44 +58,49 @@ export function CheckoutPage() {
   }
 
   return (
-    <section className="py-12 lg:py-16">
-      <div className="section-shell grid gap-6 lg:grid-cols-[1.05fr_0.95fr]">
-        <form className="section-card space-y-5 p-5 sm:p-8" onSubmit={handleSubmit}>
-          <div>
-            <span className="eyebrow">Checkout</span>
-            <h1 className="mt-4 text-2xl font-bold text-brand-deep sm:text-3xl">Place your solar order</h1>
-          </div>
-          <CheckoutField label="Full name" value={form.fullName} onChange={(value) => setForm((current) => ({ ...current, fullName: value }))} required />
-          <CheckoutField label="Phone" value={form.phone} onChange={(value) => setForm((current) => ({ ...current, phone: value }))} required />
-          <CheckoutField label="Email" type="email" value={form.email} onChange={(value) => setForm((current) => ({ ...current, email: value }))} required />
-          <CheckoutField label="Address" value={form.address} onChange={(value) => setForm((current) => ({ ...current, address: value }))} required />
-          <CheckoutField label="City / State" value={form.city} onChange={(value) => setForm((current) => ({ ...current, city: value }))} required />
-          <label className="flex items-center gap-3 rounded-2xl bg-brand-cream px-4 py-3 text-sm text-brand-slate">
-            <input type="checkbox" checked={createAccount} onChange={(event) => setCreateAccount(event.target.checked)} />
-            Create an account after checkout
-          </label>
-          {createAccount ? (
-            <CheckoutField label="Set password" type="password" value={password} onChange={setPassword} required />
-          ) : null}
-          {referralCode ? (
-            <p className="rounded-2xl bg-brand-green/10 px-4 py-3 text-sm text-brand-green">
-              Affiliate referral applied: {referralCode}
-            </p>
-          ) : null}
-          {status.message ? (
-            <p
-              className={`rounded-2xl px-4 py-3 text-sm ${
-                status.type === "success" ? "bg-green-50 text-brand-green" : "bg-red-50 text-red-600"
-              }`}
-            >
-              {status.message}
-            </p>
-          ) : null}
-          <button type="submit" disabled={loading} className="button-primary w-full disabled:opacity-60">
-            {loading ? "Processing..." : "Proceed to payment"}
-          </button>
-        </form>
-        <OrderSummary subtotal={totals.subtotal} delivery={totals.delivery} total={totals.total} />
+    <section className="py-10 lg:py-16">
+      <div className="section-shell space-y-6">
+        <CheckoutStepper step={1} />
+        <div className="grid gap-6 lg:grid-cols-[1.05fr_0.95fr]">
+          <form className="section-card space-y-5 p-5 sm:p-8" onSubmit={handleSubmit}>
+            <div>
+              <span className="eyebrow">Checkout</span>
+              <h1 className="mt-4 text-2xl font-bold text-brand-deep sm:text-3xl">
+                Place your solar order
+              </h1>
+            </div>
+            <CheckoutField label="Full name" value={form.fullName} onChange={(value) => setForm((current) => ({ ...current, fullName: value }))} required />
+            <CheckoutField label="Phone" value={form.phone} onChange={(value) => setForm((current) => ({ ...current, phone: value }))} required />
+            <CheckoutField label="Email" type="email" value={form.email} onChange={(value) => setForm((current) => ({ ...current, email: value }))} required />
+            <CheckoutField label="Address" value={form.address} onChange={(value) => setForm((current) => ({ ...current, address: value }))} required />
+            <CheckoutField label="City / State" value={form.city} onChange={(value) => setForm((current) => ({ ...current, city: value }))} required />
+            <label className="flex items-center gap-3 rounded-2xl bg-brand-cream px-4 py-3 text-sm text-brand-slate">
+              <input type="checkbox" checked={createAccount} onChange={(event) => setCreateAccount(event.target.checked)} />
+              Create an account after checkout
+            </label>
+            {createAccount ? (
+              <CheckoutField label="Set password" type="password" value={password} onChange={setPassword} required />
+            ) : null}
+            {referralCode ? (
+              <p className="rounded-2xl bg-brand-green/10 px-4 py-3 text-sm text-brand-green">
+                Affiliate referral applied: {referralCode}
+              </p>
+            ) : null}
+            {status.message ? (
+              <p
+                className={`rounded-2xl px-4 py-3 text-sm ${
+                  status.type === "success" ? "bg-green-50 text-brand-green" : "bg-red-50 text-red-600"
+                }`}
+              >
+                {status.message}
+              </p>
+            ) : null}
+            <button type="submit" disabled={loading} className="button-primary w-full disabled:opacity-60">
+              {loading ? "Processing..." : "Proceed to payment"}
+            </button>
+          </form>
+          <OrderSummary subtotal={totals.subtotal} delivery={totals.delivery} total={totals.total} />
+        </div>
       </div>
     </section>
   );
@@ -131,21 +137,24 @@ export function CheckoutSuccessPage() {
   }, [clearCart, params]);
 
   return (
-    <section className="py-16">
+    <section className="py-12 lg:py-16">
       <div className="section-shell">
-        <div className="mx-auto max-w-2xl section-card p-8 text-center">
-          <h1 className="text-3xl font-bold text-brand-deep">Checkout status</h1>
-          <p className="mt-4 text-base leading-7 text-brand-slate/75">{state.message}</p>
-          {!state.loading ? (
-            <div className="mt-6 flex flex-col gap-3 sm:flex-row sm:justify-center">
-              <button type="button" onClick={() => navigate("/dashboard")} className="button-primary">
-                Go to dashboard
-              </button>
-              <Link to="/products" className="button-secondary">
-                Continue shopping
-              </Link>
-            </div>
-          ) : null}
+        <div className="mx-auto max-w-2xl space-y-6">
+          <CheckoutStepper step={3} />
+          <div className="section-card p-6 text-center sm:p-8">
+            <h1 className="text-3xl font-bold text-brand-deep">Checkout status</h1>
+            <p className="mt-4 text-base leading-7 text-brand-slate/75">{state.message}</p>
+            {!state.loading ? (
+              <div className="mt-6 flex flex-col gap-3 sm:flex-row sm:justify-center">
+                <button type="button" onClick={() => navigate("/dashboard")} className="button-primary">
+                  Go to dashboard
+                </button>
+                <Link to="/products" className="button-secondary">
+                  Continue shopping
+                </Link>
+              </div>
+            ) : null}
+          </div>
         </div>
       </div>
     </section>
