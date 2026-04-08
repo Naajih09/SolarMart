@@ -58,11 +58,11 @@ export function CheckoutPage() {
 
   return (
     <section className="py-12 lg:py-16">
-      <div className="section-shell grid gap-8 lg:grid-cols-[1.05fr_0.95fr]">
-        <form className="section-card space-y-5 p-6 sm:p-8" onSubmit={handleSubmit}>
+      <div className="section-shell grid gap-6 lg:grid-cols-[1.05fr_0.95fr]">
+        <form className="section-card space-y-5 p-5 sm:p-8" onSubmit={handleSubmit}>
           <div>
             <span className="eyebrow">Checkout</span>
-            <h1 className="mt-4 text-3xl font-bold text-brand-deep">Place your solar order</h1>
+            <h1 className="mt-4 text-2xl font-bold text-brand-deep sm:text-3xl">Place your solar order</h1>
           </div>
           <CheckoutField label="Full name" value={form.fullName} onChange={(value) => setForm((current) => ({ ...current, fullName: value }))} required />
           <CheckoutField label="Phone" value={form.phone} onChange={(value) => setForm((current) => ({ ...current, phone: value }))} required />
@@ -192,9 +192,9 @@ export function AuthPage({ mode, context = "store" }) {
   }
 
   return (
-    <section className="py-12 lg:py-16">
+    <section className="py-10 lg:py-16">
       <div className="section-shell">
-        <div className="mx-auto max-w-xl section-card p-6 sm:p-8">
+        <div className="mx-auto max-w-xl section-card p-5 sm:p-8">
           <span className="eyebrow">
             {isRegister ? "Customer Register" : isAdminContext ? "Admin Login" : "Customer Login"}
           </span>

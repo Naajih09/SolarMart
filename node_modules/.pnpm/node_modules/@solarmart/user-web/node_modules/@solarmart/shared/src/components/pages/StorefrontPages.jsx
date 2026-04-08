@@ -49,11 +49,11 @@ export function HomePage() {
   return (
     <>
       <section className="overflow-hidden bg-hero-grid">
-        <div className="section-shell grid gap-10 py-12 lg:grid-cols-[1.08fr_0.92fr] lg:py-20">
+        <div className="section-shell grid gap-8 py-10 sm:py-12 lg:grid-cols-[1.08fr_0.92fr] lg:py-20">
           <div className="space-y-7">
             <span className="eyebrow">Official Solar Store</span>
             <div className="space-y-4">
-              <h1 className="max-w-3xl text-4xl font-extrabold leading-tight text-brand-deep sm:text-5xl lg:text-6xl">
+              <h1 className="max-w-3xl text-3xl font-extrabold leading-tight text-brand-deep sm:text-5xl lg:text-6xl">
                 Official solar shopping for homes, offices, and approved referral partners.
               </h1>
               <p className="max-w-2xl text-base leading-8 text-brand-slate/80 sm:text-lg">
@@ -83,10 +83,10 @@ export function HomePage() {
             </div>
           </div>
 
-          <div className="surface-dark grid gap-4 p-6 sm:p-8">
+          <div className="surface-dark grid gap-4 p-5 sm:p-8">
             <div className="rounded-[1.75rem] border border-white/10 bg-white/5 p-5">
               <p className="text-sm font-semibold uppercase tracking-[0.22em] text-brand-yellow">Storefront</p>
-              <p className="mt-3 text-3xl font-bold text-white">Official solar systems and component sales</p>
+              <p className="mt-3 text-2xl font-bold text-white sm:text-3xl">Official solar systems and component sales</p>
               <p className="mt-3 text-sm leading-7 text-white/72">
                 Built to feel closer to a premium electronics storefront than a generic marketplace.
               </p>
@@ -172,7 +172,7 @@ export function ProductsPage() {
           </h1>
         </div>
 
-        <div className="glass-panel grid gap-4 p-5 lg:grid-cols-[1.2fr_0.8fr_0.8fr]">
+        <div className="glass-panel grid gap-3 p-4 sm:p-5 lg:grid-cols-[1.2fr_0.8fr_0.8fr]">
           <input
             value={query}
             onChange={(event) => setQuery(event.target.value)}
@@ -242,15 +242,19 @@ export function ProductDetailPage() {
   return (
     <section className="py-12 lg:py-16">
       <div className="section-shell space-y-10">
-        <div className="grid gap-8 lg:grid-cols-[1fr_0.95fr]">
+        <div className="grid gap-6 lg:grid-cols-[1fr_0.95fr]">
           <div className="glass-panel overflow-hidden">
-            <img src={product.images?.[0]} alt={product.name} className="h-full min-h-[340px] w-full object-cover" />
+            <img
+              src={product.images?.[0]}
+              alt={product.name}
+              className="h-full min-h-[260px] w-full object-cover sm:min-h-[340px]"
+            />
           </div>
           <div className="space-y-5">
             <span className="eyebrow">{product.category}</span>
             <div>
-              <h1 className="text-4xl font-extrabold text-brand-deep">{product.name}</h1>
-              <p className="mt-3 text-base leading-7 text-brand-slate/75">{product.description}</p>
+              <h1 className="text-3xl font-extrabold text-brand-deep sm:text-4xl">{product.name}</h1>
+              <p className="mt-3 text-sm leading-7 text-brand-slate/75 sm:text-base">{product.description}</p>
             </div>
             <div className="grid gap-4 sm:grid-cols-2">
               <DetailCard label="Price" value={formatNaira(product.price)} />
@@ -312,22 +316,26 @@ export function CartPage() {
 
   return (
     <section className="py-12 lg:py-16">
-      <div className="section-shell grid gap-8 lg:grid-cols-[1.2fr_0.8fr]">
+      <div className="section-shell grid gap-6 lg:grid-cols-[1.2fr_0.8fr]">
         <div className="space-y-4">
           {cart.map((item) => (
-            <div key={item.id} className="section-card grid gap-4 p-5 sm:grid-cols-[100px_1fr_auto] sm:items-center">
-              <img src={item.image} alt={item.name} className="h-24 w-full rounded-2xl object-cover sm:w-24" />
+            <div key={item.id} className="section-card grid gap-4 p-4 sm:grid-cols-[96px_1fr_auto] sm:items-center sm:p-5">
+              <img
+                src={item.image}
+                alt={item.name}
+                className="h-24 w-full rounded-2xl object-cover sm:w-24"
+              />
               <div>
                 <p className="font-semibold text-brand-deep">{item.name}</p>
                 <p className="mt-1 text-sm text-brand-slate/70">{formatNaira(item.price)}</p>
               </div>
-              <div className="flex items-center gap-3">
+              <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
                 <input
                   type="number"
                   min="1"
                   value={item.quantity}
                   onChange={(event) => updateQuantity(item.id, Number(event.target.value))}
-                  className="w-20 rounded-2xl border border-brand-slate/10 bg-brand-cream px-3 py-2 outline-none"
+                  className="w-full rounded-2xl border border-brand-slate/10 bg-brand-cream px-3 py-2 outline-none sm:w-20"
                 />
                 <button
                   type="button"
@@ -353,16 +361,16 @@ export function CalculatorPage() {
 
   return (
     <section className="py-12 lg:py-16">
-      <div className="section-shell grid gap-8 lg:grid-cols-[0.9fr_1.1fr]">
+      <div className="section-shell grid gap-6 lg:grid-cols-[0.9fr_1.1fr]">
         <div className="space-y-4">
           <span className="eyebrow">Conversion tool</span>
-          <h1 className="text-4xl font-extrabold text-brand-deep">NEPA bill calculator</h1>
-          <p className="text-base leading-8 text-brand-slate/75">
+          <h1 className="text-3xl font-extrabold text-brand-deep sm:text-4xl">NEPA bill calculator</h1>
+          <p className="text-sm leading-8 text-brand-slate/75 sm:text-base">
             Estimate your spend, understand your energy tier, and jump straight into the
             product path that fits.
           </p>
         </div>
-        <div className="section-card space-y-5 p-6 sm:p-8">
+        <div className="section-card space-y-5 p-5 sm:p-8">
           <label className="block">
             <span className="mb-2 block text-sm font-semibold text-brand-slate">
               Monthly electricity bill (NGN)

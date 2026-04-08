@@ -165,7 +165,7 @@ export function DashboardPage() {
               </p>
             </div>
           </div>
-          <div className="grid gap-6 lg:grid-cols-3">
+          <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
             <StatsCard label="Products" value={adminProducts.length} />
             <StatsCard label="Orders" value={orders.length} />
             <StatsCard label="Partners" value={affiliates.length} />
@@ -190,7 +190,7 @@ export function DashboardPage() {
               formatNaira(item.total_commission || 0),
             ])}
           />
-          <div className="grid gap-8 xl:grid-cols-3">
+          <div className="grid gap-6 xl:grid-cols-3">
             <div className="section-card p-6">
               <p className="text-lg font-semibold text-brand-deep">Add official product</p>
               <p className="mt-2 text-sm leading-6 text-brand-slate/70">
@@ -325,12 +325,12 @@ export function DashboardPage() {
       <div className="section-shell space-y-8">
         <div>
           <span className="eyebrow">Customer dashboard</span>
-          <h1 className="mt-4 text-4xl font-extrabold text-brand-deep">Welcome back, {user.fullName}</h1>
+          <h1 className="mt-4 text-3xl font-extrabold text-brand-deep sm:text-4xl">Welcome back, {user.fullName}</h1>
           <p className="mt-3 max-w-2xl text-base leading-7 text-brand-slate/75">
             Review your customer account details and continue shopping from the official SolarMart store.
           </p>
         </div>
-        <div className="grid gap-6 lg:grid-cols-3">
+        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           <StatsCard label="Role" value={user.role} />
           <StatsCard label="Email" value={user.email} />
           <StatsCard label="Phone" value={user.phone || "Not set"} />
@@ -441,7 +441,7 @@ export function AffiliatePage() {
           </div>
         </div>
 
-        <div className="grid gap-6 lg:grid-cols-4">
+        <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
           <StatsCard label="Referral clicks" value={stats.totalReferrals} />
           <StatsCard label="Conversions" value={stats.conversions} />
           <StatsCard label="Pending payouts" value={stats.pendingPayouts} />

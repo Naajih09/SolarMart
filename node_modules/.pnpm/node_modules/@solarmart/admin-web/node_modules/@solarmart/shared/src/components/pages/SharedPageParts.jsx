@@ -37,29 +37,32 @@ export function ProductGrid({
   }
 
   return (
-    <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-4">
+    <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
       {items.map((product) => (
-        <article key={product.id} className="section-card overflow-hidden transition duration-300 hover:-translate-y-1">
+        <article
+          key={product.id}
+          className="section-card flex h-full flex-col overflow-hidden transition duration-300 md:hover:-translate-y-1"
+        >
           {product.images?.[0] ? (
-            <img src={product.images[0]} alt={product.name} className="h-52 w-full object-cover" />
+            <img src={product.images[0]} alt={product.name} className="aspect-[4/3] w-full object-cover" />
           ) : (
-            <div className="flex h-52 items-center justify-center bg-brand-cream px-6 text-center text-sm font-semibold text-brand-slate/65">
+            <div className="flex aspect-[4/3] items-center justify-center bg-brand-cream px-6 text-center text-sm font-semibold text-brand-slate/65">
               Product image coming soon
             </div>
           )}
-          <div className="space-y-4 p-5">
+          <div className="flex flex-1 flex-col space-y-4 p-4 sm:p-5">
             <div className="flex items-start justify-between gap-3">
               <div>
                 <p className="text-xs font-semibold uppercase tracking-[0.22em] text-brand-green">{product.category}</p>
-                <h3 className="mt-1 text-xl font-bold text-brand-deep">{product.name}</h3>
+                <h3 className="mt-1 text-lg font-bold text-brand-deep sm:text-xl">{product.name}</h3>
               </div>
               <span className="rounded-full bg-brand-yellow/15 px-3 py-1 text-xs font-semibold text-brand-deep">
                 {product.rating}/5
               </span>
             </div>
             <p className="text-sm leading-6 text-brand-slate/75">{product.shortDescription}</p>
-            <p className="text-lg font-bold text-brand-deep">{formatNaira(product.price)}</p>
-            <div className="flex flex-col gap-3">
+            <p className="text-base font-bold text-brand-deep sm:text-lg">{formatNaira(product.price)}</p>
+            <div className="mt-auto flex flex-col gap-3">
               <Link to={`/products/${product.slug}`} className="button-secondary w-full">
                 View details
               </Link>
@@ -76,26 +79,26 @@ export function ProductGrid({
 
 export function DetailCard({ label, value }) {
   return (
-    <div className="rounded-[1.5rem] border border-brand-slate/10 bg-white/75 p-4 backdrop-blur">
+    <div className="rounded-[1.5rem] border border-brand-slate/10 bg-white/75 p-3 backdrop-blur sm:p-4">
       <p className="text-xs uppercase tracking-[0.18em] text-brand-slate/60">{label}</p>
-      <p className="mt-2 break-words text-lg font-semibold text-brand-deep">{value}</p>
+      <p className="mt-2 break-words text-base font-semibold text-brand-deep sm:text-lg">{value}</p>
     </div>
   );
 }
 
 export function StatsCard({ label, value }) {
   return (
-    <div className="surface-dark p-5">
+    <div className="surface-dark p-4 sm:p-5">
       <p className="text-sm uppercase tracking-[0.18em] text-brand-yellow/90">{label}</p>
-      <p className="mt-3 break-words text-2xl font-bold text-white">{value}</p>
+      <p className="mt-3 break-words text-xl font-bold text-white sm:text-2xl">{value}</p>
     </div>
   );
 }
 
 export function OrderSummary({ subtotal, delivery, total }) {
   return (
-    <aside className="glass-panel h-fit p-6">
-      <p className="text-xl font-bold text-brand-deep">Order summary</p>
+    <aside className="glass-panel h-fit p-5 lg:sticky lg:top-24">
+      <p className="text-lg font-bold text-brand-deep sm:text-xl">Order summary</p>
       <div className="mt-5 space-y-3 text-sm text-brand-slate/75">
         <div className="flex items-center justify-between">
           <span>Subtotal</span>
@@ -119,9 +122,27 @@ export function OrderSummary({ subtotal, delivery, total }) {
 
 export function AdminTable({ title, headers, rows }) {
   return (
-    <div className="glass-panel p-6">
+    <div className="glass-panel p-5 sm:p-6">
       <p className="text-lg font-semibold text-brand-deep">{title}</p>
-      <div className="mt-4 overflow-x-auto">
+      <div className="mt-4 space-y-3 md:hidden">
+        {rows.length ? (
+          rows.map((row, index) => (
+            <div key={`${title}-mobile-${index}`} className="rounded-2xl border border-brand-slate/10 bg-brand-cream p-4">
+              <div className="space-y-3">
+                {row.map((value, cellIndex) => (
+                  <div key={`${title}-mobile-${index}-${cellIndex}`} className="flex items-start justify-between gap-4 text-sm">
+                    <span className="font-semibold text-brand-slate/70">{headers[cellIndex]}</span>
+                    <span className="text-right text-brand-deep">{value}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          ))
+        ) : (
+          <p className="text-sm text-brand-slate/70">No records yet.</p>
+        )}
+      </div>
+      <div className="mt-4 hidden overflow-x-auto md:block">
         <table className="min-w-full text-left text-sm">
           <thead className="text-brand-slate/70">
             <tr>
@@ -153,8 +174,8 @@ export function EmptyState({ title, copy, actionLabel, actionTo }) {
   return (
     <section className="py-16">
       <div className="section-shell">
-        <div className="mx-auto max-w-2xl glass-panel p-8 text-center">
-          <h1 className="text-3xl font-bold text-brand-deep">{title}</h1>
+        <div className="mx-auto max-w-2xl glass-panel p-6 text-center sm:p-8">
+          <h1 className="text-2xl font-bold text-brand-deep sm:text-3xl">{title}</h1>
           <p className="mt-4 text-base leading-7 text-brand-slate/75">{copy}</p>
           {actionLabel && actionTo ? (
             <Link to={actionTo} className="button-primary mt-6">

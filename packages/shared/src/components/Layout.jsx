@@ -238,15 +238,19 @@ export function Footer() {
 
 export function MobileStickyBar() {
   const { totals } = useStore();
+  const { isAuthenticated, user } = useAuth();
 
   return (
     <div className="fixed inset-x-0 bottom-0 z-40 border-t border-white/60 bg-white/80 px-4 py-3 backdrop-blur-2xl md:hidden">
-      <div className="mx-auto grid max-w-7xl grid-cols-2 gap-3">
-        <Link to="/products" className="button-secondary w-full">
-          Shop Products
+      <div className="mx-auto grid max-w-7xl grid-cols-3 gap-2">
+        <Link to="/products" className="button-secondary w-full px-3 py-3 text-xs sm:text-sm">
+          Shop
         </Link>
-        <Link to="/cart" className="button-primary w-full">
+        <Link to="/cart" className="button-primary w-full px-3 py-3 text-xs sm:text-sm">
           Cart ({totals.count})
+        </Link>
+        <Link to={isAuthenticated ? "/dashboard" : "/login"} className="button-secondary w-full px-3 py-3 text-xs sm:text-sm">
+          {user?.role === "admin" ? "Admin" : isAuthenticated ? "Account" : "Login"}
         </Link>
       </div>
     </div>
