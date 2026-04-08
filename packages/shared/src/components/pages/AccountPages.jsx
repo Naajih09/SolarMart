@@ -5,6 +5,7 @@ import { apiFetch } from "../../lib/api";
 import { formatNaira } from "../../site";
 import { brands, categories } from "../../store/catalog";
 import { AdminTable, CheckoutField, EmptyState, StatsCard } from "./SharedPageParts";
+import starterCatalog from "../../../../../data/solarmart-starter-catalog.json";
 
 export function DashboardPage() {
   const { user, loading, logout } = useAuth();
@@ -12,9 +13,10 @@ export function DashboardPage() {
   const [affiliates, setAffiliates] = useState([]);
   const [adminProducts, setAdminProducts] = useState([]);
   const [adminMessage, setAdminMessage] = useState("");
+  const [importing, setImporting] = useState(false);
   const [productForm, setProductForm] = useState({
     name: "",
-    category: "Kits",
+    category: "Solar Kits",
     brand: "SolarMart",
     sku: "",
     price: "",
@@ -24,22 +26,24 @@ export function DashboardPage() {
     description: "",
   });
 
+  async function loadAdminData() {
+    const [ordersData, affiliatesData, productsData] = await Promise.all([
+      apiFetch("/api/admin?action=orders"),
+      apiFetch("/api/admin?action=affiliates"),
+      apiFetch("/api/admin?action=products"),
+    ]);
+
+    setOrders(ordersData.orders || []);
+    setAffiliates(affiliatesData.affiliates || []);
+    setAdminProducts(productsData.products || []);
+  }
+
   useEffect(() => {
     if (!user || user.role !== "admin") {
       return;
     }
 
-    Promise.all([
-        apiFetch("/api/admin?action=orders"),
-        apiFetch("/api/admin?action=affiliates"),
-                apiFetch("/api/admin?action=products"),
-    ])
-      .then(([ordersData, affiliatesData, productsData]) => {
-        setOrders(ordersData.orders || []);
-        setAffiliates(affiliatesData.affiliates || []);
-        setAdminProducts(productsData.products || []);
-      })
-      .catch(() => null);
+    loadAdminData().catch(() => null);
   }, [user]);
 
   async function approveAffiliate(id) {
@@ -77,7 +81,7 @@ export function DashboardPage() {
       setAdminMessage("Product created.");
       setProductForm({
         name: "",
-        category: "Kits",
+        category: "Solar Kits",
         brand: "SolarMart",
         sku: "",
         price: "",
@@ -93,13 +97,31 @@ export function DashboardPage() {
 
   async function deleteProduct(productId) {
     try {
-      await apiFetch(`/api/admin?action=products&id=${encodeURIComponent(productId)}`, {
+      await apiFetch("/api/admin?action=products", {
         method: "DELETE",
+        body: JSON.stringify({ id: productId }),
       });
-      setAdminProducts((current) => current.filter((item) => item.dbId !== productId && item.id !== productId));
+      await loadAdminData();
       setAdminMessage("Product deleted.");
     } catch (error) {
       setAdminMessage(error.message);
+    }
+  }
+
+  async function importStarterCatalog() {
+    setImporting(true);
+    setAdminMessage("");
+    try {
+      const data = await apiFetch("/api/admin?action=import-products", {
+        method: "POST",
+        body: JSON.stringify({ products: starterCatalog }),
+      });
+      await loadAdminData();
+      setAdminMessage(data.message || `Imported ${starterCatalog.length} products.`);
+    } catch (error) {
+      setAdminMessage(error.message);
+    } finally {
+      setImporting(false);
     }
   }
 
@@ -129,6 +151,19 @@ export function DashboardPage() {
               Manage official SolarMart products, monitor customer orders, and approve partner
               applications from one internal dashboard.
             </p>
+            <div className="mt-5 flex flex-col gap-3 sm:flex-row">
+              <button
+                type="button"
+                onClick={importStarterCatalog}
+                disabled={importing}
+                className="button-secondary"
+              >
+                {importing ? "Importing starter catalogue..." : "Import starter catalogue"}
+              </button>
+              <p className="text-sm leading-6 text-brand-slate/70">
+                One click loads the SolarMart starter catalogue into PostgreSQL using the official product structure.
+              </p>
+            </div>
           </div>
           <div className="grid gap-6 lg:grid-cols-3">
             <StatsCard label="Products" value={adminProducts.length} />
@@ -236,7 +271,12 @@ export function DashboardPage() {
                       </div>
                       <button
                         type="button"
-                        onClick={() => deleteProduct(item.dbId || item.id)}
+                        onClick={() => {
+                          const shouldDelete = window.confirm(`Delete "${item.name}" from the official store catalogue?`);
+                          if (shouldDelete) {
+                            deleteProduct(item.dbId || item.id);
+                          }
+                        }}
                         className="rounded-full border border-brand-slate/10 px-4 py-2 text-sm font-semibold text-brand-deep"
                       >
                         Delete

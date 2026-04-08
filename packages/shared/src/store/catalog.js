@@ -1,8 +1,8 @@
 export const categories = [
+  "Solar Kits",
   "Inverters",
   "Batteries",
-  "Panels",
-  "Kits",
+  "Solar Panels",
   "Accessories",
 ];
 

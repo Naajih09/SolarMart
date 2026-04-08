@@ -12,6 +12,97 @@ function slugify(value = "") {
     .slice(0, 80);
 }
 
+function normalizeProductInput(input = {}) {
+  const name = String(input.name || "").trim();
+  const category = String(input.category || "").trim();
+  const price = Number(input.price);
+  const stock = Number(input.stock || 0);
+  const slug = slugify(input.slug || name);
+  const externalId = String(input.externalId || input.sku || `sm-${slug}`).trim();
+  const sku = String(input.sku || `SM-${slug.toUpperCase().replace(/-/g, "-")}`).trim();
+  const images = Array.isArray(input.images)
+    ? input.images.filter(Boolean)
+    : input.imageUrl
+      ? [String(input.imageUrl).trim()]
+      : [];
+
+  return {
+    name,
+    category,
+    price,
+    stock,
+    slug,
+    externalId,
+    sku,
+    brand: String(input.brand || "SolarMart").trim() || "SolarMart",
+    rating: Number(input.rating || 0),
+    availability: String(input.availability || (stock > 0 ? "In stock" : "Out of stock")).trim(),
+    images,
+    shortDescription: String(input.shortDescription || "").trim(),
+    description: String(input.description || input.shortDescription || "").trim(),
+    features: Array.isArray(input.features) ? input.features.filter(Boolean) : [],
+    variants: Array.isArray(input.variants) ? input.variants.filter(Boolean) : [],
+    relatedIds: Array.isArray(input.relatedIds) ? input.relatedIds.filter(Boolean) : [],
+  };
+}
+
+async function upsertProduct(input = {}) {
+  const product = normalizeProductInput(input);
+
+  if (!product.name || !product.category || !Number.isFinite(product.price) || product.price <= 0) {
+    throw new Error("Name, category, and price are required.");
+  }
+
+  const result = await query(
+    `INSERT INTO products (
+      external_id, slug, name, category, brand, sku, price, rating, availability, stock,
+      images, short_description, description, features, variants, related_ids
+    )
+    VALUES (
+      $1, $2, $3, $4, $5, $6, $7, $8, $9, $10,
+      $11::jsonb, $12, $13, $14::jsonb, $15::jsonb, $16::jsonb
+    )
+    ON CONFLICT (external_id) DO UPDATE SET
+      slug = EXCLUDED.slug,
+      name = EXCLUDED.name,
+      category = EXCLUDED.category,
+      brand = EXCLUDED.brand,
+      sku = EXCLUDED.sku,
+      price = EXCLUDED.price,
+      rating = EXCLUDED.rating,
+      availability = EXCLUDED.availability,
+      stock = EXCLUDED.stock,
+      images = EXCLUDED.images,
+      short_description = EXCLUDED.short_description,
+      description = EXCLUDED.description,
+      features = EXCLUDED.features,
+      variants = EXCLUDED.variants,
+      related_ids = EXCLUDED.related_ids,
+      updated_at = NOW()
+    RETURNING *`,
+    [
+      product.externalId,
+      product.slug,
+      product.name,
+      product.category,
+      product.brand,
+      product.sku,
+      product.price,
+      product.rating,
+      product.availability,
+      product.stock,
+      JSON.stringify(product.images),
+      product.shortDescription,
+      product.description,
+      JSON.stringify(product.features),
+      JSON.stringify(product.variants),
+      JSON.stringify(product.relatedIds),
+    ],
+  );
+
+  return mapProductRow(result.rows[0]);
+}
+
 export default async function handler(req, res) {
   const action = String(getQueryParam(req, "action") || "");
 
@@ -62,98 +153,38 @@ export default async function handler(req, res) {
     }
 
     if (req.method === "POST" && action === "products") {
-      const {
-        externalId,
-        slug,
-        name,
-        category,
-        brand,
-        sku,
-        price,
-        rating,
-        availability,
-        stock,
-        images,
-        shortDescription,
-        description,
-        features,
-        variants,
-        relatedIds,
-      } = await readJsonBody(req);
+      return res.status(201).json({ product: await upsertProduct(await readJsonBody(req)) });
+    }
 
-      if (!name || !category || !price) {
-        return res.status(400).json({ message: "Name, category, and price are required." });
+    if (req.method === "POST" && action === "import-products") {
+      const body = await readJsonBody(req);
+      const products = Array.isArray(body.products) ? body.products : [];
+
+      if (!products.length) {
+        return res.status(400).json({ message: "A products array is required." });
       }
 
-      const safeSlug = slugify(slug || name);
-      if (!safeSlug) {
-        return res.status(400).json({ message: "Provide a valid product name or slug." });
+      const imported = [];
+      for (const product of products) {
+        imported.push(await upsertProduct(product));
       }
 
-      const safeExternalId = externalId || `sm-${safeSlug}`;
-      const safeSku = sku || `SM-${safeSlug.toUpperCase().replace(/-/g, "-")}`;
-      const imageList = Array.isArray(images)
-        ? images.filter(Boolean)
-        : String(images || "")
-            .split(",")
-            .map((item) => item.trim())
-            .filter(Boolean);
-
-      const featureList = Array.isArray(features)
-        ? features.filter(Boolean)
-        : String(features || "")
-            .split("\n")
-            .map((item) => item.trim())
-            .filter(Boolean);
-
-      const numericPrice = Number(price);
-      const numericStock = Number(stock || 0);
-      if (!Number.isFinite(numericPrice) || numericPrice <= 0) {
-        return res.status(400).json({ message: "Price must be greater than zero." });
-      }
-
-      const result = await query(
-        `INSERT INTO products (
-          external_id, slug, name, category, brand, sku, price, rating, availability, stock,
-          images, short_description, description, features, variants, related_ids
-        )
-        VALUES (
-          $1, $2, $3, $4, $5, $6, $7, $8, $9, $10,
-          $11::jsonb, $12, $13, $14::jsonb, $15::jsonb, $16::jsonb
-        )
-        RETURNING *`,
-        [
-          safeExternalId,
-          safeSlug,
-          name,
-          category,
-          brand || "SolarMart",
-          safeSku,
-          numericPrice,
-          rating || 0,
-          availability || "In stock",
-          numericStock,
-          JSON.stringify(imageList),
-          shortDescription || "Added from the SolarMart admin dashboard.",
-          description || shortDescription || "A new SolarMart product is now available in the marketplace.",
-          JSON.stringify(featureList),
-          JSON.stringify(variants || []),
-          JSON.stringify(relatedIds || []),
-        ],
-      );
-
-      return res.status(201).json({ product: mapProductRow(result.rows[0]) });
+      return res.status(201).json({
+        message: `Imported ${imported.length} products.`,
+        products: imported,
+      });
     }
 
     if (req.method === "DELETE" && action === "products") {
-      const id = getQueryParam(req, "id");
-      if (!id) {
+      const body = await readJsonBody(req).catch(() => ({}));
+      const identifier = getQueryParam(req, "id") || body.id || body.dbId || body.externalId || body.slug;
+      if (!identifier) {
         return res.status(400).json({ message: "Product id is required." });
       }
 
       const deleted = await query(
         "DELETE FROM products WHERE id = $1 OR external_id = $1 OR slug = $1 RETURNING id, name",
-        [String(id)],
+        [String(identifier)],
       );
 
       if (!deleted.rows.length) {
