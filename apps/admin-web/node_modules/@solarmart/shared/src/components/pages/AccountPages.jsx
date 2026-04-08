@@ -144,25 +144,48 @@ export function DashboardPage() {
     return (
       <section className="py-12 lg:py-16">
         <div className="section-shell space-y-8">
-          <div>
-            <span className="eyebrow">Admin workspace</span>
-            <h1 className="mt-4 text-4xl font-extrabold text-brand-deep">Official store operations</h1>
-            <p className="mt-3 max-w-3xl text-base leading-7 text-brand-slate/75">
-              Manage official SolarMart products, monitor customer orders, and approve partner
-              applications from one internal dashboard.
-            </p>
-            <div className="mt-5 flex flex-col gap-3 sm:flex-row">
-              <button
-                type="button"
-                onClick={importStarterCatalog}
-                disabled={importing}
-                className="button-secondary"
-              >
-                {importing ? "Importing starter catalogue..." : "Import starter catalogue"}
-              </button>
-              <p className="text-sm leading-6 text-brand-slate/70">
-                One click loads the SolarMart starter catalogue into PostgreSQL using the official product structure.
-              </p>
+          <div className="section-card overflow-hidden">
+            <div className="grid gap-0 lg:grid-cols-[1.1fr_0.9fr]">
+              <div className="space-y-4 p-6 sm:p-8">
+                <span className="eyebrow">Admin workspace</span>
+                <h1 className="text-4xl font-extrabold text-brand-deep">SolarMart store operations</h1>
+                <p className="max-w-3xl text-base leading-7 text-brand-slate/75">
+                  Manage official SolarMart products, monitor customer orders, and approve partner
+                  applications from one premium internal dashboard.
+                </p>
+                <div className="flex flex-col gap-3 sm:flex-row">
+                  <button
+                    type="button"
+                    onClick={importStarterCatalog}
+                    disabled={importing}
+                    className="button-secondary"
+                  >
+                    {importing ? "Importing starter catalogue..." : "Import starter catalogue"}
+                  </button>
+                  <p className="text-sm leading-6 text-brand-slate/70">
+                    One click loads the SolarMart starter catalogue into PostgreSQL using the official product structure.
+                  </p>
+                </div>
+              </div>
+              <div className="bg-brand-deep p-6 text-white sm:p-8">
+                <p className="text-sm font-semibold uppercase tracking-[0.18em] text-brand-yellow">Operations snapshot</p>
+                <div className="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-1">
+                  <div className="rounded-[1.5rem] border border-white/10 bg-white/10 p-4">
+                    <p className="text-xs uppercase tracking-[0.18em] text-brand-yellow">Products</p>
+                    <p className="mt-2 text-2xl font-bold">{adminProducts.length}</p>
+                  </div>
+                  <div className="rounded-[1.5rem] border border-white/10 bg-white/10 p-4">
+                    <p className="text-xs uppercase tracking-[0.18em] text-brand-yellow">Partners</p>
+                    <p className="mt-2 text-2xl font-bold">{affiliates.length}</p>
+                  </div>
+                  <div className="rounded-[1.5rem] border border-white/10 bg-white/10 p-4 sm:col-span-2 lg:col-span-1">
+                    <p className="text-xs uppercase tracking-[0.18em] text-brand-yellow">Live store mode</p>
+                    <p className="mt-2 text-sm leading-6 text-white/75">
+                      Light and dark themes are ready, and the storefront now feels like a real solar commerce operation.
+                    </p>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
           <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">

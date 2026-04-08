@@ -623,7 +623,7 @@ export function SplashCard({ open, onClose }) {
             <div className="absolute bottom-5 left-5 right-5 space-y-2 text-white">
               <span className="eyebrow w-fit border-white/10 bg-white/10 text-brand-yellow">Welcome to SolarMart</span>
               <p className="max-w-md text-sm leading-6 text-white/80">
-                Modern solar products, clean pricing, and partner referrals built for Nigeria.
+                Modern solar products, clean pricing, and approved partner referrals built for Nigeria.
               </p>
             </div>
           </div>
@@ -631,7 +631,7 @@ export function SplashCard({ open, onClose }) {
             <div className="flex items-start justify-between gap-4">
               <div>
                 <p className="text-sm font-semibold uppercase tracking-[0.18em] text-brand-green">SolarMart splash card</p>
-                <h2 className="mt-2 text-3xl font-extrabold text-brand-deep">Your power store is ready</h2>
+                <h2 className="mt-2 text-3xl font-extrabold text-brand-deep">Official store for solar power in Nigeria</h2>
               </div>
               <button
                 type="button"
