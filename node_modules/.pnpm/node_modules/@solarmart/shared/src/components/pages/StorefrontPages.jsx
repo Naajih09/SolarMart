@@ -300,7 +300,7 @@ export function ProductDetailPage() {
     return <EmptyState title="Product not found" copy="The product you requested is not in the catalogue." />;
   }
 
-  const images = product.images?.length ? product.images : ["https://images.unsplash.com/photo-1509391366360-2e959784a276?auto=format&fit=crop&w=1400&q=80"];
+  const images = product.images?.length ? product.images : ["/solarmart-product-placeholder.svg"];
   const tabs = {
     description: (
       <div className="space-y-4 text-sm leading-7 text-brand-slate/75 sm:text-base">

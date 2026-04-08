@@ -20,8 +20,7 @@ const heroSlides = [
       "Shop complete systems built for Nigerian homes, shops, and offices with straightforward pricing and trusted support.",
     primary: { label: "Shop products", to: "/products" },
     secondary: { label: "Join partner program", to: "/affiliate" },
-    image:
-      "https://images.unsplash.com/photo-1517048676732-d65bc937f952?auto=format&fit=crop&w=1400&q=80",
+    image: "/solarmart-hero-1.svg",
   },
   {
     eyebrow: "Clean power planning",
@@ -30,8 +29,7 @@ const heroSlides = [
       "Use the SolarMart calculator to estimate your spend, compare kits, and choose a system with confidence.",
     primary: { label: "Open calculator", to: "/calculator" },
     secondary: { label: "See best deals", to: "/products" },
-    image:
-      "https://images.unsplash.com/photo-1509391366360-2e959784a276?auto=format&fit=crop&w=1400&q=80",
+    image: "/solarmart-hero-2.svg",
   },
   {
     eyebrow: "Approved partners",
@@ -40,8 +38,7 @@ const heroSlides = [
       "Keep customers in one trusted storefront while partners share links, track conversions, and grow with the brand.",
     primary: { label: "Become a partner", to: "/affiliate" },
     secondary: { label: "Shop catalogue", to: "/products" },
-    image:
-      "https://images.unsplash.com/photo-1473341304170-971dccb5ac1e?auto=format&fit=crop&w=1400&q=80",
+    image: "/solarmart-hero-3.svg",
   },
 ];
 

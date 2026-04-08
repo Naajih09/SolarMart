@@ -4,7 +4,7 @@
     "price": 1850000,
     "shortDescription": "Reliable backup power for essential home loads with lower generator dependence.",
     "fullDescription": "A compact solar kit built for Nigerian homes that want steady power for lights, fans, TVs, routers, and small appliances. It helps reduce fuel cost and gives cleaner daily backup for unstable grid conditions.",
-    "imageUrl": "https://placehold.co/1200x800/png?text=SolarMart+3kVA+Home+Solar+Kit",
+    "imageUrl": "/solarmart-product-placeholder.svg",
     "sku": "SM-KIT-3KVA-001",
     "category": "Solar Kits",
     "stock": 8
@@ -14,7 +14,7 @@
     "price": 3250000,
     "shortDescription": "Balanced solar package for family homes and small office use.",
     "fullDescription": "A strong mid-size solar solution for households and small businesses that need dependable power through the day. Designed to reduce NEPA spend and keep key appliances running with less interruption.",
-    "imageUrl": "https://placehold.co/1200x800/png?text=SolarMart+5kVA+Family+Solar+Kit",
+    "imageUrl": "/solarmart-product-placeholder.svg",
     "sku": "SM-KIT-5KVA-001",
     "category": "Solar Kits",
     "stock": 6
@@ -24,7 +24,7 @@
     "price": 5950000,
     "shortDescription": "High-capacity system for offices, shops, and heavier household demand.",
     "fullDescription": "Built for stronger daily loads, this kit supports business continuity, longer backup time, and lower generator use. A good fit for offices, shops, and large homes that need reliable solar performance.",
-    "imageUrl": "https://placehold.co/1200x800/png?text=SolarMart+10kVA+Business+Solar+Kit",
+    "imageUrl": "/solarmart-product-placeholder.svg",
     "sku": "SM-KIT-10KVA-001",
     "category": "Solar Kits",
     "stock": 4
@@ -34,7 +34,7 @@
     "price": 840000,
     "shortDescription": "Efficient inverter for stable home and small business backup.",
     "fullDescription": "A practical inverter choice for users who want clean power switching, battery support, and solar readiness. It is built to handle Nigeria's frequent outages with steady output and good energy savings.",
-    "imageUrl": "https://placehold.co/1200x800/png?text=SolarMart+3.5kVA+Hybrid+Inverter",
+    "imageUrl": "/solarmart-product-placeholder.svg",
     "sku": "SM-INV-35KVA-001",
     "category": "Inverters",
     "stock": 12
@@ -44,7 +44,7 @@
     "price": 920000,
     "shortDescription": "Clean and dependable inverter for everyday power backup.",
     "fullDescription": "Designed for homes and offices that need stable power without noise or fuel cost. This inverter helps support longer backup periods and pairs well with batteries and solar panels.",
-    "imageUrl": "https://placehold.co/1200x800/png?text=SolarMart+5kVA+Pure+Sine+Wave+Inverter",
+    "imageUrl": "/solarmart-product-placeholder.svg",
     "sku": "SM-INV-5KVA-001",
     "category": "Inverters",
     "stock": 10
@@ -54,7 +54,7 @@
     "price": 1250000,
     "shortDescription": "Long-life battery storage for reliable backup and faster charging.",
     "fullDescription": "A modern lithium storage option for customers who want better cycle life, faster recharge, and stronger backup quality. Ideal for daily solar use in Nigerian homes and businesses.",
-    "imageUrl": "https://placehold.co/1200x800/png?text=SolarMart+5kWh+Lithium+Battery",
+    "imageUrl": "/solarmart-product-placeholder.svg",
     "sku": "SM-BAT-5KWH-001",
     "category": "Batteries",
     "stock": 14
@@ -64,7 +64,7 @@
     "price": 2480000,
     "shortDescription": "Higher storage capacity for larger homes and business backup needs.",
     "fullDescription": "A larger battery for customers who need extended backup and better support for demanding appliances. It helps reduce downtime and keeps solar systems useful during long outages.",
-    "imageUrl": "https://placehold.co/1200x800/png?text=SolarMart+10kWh+Lithium+Battery",
+    "imageUrl": "/solarmart-product-placeholder.svg",
     "sku": "SM-BAT-10KWH-001",
     "category": "Batteries",
     "stock": 7
@@ -74,7 +74,7 @@
     "price": 165000,
     "shortDescription": "High-output panel for stronger energy generation per roof space.",
     "fullDescription": "A high-efficiency solar panel built to capture more power with fewer modules. Good for homes and businesses that want better output, stronger reliability, and cleaner long-term energy savings.",
-    "imageUrl": "https://placehold.co/1200x800/png?text=SolarMart+550W+Monocrystalline+Panel",
+    "imageUrl": "/solarmart-product-placeholder.svg",
     "sku": "SM-PNL-550W-001",
     "category": "Solar Panels",
     "stock": 48
@@ -84,7 +84,7 @@
     "price": 130000,
     "shortDescription": "Trusted panel for dependable rooftop solar generation.",
     "fullDescription": "A practical panel choice for complete kits and system expansion. It offers dependable solar generation for Nigerian conditions and helps reduce dependence on grid electricity and generators.",
-    "imageUrl": "https://placehold.co/1200x800/png?text=SolarMart+410W+Monocrystalline+Panel",
+    "imageUrl": "/solarmart-product-placeholder.svg",
     "sku": "SM-PNL-410W-001",
     "category": "Solar Panels",
     "stock": 60
@@ -94,7 +94,7 @@
     "price": 115000,
     "shortDescription": "Secure mounting hardware for neat rooftop installation.",
     "fullDescription": "A clean mounting accessory set for solar panels on rooftops and frames. It helps installers achieve a stable, tidy setup that supports long-term reliability and safe placement.",
-    "imageUrl": "https://placehold.co/1200x800/png?text=SolarMart+Mounting+Rail+Kit",
+    "imageUrl": "/solarmart-product-placeholder.svg",
     "sku": "SM-ACC-MRK-001",
     "category": "Accessories",
     "stock": 22
@@ -104,7 +104,7 @@
     "price": 98000,
     "shortDescription": "Organized protection and wiring for solar panel connections.",
     "fullDescription": "A practical accessory for tidy system wiring, protection, and smoother installation. Useful for installers building reliable solar setups for homes and commercial spaces.",
-    "imageUrl": "https://placehold.co/1200x800/png?text=SolarMart+DC+Combiner+Box",
+    "imageUrl": "/solarmart-product-placeholder.svg",
     "sku": "SM-ACC-DCB-001",
     "category": "Accessories",
     "stock": 18
