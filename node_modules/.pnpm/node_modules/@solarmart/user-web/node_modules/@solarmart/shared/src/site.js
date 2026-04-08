@@ -34,7 +34,7 @@ export function getRecommendation(monthlyBill) {
     return {
       title: "Starter home setup",
       copy: "A 3kVA home kit or inverter-plus-battery bundle should cover essential appliances.",
-      suggestion: "Recommended product: 3kVA Home Solar Kit",
+      suggestion: "Recommended solar kit: 3kVA Home Solar Kit",
     };
   }
 
@@ -42,13 +42,13 @@ export function getRecommendation(monthlyBill) {
     return {
       title: "Family or small business setup",
       copy: "A 5kVA inverter or complete family kit is the strongest fit for moderate daily demand.",
-      suggestion: "Recommended product: 5kVA Family Solar Kit",
+      suggestion: "Recommended solar kit: 5kVA Family Solar Kit",
     };
   }
 
   return {
     title: "Business-grade setup",
     copy: "You likely need a larger inverter, more battery storage, and a complete commercial-ready solar kit.",
-    suggestion: "Recommended product: 10kVA Business Solar Kit",
+    suggestion: "Recommended solar kit: 10kVA Business Solar Kit",
   };
 }

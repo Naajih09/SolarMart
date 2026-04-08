@@ -88,8 +88,8 @@ export function HomePage() {
       <section className="py-4 sm:py-6">
         <div className="section-shell space-y-5">
           <SectionHeader
-            eyebrow="Browse fast"
-            title="Shop by category"
+            eyebrow="Power solutions"
+            title="Shop by power need"
             copy="Tap into the solar category that matches your current power need."
           />
           <div className="hide-scrollbar flex gap-3 overflow-x-auto pb-2">
@@ -103,8 +103,8 @@ export function HomePage() {
       <section className="py-4 sm:py-6">
         <div className="section-shell space-y-5">
           <SectionHeader
-            eyebrow="Featured products"
-            title="Top picks for homes, offices, and installers"
+            eyebrow="Featured power solutions"
+            title="Home & Business Solar Kits"
             copy="Clear prices, stronger value, and solar-ready options for buyers who want to move fast."
             actionLabel="View all products"
             actionTo="/products"
@@ -120,8 +120,8 @@ export function HomePage() {
       </section>
 
       <HorizontalScroller
-        eyebrow="Best deals"
-        title="Best deals for quick buyers"
+        eyebrow="Generator replacement packages"
+        title="Generator Replacement Packages"
         copy="A fast horizontal rail for the strongest value items."
         actionLabel="See all products"
         actionTo="/products"
@@ -130,8 +130,8 @@ export function HomePage() {
       />
 
       <HorizontalScroller
-        eyebrow="Recommended solar kits"
-        title="Complete kits that simplify buying"
+        eyebrow="Most installed systems"
+        title="Most Installed Systems"
         copy="Home and office bundles that make it easy to choose the right system."
         actionLabel="Open kits"
         actionTo="/products?category=Solar%20Kits"
@@ -142,7 +142,7 @@ export function HomePage() {
       <section className="py-4 sm:py-6">
         <div className="section-shell grid gap-5 lg:grid-cols-[1.1fr_0.9fr]">
           <div className="rounded-[2.25rem] bg-brand-deep p-6 text-white shadow-soft sm:p-8">
-            <span className="eyebrow border-white/10 bg-white/10 text-brand-yellow">Partner program</span>
+            <span className="eyebrow border-white/10 bg-white/10 text-brand-yellow">Partner referral available</span>
             <h2 className="mt-4 text-3xl font-extrabold sm:text-4xl">
               Approved partners earn commission on real SolarMart sales.
             </h2>
@@ -152,7 +152,7 @@ export function HomePage() {
             </p>
             <div className="mt-6 flex flex-col gap-3 sm:flex-row">
               <Link to="/affiliate" className="button-primary w-full sm:w-auto">
-                Join partner program
+                Partner referral available
               </Link>
               <Link to="/calculator" className="button-secondary w-full sm:w-auto">
                 Estimate my savings
@@ -161,15 +161,15 @@ export function HomePage() {
           </div>
           <div className="grid gap-4 sm:grid-cols-3 lg:grid-cols-1">
             <TrustBadge
-              title="Warranty-first shopping"
+              title="Warranty included"
               copy="Clear product information and after-sales confidence."
             />
             <TrustBadge
-              title="Installation support"
+              title="Installation available"
               copy="We help customers move from quote to setup with less friction."
             />
             <TrustBadge
-              title="Delivery and support"
+              title="Nationwide delivery"
               copy="A storefront experience built for faster checkout and follow-through."
             />
           </div>
@@ -216,9 +216,9 @@ export function ProductsPage() {
     <section className="py-10 sm:py-12 lg:py-16">
       <div className="section-shell space-y-8">
         <div className="space-y-4">
-          <span className="eyebrow">Product catalogue</span>
+          <span className="eyebrow">Power solutions</span>
           <h1 className="text-3xl font-extrabold text-brand-deep sm:text-5xl">
-            Browse the SolarMart store
+            Browse SolarMart power solutions
           </h1>
           <p className="max-w-3xl text-sm leading-7 text-brand-slate/75 sm:text-base">
             Use the filters to find the best solar kit, inverter, battery, or accessory for your
@@ -433,8 +433,8 @@ export function ProductDetailPage() {
         </div>
 
         <HorizontalScroller
-          eyebrow="Recommended products"
-          title="More products that fit the same store flow"
+          eyebrow="Recommended solar products"
+          title="More products that fit the same power profile"
           copy="Continue browsing with related SolarMart options."
           items={related}
           renderItem={(item) => <ProductCard product={item} compact />}
@@ -452,7 +452,7 @@ export function CartPage() {
       <EmptyState
         title="Your cart is empty"
         copy="Browse the catalogue and add products to continue to checkout."
-        actionLabel="Shop products"
+        actionLabel="Shop solar products"
         actionTo="/products"
       />
     );

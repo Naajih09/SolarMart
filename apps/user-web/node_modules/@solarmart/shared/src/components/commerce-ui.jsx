@@ -18,8 +18,8 @@ const heroSlides = [
     title: "Solar kits that reduce generator spend and power interruptions.",
     copy:
       "Shop complete systems built for Nigerian homes, shops, and offices with straightforward pricing and trusted support.",
-    primary: { label: "Shop products", to: "/products" },
-    secondary: { label: "Join partner program", to: "/affiliate" },
+    primary: { label: "Shop solar products", to: "/products" },
+    secondary: { label: "Partner referral available", to: "/affiliate" },
     image: "/solarmart-hero-1.svg",
   },
   {
@@ -168,11 +168,11 @@ export function HeroCarousel() {
                     <div className="absolute inset-0 bg-gradient-to-t from-brand-deep/85 via-brand-deep/25 to-transparent" />
                     <div className="absolute bottom-4 left-4 right-4 grid gap-3 sm:grid-cols-2">
                       <div className="rounded-[1.5rem] border border-white/10 bg-white/10 p-4 text-white backdrop-blur">
-                        <p className="text-xs uppercase tracking-[0.2em] text-brand-yellow">Fast delivery</p>
+                        <p className="text-xs uppercase tracking-[0.2em] text-brand-yellow">Nationwide delivery</p>
                         <p className="mt-2 text-sm leading-6 text-white/80">Built for homes, offices, and shops that need power without delay.</p>
                       </div>
                       <div className="rounded-[1.5rem] border border-white/10 bg-white/10 p-4 text-white backdrop-blur">
-                        <p className="text-xs uppercase tracking-[0.2em] text-brand-yellow">Trusted support</p>
+                        <p className="text-xs uppercase tracking-[0.2em] text-brand-yellow">Paystack secure payment</p>
                         <p className="mt-2 text-sm leading-6 text-white/80">Installation guidance and after-sales help from SolarMart.</p>
                       </div>
                     </div>
@@ -520,7 +520,7 @@ export function MiniCartDrawer({ open, onClose }) {
                 Browse products and add something to get started.
               </p>
               <Link to="/products" onClick={onClose} className="button-primary mt-5">
-                Shop products
+                Shop solar products
               </Link>
             </div>
           )}
@@ -568,7 +568,7 @@ export function BottomNavigation() {
 
   const items = [
     { label: "Home", to: "/", icon: "⌂" },
-    { label: "Categories", to: "/products", icon: "▦" },
+    { label: "Power Solutions", to: "/products", icon: "▦" },
     { label: "Cart", to: "/cart", icon: "🛒", count: totals.count },
     { label: user?.role === "admin" ? "Admin" : "Account", to: "/dashboard", icon: "◌" },
   ];
