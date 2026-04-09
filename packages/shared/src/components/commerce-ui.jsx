@@ -459,10 +459,10 @@ export function MiniCartDrawer({ open, onClose }) {
       <button
         type="button"
         aria-label="Close mini cart"
-        className="absolute inset-0 bg-brand-deep/40"
+        className="absolute inset-0 z-0 bg-brand-deep/40"
         onClick={onClose}
       />
-      <aside className="absolute right-0 top-0 flex h-full w-full max-w-md flex-col border-l border-white/70 bg-brand-cream shadow-soft sm:w-[420px]">
+      <aside className="absolute right-0 top-0 z-10 flex h-full w-full max-w-md flex-col border-l border-white/70 bg-brand-cream shadow-soft sm:w-[420px]">
         <div className="flex items-center justify-between border-b border-brand-slate/10 px-5 py-4">
           <div>
             <p className="text-sm font-semibold uppercase tracking-[0.18em] text-brand-green">Mini cart</p>
@@ -514,11 +514,16 @@ export function MiniCartDrawer({ open, onClose }) {
               </div>
             ))
           ) : (
-            <div className="rounded-[1.5rem] border border-brand-slate/10 bg-white p-6 text-center">
-              <p className="text-lg font-semibold text-brand-deep">Your cart is empty</p>
-              <p className="mt-2 text-sm leading-6 text-brand-slate/75">
-                Browse products and add something to get started.
-              </p>
+            <div className="grid min-h-[45vh] place-items-center rounded-[1.5rem] border border-brand-slate/10 bg-white p-6 text-center">
+              <div className="max-w-sm space-y-3">
+                <p className="text-sm font-semibold uppercase tracking-[0.18em] text-brand-green">
+                  Nothing added yet
+                </p>
+                <p className="text-lg font-semibold text-brand-deep">Your cart is empty</p>
+                <p className="text-sm leading-6 text-brand-slate/75">
+                  Browse products and add a solar kit, inverter, battery, or panel to continue.
+                </p>
+              </div>
               <Link to="/products" onClick={onClose} className="button-primary mt-5">
                 Shop solar products
               </Link>
