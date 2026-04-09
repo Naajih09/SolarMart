@@ -76,14 +76,8 @@ export function Navbar({ onOpenCart = () => {} }) {
     <header className="sticky top-0 z-50 border-b border-white/40 bg-brand-cream/80 backdrop-blur-2xl">
       <div className="section-shell py-3 sm:py-4">
         <div className="flex items-center gap-3">
-        <Link to="/" className="flex min-w-0 items-center gap-3">
-          <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-[1.25rem] bg-brand-deep font-bold text-white shadow-[0_16px_30px_rgba(15,23,42,0.2)]">
-            SM
-          </div>
-          <div className="min-w-0">
-            <p className="truncate text-base font-bold text-brand-deep">{company.name}</p>
-            <p className="hidden text-xs text-brand-slate/70 lg:block">{company.tagline}</p>
-          </div>
+                <Link to="/" className="flex min-w-0 items-center gap-3">
+          <img src="/solarmart-logo.svg" alt="SolarMart" className="h-10 w-auto sm:h-11" />
         </Link>
 
         <form onSubmit={submitSearch} className="hidden flex-1 lg:block">
@@ -101,29 +95,17 @@ export function Navbar({ onOpenCart = () => {} }) {
           </label>
         </form>
 
-                <div className="ml-auto flex items-center gap-2 lg:hidden">
+                                <div className="ml-auto flex items-center gap-2 lg:hidden">
           <ThemeToggle compact />
-          <Link
-            to="/affiliate"
-            className="inline-flex h-11 items-center justify-center rounded-full border border-white/80 bg-white/80 px-3 text-sm font-semibold text-brand-green shadow-[0_10px_24px_rgba(15,23,42,0.08)]"
-          >
-            Partner
-          </Link>
-          <Link
-            to="/dashboard"
-            className="inline-flex h-11 items-center justify-center rounded-full border border-white/80 bg-white/80 px-3 text-sm font-semibold text-brand-deep shadow-[0_10px_24px_rgba(15,23,42,0.08)]"
-          >
-            {user?.role === "admin" ? "Admin" : "Account"}
-          </Link>
           <button
             type="button"
             onClick={onOpenCart}
-            className="inline-flex h-11 min-w-[86px] items-center justify-center gap-2 rounded-full border border-brand-deep/10 bg-brand-deep px-4 text-sm font-semibold text-white shadow-[0_10px_24px_rgba(15,23,42,0.08)]"
+            className="relative inline-flex h-11 w-11 items-center justify-center rounded-full border border-brand-deep/10 bg-brand-deep text-white shadow-[0_10px_24px_rgba(15,23,42,0.08)]"
             aria-label="Open cart"
           >
-            <span aria-hidden="true">Cart</span>
+            <span className="text-base" aria-hidden="true">??</span>
             {totals.count ? (
-              <span className="flex h-5 min-w-5 items-center justify-center rounded-full bg-brand-yellow px-1 text-[10px] font-bold text-brand-deep">
+              <span className="absolute -right-1 -top-1 flex h-5 min-w-5 items-center justify-center rounded-full bg-brand-yellow px-1 text-[10px] font-bold text-brand-deep">
                 {totals.count}
               </span>
             ) : null}
@@ -301,5 +283,7 @@ export function WhatsAppFloat() {
     </a>
   );
 }
+
+
 
 
