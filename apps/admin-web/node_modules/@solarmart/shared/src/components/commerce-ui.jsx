@@ -463,14 +463,21 @@ export function MiniCartDrawer({ open, onClose }) {
         onClick={onClose}
       />
       <aside className="absolute right-0 top-0 z-10 flex h-full w-full max-w-md flex-col border-l border-white/70 bg-brand-cream shadow-soft sm:w-[420px]">
-        <div className="flex items-center justify-between border-b border-brand-slate/10 px-5 py-4">
-          <div>
-            <p className="text-sm font-semibold uppercase tracking-[0.18em] text-brand-green">Mini cart</p>
-            <p className="text-lg font-bold text-brand-deep">{cart.length} item(s)</p>
+        <div className="border-b border-brand-slate/10 bg-brand-deep px-5 py-4 text-white">
+          <div className="flex items-center justify-between gap-3">
+            <div>
+              <p className="text-sm font-semibold uppercase tracking-[0.18em] text-brand-yellow">Mini cart</p>
+              <p className="text-lg font-bold">{cart.length ? `${cart.length} item(s) ready to checkout` : "No items in cart yet"}</p>
+            </div>
+            <button type="button" onClick={onClose} className="rounded-full border border-white/15 bg-white/10 px-4 py-2 text-sm font-semibold text-white">
+              Close
+            </button>
           </div>
-          <button type="button" onClick={onClose} className="rounded-full border border-brand-slate/10 px-4 py-2 text-sm font-semibold text-brand-deep">
-            Close
-          </button>
+          <div className="mt-3 flex flex-wrap gap-2 text-xs font-semibold">
+            <span className="rounded-full bg-white/10 px-3 py-1">Secure checkout</span>
+            <span className="rounded-full bg-white/10 px-3 py-1">Paystack ready</span>
+            <span className="rounded-full bg-white/10 px-3 py-1">Fast delivery</span>
+          </div>
         </div>
         <div className="flex-1 space-y-4 overflow-y-auto px-5 py-4">
           {cart.length ? (

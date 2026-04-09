@@ -101,29 +101,32 @@ export function Navbar({ onOpenCart = () => {} }) {
           </label>
         </form>
 
-        <div className="ml-auto flex items-center gap-2 lg:hidden">
+                <div className="ml-auto flex items-center gap-2 lg:hidden">
           <ThemeToggle compact />
           <Link
             to="/affiliate"
-            className="flex h-11 w-11 items-center justify-center rounded-full border border-white/80 bg-white/80 text-brand-green shadow-[0_10px_24px_rgba(15,23,42,0.08)]"
-            aria-label="Partner program"
+            className="inline-flex h-11 items-center justify-center rounded-full border border-white/80 bg-white/80 px-3 text-sm font-semibold text-brand-green shadow-[0_10px_24px_rgba(15,23,42,0.08)]"
           >
-            ⟡
+            Partner
           </Link>
           <Link
             to="/dashboard"
-            className="flex h-11 w-11 items-center justify-center rounded-full border border-white/80 bg-white/80 text-brand-deep shadow-[0_10px_24px_rgba(15,23,42,0.08)]"
-            aria-label="Account"
+            className="inline-flex h-11 items-center justify-center rounded-full border border-white/80 bg-white/80 px-3 text-sm font-semibold text-brand-deep shadow-[0_10px_24px_rgba(15,23,42,0.08)]"
           >
-            ◌
+            {user?.role === "admin" ? "Admin" : "Account"}
           </Link>
           <button
             type="button"
             onClick={onOpenCart}
-            className="flex h-11 w-11 items-center justify-center rounded-full border border-white/80 bg-white/80 text-brand-deep shadow-[0_10px_24px_rgba(15,23,42,0.08)]"
+            className="inline-flex h-11 min-w-[86px] items-center justify-center gap-2 rounded-full border border-brand-deep/10 bg-brand-deep px-4 text-sm font-semibold text-white shadow-[0_10px_24px_rgba(15,23,42,0.08)]"
             aria-label="Open cart"
           >
-            🛒
+            <span aria-hidden="true">Cart</span>
+            {totals.count ? (
+              <span className="flex h-5 min-w-5 items-center justify-center rounded-full bg-brand-yellow px-1 text-[10px] font-bold text-brand-deep">
+                {totals.count}
+              </span>
+            ) : null}
           </button>
         </div>
 
@@ -298,3 +301,5 @@ export function WhatsAppFloat() {
     </a>
   );
 }
+
+
