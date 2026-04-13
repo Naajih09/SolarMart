@@ -272,7 +272,7 @@ export function ProductCard({ product, badge, compact = false, onQuickView }) {
           />
         ) : (
           <div className="flex aspect-[4/3] items-center justify-center bg-brand-cream px-6 text-center text-sm font-semibold text-brand-slate/65">
-            Product image coming soon
+            Product image unavailable
           </div>
         )}
         <div className="absolute left-4 top-4 flex items-center gap-2">

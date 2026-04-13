@@ -44,7 +44,7 @@ export function ProductGrid({
             <img src={product.images[0]} alt={product.name} className="h-52 w-full object-cover" />
           ) : (
             <div className="flex h-52 items-center justify-center bg-brand-cream px-6 text-center text-sm font-semibold text-brand-slate/65">
-              Product image coming soon
+              Product image unavailable
             </div>
           )}
           <div className="space-y-4 p-5">

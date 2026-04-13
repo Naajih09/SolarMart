@@ -1,4 +1,6 @@
 import { createContext, useContext, useEffect, useMemo, useState } from "react";
+import { apiFetch } from "../lib/api";
+import { useAuth } from "./AuthContext";
 
 const StoreContext = createContext(null);
 
@@ -14,18 +16,119 @@ function safeRead(key, fallback) {
   }
 }
 
+function normalizeCartItem(item) {
+  return {
+    id: String(item?.id || "").trim(),
+    slug: String(item?.slug || "").trim(),
+    name: String(item?.name || "").trim(),
+    price: Number(item?.price || 0),
+    image: String(item?.image || "").trim(),
+    quantity: Math.max(1, Math.floor(Number(item?.quantity || 1))),
+  };
+}
+
+function normalizeCart(items = []) {
+  return items
+    .map(normalizeCartItem)
+    .filter((item) => item.id && item.name && Number.isFinite(item.price) && item.price >= 0);
+}
+
 export function StoreProvider({ children }) {
+  const { user, loading: authLoading, isAuthenticated } = useAuth();
   const [cart, setCart] = useState([]);
   const [referralCode, setReferralCode] = useState("");
+  const [cartReady, setCartReady] = useState(false);
 
   useEffect(() => {
-    setCart(safeRead(CART_KEY, []));
     setReferralCode(safeRead(REF_KEY, ""));
   }, []);
 
   useEffect(() => {
+    if (authLoading) {
+      return;
+    }
+
+    let cancelled = false;
+
+    async function hydrateCart() {
+      const localCart = normalizeCart(safeRead(CART_KEY, []));
+
+      if (!isAuthenticated || !user?.id) {
+        if (!cancelled) {
+          setCart(localCart);
+          setCartReady(true);
+        }
+        return;
+      }
+
+      try {
+        const data = await apiFetch("/api/store?action=cart");
+        const serverCart = normalizeCart(data.items || []);
+
+        if (serverCart.length) {
+          if (!cancelled) {
+            setCart(serverCart);
+            setCartReady(true);
+          }
+          return;
+        }
+
+        if (localCart.length) {
+          const saved = await apiFetch("/api/store?action=cart", {
+            method: "POST",
+            body: JSON.stringify({ items: localCart }),
+          });
+
+          if (!cancelled) {
+            setCart(normalizeCart(saved.cart || localCart));
+            setCartReady(true);
+          }
+          return;
+        }
+
+        if (!cancelled) {
+          setCart([]);
+          setCartReady(true);
+        }
+      } catch {
+        if (!cancelled) {
+          setCart(localCart);
+          setCartReady(true);
+        }
+      }
+    }
+
+    hydrateCart();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [authLoading, isAuthenticated, user?.id]);
+
+  useEffect(() => {
+    if (!cartReady) {
+      return;
+    }
+
     window.localStorage.setItem(CART_KEY, JSON.stringify(cart));
-  }, [cart]);
+  }, [cart, cartReady]);
+
+  useEffect(() => {
+    if (!cartReady || !isAuthenticated || !user?.id) {
+      return;
+    }
+
+    const timeout = window.setTimeout(() => {
+      apiFetch("/api/store?action=cart", {
+        method: "POST",
+        body: JSON.stringify({ items: cart }),
+      }).catch(() => {
+        // Keep the local cart usable even if persistence temporarily fails.
+      });
+    }, 150);
+
+    return () => window.clearTimeout(timeout);
+  }, [cart, cartReady, isAuthenticated, user?.id]);
 
   useEffect(() => {
     window.localStorage.setItem(REF_KEY, JSON.stringify(referralCode));

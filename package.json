@@ -8,7 +8,8 @@
     "dev:admin": "pnpm --filter @solarmart/admin-web dev",
     "build": "pnpm -r build",
     "build:user": "pnpm --filter @solarmart/user-web build",
-    "build:admin": "pnpm --filter @solarmart/admin-web build"
+    "build:admin": "pnpm --filter @solarmart/admin-web build",
+    "test": "node tests/core-helpers.check.mjs"
   },
   "dependencies": {
     "pg": "^8.13.1"

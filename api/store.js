@@ -1,12 +1,13 @@
 import { sendOrderNotification } from "./_lib/mail.js";
 import { applyCors } from "./_lib/cors.js";
 import { createOrderNumber, ensureSchema, hashPassword, mapProductRow, query } from "./_lib/db.js";
+import { requireUser } from "./_lib/auth.js";
 import { getQueryParam, readJsonBody } from "./_lib/request.js";
 
 const paystackInitUrl = "https://api.paystack.co/transaction/initialize";
 const paystackVerifyUrl = "https://api.paystack.co/transaction/verify/";
 
-function validateCheckout(body = {}) {
+export function validateCheckout(body = {}) {
   const { customer, items } = body;
   if (!customer?.fullName || !customer?.phone || !customer?.email || !customer?.address || !customer?.city) {
     return "Customer name, phone, email, address, and city are required.";
@@ -17,7 +18,7 @@ function validateCheckout(body = {}) {
   return null;
 }
 
-function computeTotals(items) {
+export function computeTotals(items) {
   const subtotal = items.reduce((sum, item) => sum + Number(item.price) * Number(item.quantity), 0);
   const delivery = subtotal > 0 ? 25000 : 0;
   return { subtotal, delivery, total: subtotal + delivery };
@@ -87,6 +88,45 @@ async function resolveAffiliate(referralCode) {
     String(referralCode).toUpperCase(),
   ]);
   return result.rows[0] || null;
+}
+
+function normalizeCartItems(items = []) {
+  return items
+    .map((item) => ({
+      id: String(item.id || "").trim(),
+      slug: String(item.slug || "").trim(),
+      name: String(item.name || "").trim(),
+      price: Number(item.price || 0),
+      image: String(item.image || "").trim(),
+      quantity: Math.max(1, Math.floor(Number(item.quantity || 1))),
+    }))
+    .filter((item) => item.id && item.name && Number.isFinite(item.price) && item.price >= 0);
+}
+
+async function getAuthenticatedUser(req) {
+  try {
+    return await requireUser(req);
+  } catch {
+    return null;
+  }
+}
+
+async function loadUserCart(userId) {
+  const result = await query("SELECT items FROM carts WHERE user_id = $1 LIMIT 1", [userId]);
+  return result.rows[0]?.items || [];
+}
+
+async function saveUserCart(userId, items) {
+  const result = await query(
+    `INSERT INTO carts (user_id, items)
+     VALUES ($1, $2::jsonb)
+     ON CONFLICT (user_id) DO UPDATE SET
+       items = EXCLUDED.items,
+       updated_at = NOW()
+     RETURNING items`,
+    [userId, JSON.stringify(items)],
+  );
+  return result.rows[0]?.items || [];
 }
 
 export default async function handler(req, res) {
@@ -273,11 +313,38 @@ export default async function handler(req, res) {
     }
 
     if (req.method === "GET" && action === "cart") {
-      return res.status(200).json({ message: "Cart is managed client-side for guest checkout in this MVP.", items: [] });
+      const user = await getAuthenticatedUser(req);
+      if (!user) {
+        return res.status(200).json({
+          message: "Cart is managed locally for guest checkout.",
+          items: [],
+        });
+      }
+
+      const items = await loadUserCart(user.id);
+      return res.status(200).json({
+        message: "Cart loaded successfully.",
+        items,
+      });
     }
 
     if (req.method === "POST" && action === "cart") {
-      return res.status(200).json({ message: "Cart payload accepted client-side.", cart: await readJsonBody(req) });
+      const user = await getAuthenticatedUser(req);
+      const body = await readJsonBody(req);
+      const items = normalizeCartItems(body.items || body.cart || []);
+
+      if (!user) {
+        return res.status(200).json({
+          message: "Cart payload accepted client-side.",
+          cart: items,
+        });
+      }
+
+      const savedItems = await saveUserCart(user.id, items);
+      return res.status(200).json({
+        message: "Cart saved successfully.",
+        cart: savedItems,
+      });
     }
 
     res.setHeader("Allow", "GET, POST");

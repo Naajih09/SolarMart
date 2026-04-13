@@ -3,7 +3,7 @@ import { readJsonBody } from "./_lib/request.js";
 
 const resendUrl = "https://api.resend.com/emails";
 
-function normalizeLead(body = {}) {
+export function normalizeLead(body = {}) {
   return {
     name: String(body.name || "").trim(),
     phone: String(body.phone || "").trim(),
@@ -16,7 +16,7 @@ function normalizeLead(body = {}) {
   };
 }
 
-function validateLead(lead) {
+export function validateLead(lead) {
   if (!lead.name || !lead.phone || !lead.location) {
     return "Name, phone, and location are required.";
   }

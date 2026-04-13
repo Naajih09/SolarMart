@@ -144,6 +144,14 @@ Build only the admin workspace:
 pnpm build:admin
 ```
 
+## Smoke Checks
+
+Run the lightweight helper checks for checkout, product normalization, and lead validation:
+
+```bash
+pnpm test
+```
+
 ## Production Deployment Shape
 
 Recommended Vercel project split:
@@ -163,6 +171,7 @@ Recommended Vercel project split:
 - Products are now database-only and no longer auto-sync from demo seed data at runtime.
 - Admin users add and delete products from the admin dashboard.
 - Successful payment verification creates orders and order items in PostgreSQL through `/api/store?action=verify`.
+- Signed-in users now get a persistent cart stored in PostgreSQL, while guests still fall back to local browser storage.
 - Order notification emails are sent to `LEAD_NOTIFICATION_EMAIL` using Resend after verified checkout.
 - Guest checkout is allowed, with optional account creation at checkout.
 - If `ADMIN_EMAIL` and `ADMIN_PASSWORD` are provided, the first admin account is auto-created in the database.

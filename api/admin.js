@@ -3,7 +3,7 @@ import { applyCors } from "./_lib/cors.js";
 import { ensureSchema, mapProductRow, query } from "./_lib/db.js";
 import { getQueryParam, readJsonBody } from "./_lib/request.js";
 
-function slugify(value = "") {
+export function slugify(value = "") {
   return String(value)
     .trim()
     .toLowerCase()
@@ -12,7 +12,7 @@ function slugify(value = "") {
     .slice(0, 80);
 }
 
-function normalizeProductInput(input = {}) {
+export function normalizeProductInput(input = {}) {
   const name = String(input.name || "").trim();
   const category = String(input.category || "").trim();
   const price = Number(input.price);
