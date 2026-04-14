@@ -1,0 +1,28 @@
+<svg width="1200" height="800" viewBox="0 0 1200 800" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1200" y2="800" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#0F3D2E"/>
+      <stop offset="1" stop-color="#1F7A4A"/>
+    </linearGradient>
+    <linearGradient id="shine" x1="160" y1="120" x2="1040" y2="680" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#FDF7EA" stop-opacity="0.18"/>
+      <stop offset="1" stop-color="#F5C542" stop-opacity="0.04"/>
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="800" rx="56" fill="url(#bg)"/>
+  <circle cx="980" cy="130" r="170" fill="#F5C542" fill-opacity="0.16"/>
+  <circle cx="220" cy="620" r="160" fill="#F5C542" fill-opacity="0.12"/>
+  <rect x="88" y="88" width="1024" height="624" rx="44" fill="url(#shine)" stroke="white" stroke-opacity="0.12"/>
+  <g transform="translate(170 170)">
+    <rect x="0" y="0" width="860" height="360" rx="36" fill="white" fill-opacity="0.08"/>
+    <rect x="60" y="60" width="280" height="240" rx="28" fill="#F5C542" fill-opacity="0.18"/>
+    <path d="M92 112H308V248H92V112Z" fill="none" stroke="#FDF7EA" stroke-opacity="0.45" stroke-width="10"/>
+    <path d="M146 112V248M200 112V248M254 112V248M92 168H308M92 224H308" stroke="#FDF7EA" stroke-opacity="0.45" stroke-width="10"/>
+    <rect x="396" y="76" width="354" height="40" rx="20" fill="#FDF7EA" fill-opacity="0.78"/>
+    <rect x="396" y="140" width="250" height="24" rx="12" fill="#FDF7EA" fill-opacity="0.46"/>
+    <rect x="396" y="184" width="310" height="24" rx="12" fill="#FDF7EA" fill-opacity="0.46"/>
+    <rect x="396" y="228" width="196" height="24" rx="12" fill="#FDF7EA" fill-opacity="0.46"/>
+    <rect x="396" y="280" width="120" height="44" rx="22" fill="#F5C542"/>
+  </g>
+  <text x="600" y="706" text-anchor="middle" fill="#FDF7EA" font-family="Arial, Helvetica, sans-serif" font-size="34" font-weight="700">SolarMart Product Placeholder</text>
+</svg>

@@ -1,0 +1,19 @@
+<svg width="1400" height="900" viewBox="0 0 1400 900" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1400" y2="900" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#102A43"/>
+      <stop offset="1" stop-color="#255E8B"/>
+    </linearGradient>
+  </defs>
+  <rect width="1400" height="900" rx="64" fill="url(#bg)"/>
+  <circle cx="1120" cy="150" r="220" fill="#F5C542" fill-opacity="0.12"/>
+  <rect x="120" y="120" width="1160" height="660" rx="48" fill="white" fill-opacity="0.06" stroke="white" stroke-opacity="0.10"/>
+  <text x="170" y="250" fill="#FDF7EA" font-family="Arial, Helvetica, sans-serif" font-size="30" font-weight="700">SolarMart Savings Calculator</text>
+  <text x="170" y="330" fill="#FDF7EA" font-family="Arial, Helvetica, sans-serif" font-size="66" font-weight="800">Match your power bill</text>
+  <text x="170" y="410" fill="#FDF7EA" font-family="Arial, Helvetica, sans-serif" font-size="66" font-weight="800">to the right solar setup.</text>
+  <text x="170" y="490" fill="#FDF7EA" fill-opacity="0.82" font-family="Arial, Helvetica, sans-serif" font-size="28">Built for Nigerian homes, offices, and growing businesses.</text>
+  <rect x="170" y="570" width="240" height="68" rx="34" fill="#F5C542"/>
+  <text x="290" y="614" text-anchor="middle" fill="#102A43" font-family="Arial, Helvetica, sans-serif" font-size="24" font-weight="700">Open calculator</text>
+  <rect x="430" y="570" width="210" height="68" rx="34" fill="white" fill-opacity="0.10" stroke="white" stroke-opacity="0.15"/>
+  <text x="535" y="614" text-anchor="middle" fill="#FDF7EA" font-family="Arial, Helvetica, sans-serif" font-size="24" font-weight="700">See deals</text>
+</svg>
