@@ -5,11 +5,11 @@ export default {
     extend: {
       colors: {
         brand: {
-          green: "#0f766e",
-          deep: "#0f172a",
-          yellow: "#f59e0b",
-          slate: "#334155",
-          cream: "#f8fafc",
+          green: "#22C55E",
+          deep: "#052E16",
+          yellow: "#86EFAC",
+          slate: "#1F3B2E",
+          cream: "#F4FFF7",
         },
       },
       fontFamily: {
@@ -20,7 +20,7 @@ export default {
       },
       backgroundImage: {
         "hero-grid":
-          "radial-gradient(circle at top left, rgba(15, 118, 110, 0.22), transparent 38%), radial-gradient(circle at bottom right, rgba(245, 158, 11, 0.16), transparent 28%), linear-gradient(135deg, rgba(15, 23, 42, 0.04), transparent 45%)",
+          "radial-gradient(circle at top left, rgba(34, 197, 94, 0.22), transparent 38%), radial-gradient(circle at bottom right, rgba(134, 239, 172, 0.18), transparent 28%), linear-gradient(135deg, rgba(5, 46, 22, 0.06), transparent 45%)",
       },
     },
   },

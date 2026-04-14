@@ -5,22 +5,22 @@ export default {
     extend: {
       colors: {
         brand: {
-          green: "#1F7A3F",
-          deep: "#103B22",
-          yellow: "#F5C245",
-          slate: "#2C2C2C",
-          cream: "#F9F7F1",
+          green: "#22C55E",
+          deep: "#052E16",
+          yellow: "#86EFAC",
+          slate: "#1F3B2E",
+          cream: "#F4FFF7",
         },
       },
       fontFamily: {
         sans: ["Poppins", "sans-serif"],
       },
       boxShadow: {
-        soft: "0 20px 45px rgba(16, 59, 34, 0.12)",
+        soft: "0 20px 45px rgba(5, 46, 22, 0.16)",
       },
       backgroundImage: {
         "hero-grid":
-          "radial-gradient(circle at top left, rgba(245, 194, 69, 0.28), transparent 35%), radial-gradient(circle at bottom right, rgba(31, 122, 63, 0.2), transparent 30%)",
+          "radial-gradient(circle at top left, rgba(134, 239, 172, 0.25), transparent 35%), radial-gradient(circle at bottom right, rgba(34, 197, 94, 0.2), transparent 30%)",
       },
     },
   },

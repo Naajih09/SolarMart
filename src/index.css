@@ -7,10 +7,10 @@ html {
 }
 
 body {
-  color: #2c2c2c;
+  color: #1f3b2e;
   background:
-    radial-gradient(circle at top, rgba(245, 194, 69, 0.14), transparent 20%),
-    #f9f7f1;
+    radial-gradient(circle at top, rgba(34, 197, 94, 0.2), transparent 24%),
+    #f4fff7;
 }
 
 @layer components {
