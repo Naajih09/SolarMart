@@ -55,23 +55,6 @@ export function StoreProvider({ children }) {
   }, [cart, cartReady]);
 
   useEffect(() => {
-    if (!cartReady || !isAuthenticated || !user?.id) {
-      return;
-    }
-
-    const timeout = window.setTimeout(() => {
-      apiFetch("/api/store?action=cart", {
-        method: "POST",
-        body: JSON.stringify({ items: cart }),
-      }).catch(() => {
-        // Keep the local cart usable even if persistence temporarily fails.
-      });
-    }, 150);
-
-    return () => window.clearTimeout(timeout);
-  }, [cart, cartReady, isAuthenticated, user?.id]);
-
-  useEffect(() => {
     window.localStorage.setItem(REF_KEY, JSON.stringify(referralCode));
   }, [referralCode]);
 
