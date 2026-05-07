@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import { Route, Routes } from "react-router-dom";
 import {
-  AuthProvider,
   CartPage,
   CheckoutPage,
   Footer,
@@ -14,7 +13,6 @@ import {
   ScrollToTop,
   SplashCard,
   StoreProvider,
-  ThemeProvider,
   WhatsAppFloat,
 } from "@solarmart/shared";
 
@@ -44,13 +42,11 @@ function App() {
   }
 
   return (
-    <ThemeProvider>
-      <AuthProvider>
-        <StoreProvider>
-          <div className="min-h-screen bg-brand-cream pb-32 text-brand-slate md:pb-0">
-            <ScrollToTop />
-            <Navbar onOpenCart={() => setCartOpen(true)} />
-            <main>
+    <StoreProvider>
+      <div className="min-h-screen bg-brand-cream pb-32 text-brand-slate md:pb-0">
+        <ScrollToTop />
+        <Navbar onOpenCart={() => setCartOpen(true)} />
+        <main>
               <Routes>
                 <Route path="/" element={<HomePage />} />
                 <Route path="/products" element={<ProductsPage />} />
@@ -66,8 +62,6 @@ function App() {
             <WhatsAppFloat />
           </div>
         </StoreProvider>
-      </AuthProvider>
-    </ThemeProvider>
   );
 }
 

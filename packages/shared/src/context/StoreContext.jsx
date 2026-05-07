@@ -1,6 +1,4 @@
 import { createContext, useContext, useEffect, useMemo, useState } from "react";
-import { apiFetch } from "../lib/api";
-import { useAuth } from "./AuthContext";
 
 const StoreContext = createContext(null);
 
@@ -34,7 +32,6 @@ function normalizeCart(items = []) {
 }
 
 export function StoreProvider({ children }) {
-  const { user, loading: authLoading, isAuthenticated } = useAuth();
   const [cart, setCart] = useState([]);
   const [referralCode, setReferralCode] = useState("");
   const [cartReady, setCartReady] = useState(false);
@@ -44,66 +41,10 @@ export function StoreProvider({ children }) {
   }, []);
 
   useEffect(() => {
-    if (authLoading) {
-      return;
-    }
-
-    let cancelled = false;
-
-    async function hydrateCart() {
-      const localCart = normalizeCart(safeRead(CART_KEY, []));
-
-      if (!isAuthenticated || !user?.id) {
-        if (!cancelled) {
-          setCart(localCart);
-          setCartReady(true);
-        }
-        return;
-      }
-
-      try {
-        const data = await apiFetch("/api/store?action=cart");
-        const serverCart = normalizeCart(data.items || []);
-
-        if (serverCart.length) {
-          if (!cancelled) {
-            setCart(serverCart);
-            setCartReady(true);
-          }
-          return;
-        }
-
-        if (localCart.length) {
-          const saved = await apiFetch("/api/store?action=cart", {
-            method: "POST",
-            body: JSON.stringify({ items: localCart }),
-          });
-
-          if (!cancelled) {
-            setCart(normalizeCart(saved.cart || localCart));
-            setCartReady(true);
-          }
-          return;
-        }
-
-        if (!cancelled) {
-          setCart([]);
-          setCartReady(true);
-        }
-      } catch {
-        if (!cancelled) {
-          setCart(localCart);
-          setCartReady(true);
-        }
-      }
-    }
-
-    hydrateCart();
-
-    return () => {
-      cancelled = true;
-    };
-  }, [authLoading, isAuthenticated, user?.id]);
+    const localCart = normalizeCart(safeRead(CART_KEY, []));
+    setCart(localCart);
+    setCartReady(true);
+  }, []);
 
   useEffect(() => {
     if (!cartReady) {
