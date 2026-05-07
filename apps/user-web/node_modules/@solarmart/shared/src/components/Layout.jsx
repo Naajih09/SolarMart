@@ -1,8 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link, NavLink, useLocation, useNavigate } from "react-router-dom";
-import { useTheme } from "../context/ThemeContext";
 import { useStore } from "../context/StoreContext";
-import { storeCategories } from "./commerce-ui";
 import { company, whatsappMessage } from "../site";
 
 export function ScrollToTop() {
@@ -81,14 +79,13 @@ export function Navbar({ onOpenCart = () => {} }) {
         </form>
 
                                 <div className="ml-auto flex items-center gap-2 lg:hidden">
-          <ThemeToggle compact />
           <button
             type="button"
             onClick={onOpenCart}
             className="relative inline-flex h-11 w-11 items-center justify-center rounded-full border border-brand-deep/10 bg-brand-deep text-white shadow-[0_10px_24px_rgba(15,23,42,0.08)]"
             aria-label="Open cart"
           >
-            <span className="text-base" aria-hidden="true">??</span>
+            <span className="text-base" aria-hidden="true">🛒</span>
             {totals.count ? (
               <span className="absolute -right-1 -top-1 flex h-5 min-w-5 items-center justify-center rounded-full bg-brand-yellow px-1 text-[10px] font-bold text-brand-deep">
                 {totals.count}
@@ -98,7 +95,6 @@ export function Navbar({ onOpenCart = () => {} }) {
         </div>
 
         <div className="ml-auto hidden items-center gap-2 lg:flex">
-          <ThemeToggle />
           <button
             type="button"
             onClick={onOpenCart}
@@ -106,23 +102,16 @@ export function Navbar({ onOpenCart = () => {} }) {
           >
             🛒 Cart ({totals.count})
           </button>
+          <a
+            href={`https://wa.me/${company.whatsappNumber}?text=${whatsappMessage}`}
+            target="_blank"
+            rel="noreferrer"
+            className="inline-flex items-center gap-2 rounded-full border border-brand-green/10 bg-white px-4 py-2 text-sm font-semibold text-brand-deep transition hover:bg-brand-green/10 hover:text-brand-green"
+          >
+            WhatsApp
+          </a>
         </div>
         </div>
-
-        <form onSubmit={submitSearch} className="mt-3 flex gap-2 lg:hidden">
-          <label className="flex w-full items-center gap-3 rounded-full border border-white/80 bg-white/90 px-4 py-3 shadow-[0_10px_24px_rgba(15,23,42,0.08)]">
-            <span className="text-lg text-brand-slate/50">⌕</span>
-            <input
-              value={query}
-              onChange={(event) => setQuery(event.target.value)}
-              placeholder="Search products, kits, brands..."
-              className="w-full bg-transparent text-sm outline-none placeholder:text-brand-slate/45"
-            />
-          </label>
-          <button type="submit" className="button-primary shrink-0 px-4 py-3 text-sm">
-            Go
-          </button>
-        </form>
 
         <div className="hide-scrollbar mt-3 flex items-center gap-2 overflow-x-auto pb-1">
           <NavLink
@@ -155,15 +144,14 @@ export function Navbar({ onOpenCart = () => {} }) {
           >
             Cart
           </NavLink>
-          {storeCategories.map((item) => (
-            <Link
-              key={item.label}
-              to={item.to}
-              className="rounded-full border border-white/80 bg-white/80 px-4 py-2 text-sm font-semibold text-brand-slate transition hover:border-brand-green hover:text-brand-green"
-            >
-              {item.label}
-            </Link>
-          ))}
+          <a
+            href={`https://wa.me/${company.whatsappNumber}?text=${whatsappMessage}`}
+            target="_blank"
+            rel="noreferrer"
+            className="rounded-full border border-brand-green/10 bg-white/80 px-4 py-2 text-sm font-semibold text-brand-deep transition hover:border-brand-green hover:text-brand-green"
+          >
+            WhatsApp
+          </a>
         </div>
       </div>
 
@@ -201,9 +189,14 @@ export function Footer() {
           <Link className="block hover:text-brand-green" to="/products">
             Browse catalogue
           </Link>
-          <Link className="block hover:text-brand-green" to="/checkout">
-            Checkout
-          </Link>
+          <a
+            className="block hover:text-brand-green"
+            href={`https://wa.me/${company.whatsappNumber}?text=${whatsappMessage}`}
+            target="_blank"
+            rel="noreferrer"
+          >
+            Order on WhatsApp
+          </a>
         </div>
       </div>
     </footer>
