@@ -174,13 +174,6 @@ export function ProductCard({ product, badge, compact = false, onQuickView }) {
             {resolvedBadge}
           </span>
         </div>
-        <div className="absolute inset-0 bg-gradient-to-t from-brand-deep/40 via-transparent to-transparent opacity-0 transition group-hover:opacity-100" />
-        <Link
-          to={`/products/${product.slug}`}
-          className="absolute bottom-4 left-4 rounded-full bg-white/95 px-4 py-2 text-sm font-semibold text-brand-deep opacity-0 shadow-soft transition group-hover:opacity-100"
-        >
-          Quick view
-        </Link>
       </div>
       <div className="flex flex-1 flex-col space-y-4 p-4 sm:p-5">
         <div className="space-y-2">
@@ -196,22 +189,13 @@ export function ProductCard({ product, badge, compact = false, onQuickView }) {
             {product.availability || "In stock"}
           </p>
         </div>
-        <div className="mt-auto flex flex-col gap-3">
-          <Link to={`/products/${product.slug}`} className="button-secondary w-full">
-            View details
-          </Link>
+        <div className="mt-auto grid gap-3">
           <button type="button" onClick={() => addToCart(product)} className="button-primary w-full">
             Add to cart
           </button>
-          {onQuickView ? (
-            <button
-              type="button"
-              onClick={() => onQuickView(product)}
-              className="text-sm font-semibold text-brand-green transition hover:text-brand-deep"
-            >
-              Open quick view
-            </button>
-          ) : null}
+          <Link to={`/products/${product.slug}`} className="button-secondary w-full">
+            View details
+          </Link>
         </div>
       </div>
     </article>

@@ -50,7 +50,7 @@ body[data-theme="dark"]::before {
   }
 
   .button-secondary {
-    @apply inline-flex items-center justify-center rounded-full border border-brand-slate/15 bg-white/90 px-6 py-3 text-sm font-semibold text-brand-deep transition duration-300 hover:-translate-y-0.5 hover:border-brand-green hover:bg-brand-green/5 hover:text-brand-green;
+    @apply inline-flex items-center justify-center rounded-full border border-brand-deep/15 bg-white/95 px-6 py-3 text-sm font-semibold text-brand-deep transition duration-300 hover:-translate-y-0.5 hover:border-brand-green hover:bg-brand-green/5 hover:text-brand-green;
   }
 
   .eyebrow {
