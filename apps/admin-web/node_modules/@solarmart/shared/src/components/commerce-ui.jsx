@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 import { useStore } from "../context/StoreContext";
-import { formatNaira, whatsappMessage } from "../site";
+import { company, formatNaira, whatsappMessage } from "../site";
 
 export const storeCategories = [
   { label: "Solar Kits", emoji: "☀", to: "/products?category=Solar%20Kits" },
