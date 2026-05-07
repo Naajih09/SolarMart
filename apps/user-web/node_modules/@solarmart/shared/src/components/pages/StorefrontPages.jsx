@@ -1,8 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { Link, useNavigate, useParams, useLocation } from "react-router-dom";
 import { useStore } from "../../context/StoreContext";
-import { apiFetch } from "../../lib/api";
-import { brands } from "../../store/catalog";
+import { brands, products } from "../../store/catalog";
 import { company, formatNaira, getRecommendation, whatsappMessage } from "../../site";
 import {
   CategoryIcon,
@@ -17,15 +16,8 @@ import {
 import { DetailCard, EmptyState, OrderSummary, ProductGrid } from "./SharedPageParts";
 
 function useProducts() {
-  const [items, setItems] = useState([]);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    setLoading(true);
-    apiFetch("/api/store?action=products")
-      .then((data) => setItems(data.products || []))
-      .finally(() => setLoading(false));
-  }, []);
+  const [items] = useState(products);
+  const [loading] = useState(false);
 
   return { items, loading };
 }
@@ -142,21 +134,25 @@ export function HomePage() {
       <section className="py-4 sm:py-6">
         <div className="section-shell grid gap-5 lg:grid-cols-[1.1fr_0.9fr]">
           <div className="rounded-[2.25rem] bg-brand-deep p-6 text-white shadow-soft sm:p-8">
-            <span className="eyebrow border-white/10 bg-white/10 text-brand-yellow">Partner referral available</span>
+            <span className="eyebrow border-white/10 bg-white/10 text-brand-yellow">Ready to order</span>
             <h2 className="mt-4 text-3xl font-extrabold sm:text-4xl">
-              Approved partners earn commission on real SolarMart sales.
+              Get expert help choosing the right solar kit for your home.
             </h2>
             <p className="mt-4 max-w-2xl text-sm leading-7 text-white/75 sm:text-base">
-              SolarMart keeps selling as the official store while referral partners share links,
-              track conversions, and grow with every order.
+              Browse SolarMart products, compare prices, and contact our support team to place your order.
             </p>
             <div className="mt-6 flex flex-col gap-3 sm:flex-row">
-              <Link to="/affiliate" className="button-primary w-full sm:w-auto">
-                Partner referral available
+              <Link to="/products" className="button-primary w-full sm:w-auto">
+                Shop solar products
               </Link>
-              <Link to="/calculator" className="button-secondary w-full sm:w-auto">
-                Estimate my savings
-              </Link>
+              <a
+                href={`https://wa.me/${company.whatsappNumber}?text=${whatsappMessage}`}
+                target="_blank"
+                rel="noreferrer"
+                className="button-secondary w-full sm:w-auto"
+              >
+                Contact support
+              </a>
             </div>
           </div>
           <div className="grid gap-4 sm:grid-cols-3 lg:grid-cols-1">
@@ -170,7 +166,7 @@ export function HomePage() {
             />
             <TrustBadge
               title="Nationwide delivery"
-              copy="A storefront experience built for faster checkout and follow-through."
+              copy="A storefront experience built for fast, reliable solar orders."
             />
           </div>
         </div>
@@ -282,18 +278,9 @@ export function ProductDetailPage() {
   const [tab, setTab] = useState("description");
 
   useEffect(() => {
-    apiFetch(`/api/store?action=products&id=${slug}`)
-      .then((data) => {
-        setProduct(data.product);
-        return apiFetch("/api/store?action=products");
-      })
-      .then((data) => {
-        setRelated((data.products || []).filter((item) => item.slug !== slug).slice(0, 4));
-      })
-      .catch(() => {
-        setProduct(null);
-        setRelated([]);
-      });
+    const found = products.find((item) => item.slug === slug);
+    setProduct(found || null);
+    setRelated(products.filter((item) => item.slug !== slug).slice(0, 4));
   }, [slug]);
 
   if (!product) {
@@ -403,11 +390,11 @@ export function ProductDetailPage() {
                 type="button"
                 onClick={() => {
                   addToCart(product);
-                  navigate("/checkout");
+                  navigate("/cart");
                 }}
                 className="button-secondary w-full sm:w-auto"
               >
-                Buy now
+                View cart
               </button>
             </div>
             <div className="rounded-[1.75rem] border border-brand-slate/10 bg-white/80 p-3">

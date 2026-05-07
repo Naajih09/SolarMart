@@ -1,6 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { Link } from "react-router-dom";
-import { useAuth } from "../context/AuthContext";
 import { useStore } from "../context/StoreContext";
 import { formatNaira, whatsappMessage } from "../site";
 
@@ -19,25 +18,25 @@ const heroSlides = [
     copy:
       "Shop complete systems built for Nigerian homes, shops, and offices with straightforward pricing and trusted support.",
     primary: { label: "Shop solar products", to: "/products" },
-    secondary: { label: "Partner referral available", to: "/affiliate" },
+    secondary: { label: "Contact support", to: "/products" },
     image: "/solarmart-hero-1.svg",
   },
   {
-    eyebrow: "Clean power planning",
-    title: "Match your monthly electricity spend to the right solar setup.",
+    eyebrow: "Clean power solutions",
+    title: "Choose a solar system that fits your daily load and budget.",
     copy:
-      "Use the SolarMart calculator to estimate your spend, compare kits, and choose a system with confidence.",
-    primary: { label: "Open calculator", to: "/calculator" },
-    secondary: { label: "See best deals", to: "/products" },
+      "Browse ready-to-ship kits, inverters, batteries, and panels with clear pricing and product details.",
+    primary: { label: "Browse catalogue", to: "/products" },
+    secondary: { label: "View best sellers", to: "/products" },
     image: "/solarmart-hero-2.svg",
   },
   {
-    eyebrow: "Approved partners",
-    title: "Referral partners earn commission when SolarMart orders convert.",
+    eyebrow: "Ready to order",
+    title: "Fast support and ordering for every solar purchase.",
     copy:
-      "Keep customers in one trusted storefront while partners share links, track conversions, and grow with the brand.",
-    primary: { label: "Become a partner", to: "/affiliate" },
-    secondary: { label: "Shop catalogue", to: "/products" },
+      "Contact SolarMart directly, add items to your cart, and confirm your purchase with local support.",
+    primary: { label: "Shop catalogue", to: "/products" },
+    secondary: { label: "Get in touch", to: "/products" },
     image: "/solarmart-hero-3.svg",
   },
 ];
@@ -474,8 +473,8 @@ export function MiniCartDrawer({ open, onClose }) {
             </button>
           </div>
           <div className="mt-3 flex flex-wrap gap-2 text-xs font-semibold">
-            <span className="rounded-full bg-white/10 px-3 py-1">Secure checkout</span>
-            <span className="rounded-full bg-white/10 px-3 py-1">Paystack ready</span>
+            <span className="rounded-full bg-white/10 px-3 py-1">Secure ordering</span>
+            <span className="rounded-full bg-white/10 px-3 py-1">Local support</span>
             <span className="rounded-full bg-white/10 px-3 py-1">Fast delivery</span>
           </div>
         </div>
@@ -576,13 +575,12 @@ export function MiniCartDrawer({ open, onClose }) {
 
 export function BottomNavigation() {
   const { totals } = useStore();
-  const { user } = useAuth();
 
   const items = [
     { label: "Home", to: "/", icon: "⌂" },
     { label: "Power Solutions", to: "/products", icon: "▦" },
     { label: "Cart", to: "/cart", icon: "🛒", count: totals.count },
-    { label: user?.role === "admin" ? "Admin" : "Account", to: "/dashboard", icon: "◌" },
+    { label: "Checkout", to: "/checkout", icon: "✔" },
   ];
 
   return (

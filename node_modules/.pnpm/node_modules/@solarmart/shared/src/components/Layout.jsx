@@ -1,9 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link, NavLink, useLocation, useNavigate } from "react-router-dom";
-import { useAuth } from "../context/AuthContext";
 import { useTheme } from "../context/ThemeContext";
 import { useStore } from "../context/StoreContext";
-import { apiFetch } from "../lib/api";
 import { storeCategories } from "./commerce-ui";
 import { company, whatsappMessage } from "../site";
 
@@ -46,20 +44,7 @@ export function Navbar({ onOpenCart = () => {} }) {
   const [query, setQuery] = useState("");
   const location = useLocation();
   const navigate = useNavigate();
-  const { totals, setReferralCode } = useStore();
-  const { user, isAuthenticated, logout } = useAuth();
-
-  useEffect(() => {
-    const params = new URLSearchParams(location.search);
-    const ref = params.get("ref");
-    if (ref) {
-      captureReferral(ref, setReferralCode);
-      apiFetch("/api/affiliate?action=track", {
-        method: "POST",
-        body: JSON.stringify({ code: ref }),
-      }).catch(() => null);
-    }
-  }, [location.search, setReferralCode]);
+  const { totals } = useStore();
 
   useEffect(() => {
     const params = new URLSearchParams(location.search);
@@ -114,18 +99,6 @@ export function Navbar({ onOpenCart = () => {} }) {
 
         <div className="ml-auto hidden items-center gap-2 lg:flex">
           <ThemeToggle />
-          <Link
-            to="/affiliate"
-            className="inline-flex items-center gap-2 rounded-full border border-white/80 bg-white/80 px-4 py-2 text-sm font-semibold text-brand-deep shadow-[0_10px_24px_rgba(15,23,42,0.08)] transition hover:border-brand-green hover:text-brand-green"
-          >
-            ⟡ Partner
-          </Link>
-          <Link
-            to="/dashboard"
-            className="inline-flex items-center gap-2 rounded-full border border-white/80 bg-white/80 px-4 py-2 text-sm font-semibold text-brand-deep shadow-[0_10px_24px_rgba(15,23,42,0.08)] transition hover:border-brand-green hover:text-brand-green"
-          >
-            ◌ {user?.role === "admin" ? "Admin" : "Account"}
-          </Link>
           <button
             type="button"
             onClick={onOpenCart}
@@ -133,24 +106,6 @@ export function Navbar({ onOpenCart = () => {} }) {
           >
             🛒 Cart ({totals.count})
           </button>
-          {isAuthenticated ? (
-            <button
-              type="button"
-              onClick={logout}
-              className="rounded-full px-4 py-2 text-sm font-medium text-brand-slate transition hover:bg-brand-green/10 hover:text-brand-green"
-            >
-              Logout
-            </button>
-          ) : (
-            <>
-              <NavLink to="/login" className="rounded-full px-4 py-2 text-sm font-medium text-brand-slate transition hover:bg-brand-green/10 hover:text-brand-green">
-                Login
-              </NavLink>
-              <NavLink to="/register" className="rounded-full px-4 py-2 text-sm font-medium text-brand-slate transition hover:bg-brand-green/10 hover:text-brand-green">
-                Sign Up
-              </NavLink>
-            </>
-          )}
         </div>
         </div>
 
@@ -191,24 +146,14 @@ export function Navbar({ onOpenCart = () => {} }) {
             Shop All
           </NavLink>
           <NavLink
-            to="/calculator"
+            to="/cart"
             className={({ isActive }) =>
               `rounded-full px-4 py-2 text-sm font-semibold transition ${
                 isActive ? "bg-brand-deep text-white" : "border border-white/80 bg-white/80 text-brand-slate hover:border-brand-green hover:text-brand-green"
               }`
             }
           >
-            Calculator
-          </NavLink>
-          <NavLink
-            to="/affiliate"
-            className={({ isActive }) =>
-              `rounded-full px-4 py-2 text-sm font-semibold transition ${
-                isActive ? "bg-brand-deep text-white" : "border border-white/80 bg-white/80 text-brand-slate hover:border-brand-green hover:text-brand-green"
-              }`
-            }
-          >
-            Partners
+            Cart
           </NavLink>
           {storeCategories.map((item) => (
             <Link
@@ -255,9 +200,6 @@ export function Footer() {
           <p className="font-semibold text-brand-deep">Marketplace</p>
           <Link className="block hover:text-brand-green" to="/products">
             Browse catalogue
-          </Link>
-          <Link className="block hover:text-brand-green" to="/affiliate">
-            Partner program
           </Link>
           <Link className="block hover:text-brand-green" to="/checkout">
             Checkout

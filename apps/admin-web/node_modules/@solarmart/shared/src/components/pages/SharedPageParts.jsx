@@ -19,7 +19,7 @@ export function ProductGrid({
   items,
   loading,
   emptyTitle = "No products yet",
-  emptyCopy = "The marketplace is now database-driven. Add products from the admin dashboard and they will appear here automatically.",
+  emptyCopy = "No products are available right now. Please check back soon or contact support for help.",
   gridClassName = "grid gap-4 sm:grid-cols-2 xl:grid-cols-4",
 }) {
   if (loading) {

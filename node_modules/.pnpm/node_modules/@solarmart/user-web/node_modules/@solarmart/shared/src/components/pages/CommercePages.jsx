@@ -1,17 +1,14 @@
 import { useEffect, useState } from "react";
 import { Link, useNavigate, useParams, useSearchParams } from "react-router-dom";
-import { useAuth } from "../../context/AuthContext";
 import { useStore } from "../../context/StoreContext";
-import { apiFetch } from "../../lib/api";
 import { EmptyState, OrderSummary, CheckoutField } from "./SharedPageParts";
 import { CheckoutStepper } from "../commerce-ui";
+import { company, formatNaira } from "../../site";
 
 export function CheckoutPage() {
-  const { cart, totals, referralCode } = useStore();
+  const { cart, totals } = useStore();
   const [status, setStatus] = useState({ type: "", message: "" });
   const [loading, setLoading] = useState(false);
-  const [createAccount, setCreateAccount] = useState(false);
-  const [password, setPassword] = useState("");
   const [form, setForm] = useState({
     fullName: "",
     phone: "",
@@ -26,21 +23,14 @@ export function CheckoutPage() {
     setStatus({ type: "", message: "" });
 
     try {
-      const data = await apiFetch("/api/store?action=checkout", {
-        method: "POST",
-        body: JSON.stringify({
-          customer: form,
-          items: cart,
-          referralCode,
-          createAccount,
-          password: createAccount ? password : undefined,
-        }),
-      });
-
-      setStatus({ type: "success", message: data.message });
-      window.location.href = data.paymentUrl;
+      const orderLines = cart
+        .map((item) => `${item.quantity} x ${item.name} (${formatNaira(item.price)})`)
+        .join("; ");
+      const text = `Hello ${company.name}, I want to place an order: ${orderLines}. Total: ${formatNaira(totals.total)}. My details: Name ${form.fullName}, Phone ${form.phone}, Email ${form.email}, Address ${form.address}, City ${form.city}.`;
+      window.location.href = `https://wa.me/${company.whatsappNumber}?text=${encodeURIComponent(text)}`;
+      setStatus({ type: "success", message: "Opening WhatsApp to confirm your order." });
     } catch (error) {
-      setStatus({ type: "error", message: error.message });
+      setStatus({ type: "error", message: error.message || "Unable to open WhatsApp." });
     } finally {
       setLoading(false);
     }
@@ -50,7 +40,7 @@ export function CheckoutPage() {
     return (
       <EmptyState
         title="Your cart is empty"
-        copy="Add products before attempting checkout."
+        copy="Add products before placing an order."
         actionLabel="Browse products"
         actionTo="/products"
       />
@@ -64,9 +54,9 @@ export function CheckoutPage() {
         <div className="grid gap-6 lg:grid-cols-[1.05fr_0.95fr]">
           <form className="section-card space-y-5 p-5 sm:p-8" onSubmit={handleSubmit}>
             <div>
-              <span className="eyebrow">Checkout</span>
+              <span className="eyebrow">Order</span>
               <h1 className="mt-4 text-2xl font-bold text-brand-deep sm:text-3xl">
-                Place your solar order
+                Confirm your solar order
               </h1>
             </div>
             <CheckoutField label="Full name" value={form.fullName} onChange={(value) => setForm((current) => ({ ...current, fullName: value }))} required />
@@ -74,18 +64,6 @@ export function CheckoutPage() {
             <CheckoutField label="Email" type="email" value={form.email} onChange={(value) => setForm((current) => ({ ...current, email: value }))} required />
             <CheckoutField label="Address" value={form.address} onChange={(value) => setForm((current) => ({ ...current, address: value }))} required />
             <CheckoutField label="City / State" value={form.city} onChange={(value) => setForm((current) => ({ ...current, city: value }))} required />
-            <label className="flex items-center gap-3 rounded-2xl bg-brand-cream px-4 py-3 text-sm text-brand-slate">
-              <input type="checkbox" checked={createAccount} onChange={(event) => setCreateAccount(event.target.checked)} />
-              Create an account after checkout
-            </label>
-            {createAccount ? (
-              <CheckoutField label="Set password" type="password" value={password} onChange={setPassword} required />
-            ) : null}
-            {referralCode ? (
-              <p className="rounded-2xl bg-brand-green/10 px-4 py-3 text-sm text-brand-green">
-                Affiliate referral applied: {referralCode}
-              </p>
-            ) : null}
             {status.message ? (
               <p
                 className={`rounded-2xl px-4 py-3 text-sm ${
@@ -96,7 +74,7 @@ export function CheckoutPage() {
               </p>
             ) : null}
             <button type="submit" disabled={loading} className="button-primary w-full disabled:opacity-60">
-              {loading ? "Processing..." : "Proceed to payment"}
+              {loading ? "Processing..." : "Place order via WhatsApp"}
             </button>
           </form>
           <OrderSummary subtotal={totals.subtotal} delivery={totals.delivery} total={totals.total} />

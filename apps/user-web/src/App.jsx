@@ -1,14 +1,9 @@
 import { useEffect, useState } from "react";
 import { Route, Routes } from "react-router-dom";
 import {
-  AffiliatePage,
-  AuthPage,
   AuthProvider,
-  CalculatorPage,
   CartPage,
   CheckoutPage,
-  CheckoutSuccessPage,
-  DashboardPage,
   Footer,
   HomePage,
   MobileStickyBar,
@@ -16,7 +11,6 @@ import {
   Navbar,
   ProductDetailPage,
   ProductsPage,
-  ReferralLandingPage,
   ScrollToTop,
   SplashCard,
   StoreProvider,
@@ -63,13 +57,6 @@ function App() {
                 <Route path="/products/:slug" element={<ProductDetailPage />} />
                 <Route path="/cart" element={<CartPage />} />
                 <Route path="/checkout" element={<CheckoutPage />} />
-                <Route path="/checkout/success" element={<CheckoutSuccessPage />} />
-                <Route path="/dashboard" element={<DashboardPage />} />
-                <Route path="/affiliate" element={<AffiliatePage />} />
-                <Route path="/login" element={<AuthPage mode="login" />} />
-                <Route path="/register" element={<AuthPage mode="register" />} />
-                <Route path="/calculator" element={<CalculatorPage />} />
-                <Route path="/ref/:affiliateCode" element={<ReferralLandingPage />} />
               </Routes>
             </main>
             <Footer />

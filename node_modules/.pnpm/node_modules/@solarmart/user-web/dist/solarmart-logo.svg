@@ -1,0 +1,37 @@
+<svg width="760" height="300" viewBox="0 0 760 300" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="760" height="300" fill="transparent"/>
+  <g transform="translate(24 18)">
+    <text x="0" y="150" fill="#22C55E" font-family="Arial Black, Arial, Helvetica, sans-serif" font-size="120" font-weight="800" font-style="italic">Solar</text>
+    <text x="188" y="258" fill="#22C55E" font-family="Arial Black, Arial, Helvetica, sans-serif" font-size="120" font-weight="800" font-style="italic">Mart</text>
+    <g transform="translate(520 36)">
+      <circle cx="54" cy="54" r="32" fill="#22C55E"/>
+      <g stroke="#22C55E" stroke-width="6" stroke-linecap="round">
+        <path d="M54 6V18"/>
+        <path d="M54 90V102"/>
+        <path d="M6 54H18"/>
+        <path d="M90 54H102"/>
+        <path d="M20 20L28 28"/>
+        <path d="M80 80L88 88"/>
+        <path d="M20 88L28 80"/>
+        <path d="M80 28L88 20"/>
+      </g>
+      <g transform="translate(0 94)">
+        <rect x="0" y="0" width="118" height="84" rx="10" fill="#22C55E"/>
+        <g fill="#052E16">
+          <rect x="12" y="10" width="16" height="16" rx="2"/>
+          <rect x="34" y="10" width="16" height="16" rx="2"/>
+          <rect x="56" y="10" width="16" height="16" rx="2"/>
+          <rect x="78" y="10" width="16" height="16" rx="2"/>
+          <rect x="12" y="32" width="16" height="16" rx="2"/>
+          <rect x="34" y="32" width="16" height="16" rx="2"/>
+          <rect x="56" y="32" width="16" height="16" rx="2"/>
+          <rect x="78" y="32" width="16" height="16" rx="2"/>
+          <rect x="12" y="54" width="16" height="16" rx="2"/>
+          <rect x="34" y="54" width="16" height="16" rx="2"/>
+          <rect x="56" y="54" width="16" height="16" rx="2"/>
+          <rect x="78" y="54" width="16" height="16" rx="2"/>
+        </g>
+      </g>
+    </g>
+  </g>
+</svg>
