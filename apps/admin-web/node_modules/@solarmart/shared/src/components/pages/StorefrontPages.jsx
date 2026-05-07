@@ -80,9 +80,9 @@ export function HomePage() {
       <section className="py-4 sm:py-6">
         <div className="section-shell space-y-5">
           <SectionHeader
-            eyebrow="Power solutions"
-            title="Shop by power need"
-            copy="Tap into the solar category that matches your current power need."
+            eyebrow="Quick browse"
+            title="Shop by category"
+            copy="Find solar kits, inverters, batteries, panels, and accessories in one place."
           />
           <div className="hide-scrollbar flex gap-3 overflow-x-auto pb-2">
             {storeCategories.map((item) => (
@@ -95,37 +95,70 @@ export function HomePage() {
       <section className="py-4 sm:py-6">
         <div className="section-shell space-y-5">
           <SectionHeader
-            eyebrow="Featured power solutions"
-            title="Home & Business Solar Kits"
-            copy="Clear prices, stronger value, and solar-ready options for buyers who want to move fast."
-            actionLabel="View all products"
+            eyebrow="Top products"
+            title="Best-selling solar kits and components"
+            copy="Browse the most popular items that customers order first."
+            actionLabel="View catalogue"
             actionTo="/products"
           />
           <ProductGrid
             items={featuredProducts}
             loading={loading}
             emptyTitle="No featured products yet"
-            emptyCopy="Add inventory from the admin dashboard to populate the storefront."
+            emptyCopy="Add products to your catalogue to display them here."
             gridClassName="grid gap-5 sm:grid-cols-2 2xl:grid-cols-4"
           />
         </div>
       </section>
 
+      <section className="py-4 sm:py-6">
+        <div className="section-shell space-y-5">
+          <SectionHeader
+            eyebrow="How it works"
+            title="Order solar in three easy steps"
+            copy="Browse, choose, and confirm your order with WhatsApp support."
+          />
+          <div className="grid gap-4 sm:grid-cols-3">
+            {[
+              {
+                title: "Browse products",
+                copy: "Select the right solar kit, inverter, or battery from our catalogue.",
+              },
+              {
+                title: "Add to cart",
+                copy: "Review your chosen products, then move to checkout with a single tap.",
+              },
+              {
+                title: "Confirm by WhatsApp",
+                copy: "Send your order link and get fast confirmation from our sales team.",
+              },
+            ].map((item) => (
+              <div key={item.title} className="rounded-[1.75rem] border border-brand-slate/10 bg-white/80 p-6 shadow-soft">
+                <p className="text-sm font-semibold uppercase tracking-[0.18em] text-brand-green">
+                  {item.title}
+                </p>
+                <p className="mt-4 text-sm leading-7 text-brand-slate/75">{item.copy}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
       <HorizontalScroller
-        eyebrow="Generator replacement packages"
-        title="Generator Replacement Packages"
-        copy="A fast horizontal rail for the strongest value items."
-        actionLabel="See all products"
+        eyebrow="Best seller deals"
+        title="Popular products customers choose"
+        copy="Ready to ship solar systems and components with strong value."
+        actionLabel="Shop all products"
         actionTo="/products"
         items={bestDeals}
         renderItem={(item) => <ProductCard product={item} compact />}
       />
 
       <HorizontalScroller
-        eyebrow="Most installed systems"
-        title="Most Installed Systems"
-        copy="Home and office bundles that make it easy to choose the right system."
-        actionLabel="Open kits"
+        eyebrow="Recommended systems"
+        title="Solar kits for homes and small businesses"
+        copy="Browse our most trusted solar kits with fast delivery support."
+        actionLabel="See kits"
         actionTo="/products?category=Solar%20Kits"
         items={recommendedKits}
         renderItem={(item) => <ProductCard product={item} compact />}
@@ -136,10 +169,10 @@ export function HomePage() {
           <div className="rounded-[2.25rem] bg-brand-deep p-6 text-white shadow-soft sm:p-8">
             <span className="eyebrow border-white/10 bg-white/10 text-brand-yellow">Ready to order</span>
             <h2 className="mt-4 text-3xl font-extrabold sm:text-4xl">
-              Get expert help choosing the right solar kit for your home.
+              Confirm your order today with WhatsApp support.
             </h2>
             <p className="mt-4 max-w-2xl text-sm leading-7 text-white/75 sm:text-base">
-              Browse SolarMart products, compare prices, and contact our support team to place your order.
+              Shop SolarMart products, add them to your cart, and complete your order with a quick WhatsApp message.
             </p>
             <div className="mt-6 flex flex-col gap-3 sm:flex-row">
               <Link to="/products" className="button-primary w-full sm:w-auto">
@@ -151,22 +184,22 @@ export function HomePage() {
                 rel="noreferrer"
                 className="button-secondary w-full sm:w-auto"
               >
-                Contact support
+                Order on WhatsApp
               </a>
             </div>
           </div>
           <div className="grid gap-4 sm:grid-cols-3 lg:grid-cols-1">
             <TrustBadge
               title="Warranty included"
-              copy="Clear product information and after-sales confidence."
+              copy="Clear product details and after-sales confidence."
             />
             <TrustBadge
-              title="Installation available"
-              copy="We help customers move from quote to setup with less friction."
+              title="Installation help"
+              copy="We support customers from order to setup."
             />
             <TrustBadge
-              title="Nationwide delivery"
-              copy="A storefront experience built for fast, reliable solar orders."
+              title="Fast delivery"
+              copy="Nigeria-wide shipping for popular solar products."
             />
           </div>
         </div>

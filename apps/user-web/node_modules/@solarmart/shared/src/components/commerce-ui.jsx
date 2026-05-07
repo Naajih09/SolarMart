@@ -1,4 +1,3 @@
-import { useEffect, useMemo, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import { useStore } from "../context/StoreContext";
 import { formatNaira, whatsappMessage } from "../site";
@@ -9,36 +8,6 @@ export const storeCategories = [
   { label: "Batteries", emoji: "🔋", to: "/products?category=Batteries" },
   { label: "Solar Panels", emoji: "◫", to: "/products?category=Solar%20Panels" },
   { label: "Accessories", emoji: "⌁", to: "/products?category=Accessories" },
-];
-
-const heroSlides = [
-  {
-    eyebrow: "SolarMart official store",
-    title: "Solar kits that reduce generator spend and power interruptions.",
-    copy:
-      "Shop complete systems built for Nigerian homes, shops, and offices with straightforward pricing and trusted support.",
-    primary: { label: "Shop solar products", to: "/products" },
-    secondary: { label: "Contact support", to: "/products" },
-    image: "/solarmart-hero-1.svg",
-  },
-  {
-    eyebrow: "Clean power solutions",
-    title: "Choose a solar system that fits your daily load and budget.",
-    copy:
-      "Browse ready-to-ship kits, inverters, batteries, and panels with clear pricing and product details.",
-    primary: { label: "Browse catalogue", to: "/products" },
-    secondary: { label: "View best sellers", to: "/products" },
-    image: "/solarmart-hero-2.svg",
-  },
-  {
-    eyebrow: "Ready to order",
-    title: "Fast support and ordering for every solar purchase.",
-    copy:
-      "Contact SolarMart directly, add items to your cart, and confirm your purchase with local support.",
-    primary: { label: "Shop catalogue", to: "/products" },
-    secondary: { label: "Get in touch", to: "/products" },
-    image: "/solarmart-hero-3.svg",
-  },
 ];
 
 const defaultPowerOptions = ["All", "3kVA", "5kVA", "10kVA", "410W", "550W"];
@@ -93,125 +62,51 @@ export function CategoryIcon({ label, emoji, to }) {
 }
 
 export function HeroCarousel() {
-  const trackRef = useRef(null);
-  const [active, setActive] = useState(0);
-
-  useEffect(() => {
-    const track = trackRef.current;
-    if (!track) {
-      return undefined;
-    }
-
-    const onScroll = () => {
-      const next = Math.round(track.scrollLeft / track.clientWidth);
-      setActive(Math.max(0, Math.min(heroSlides.length - 1, next)));
-    };
-
-    track.addEventListener("scroll", onScroll, { passive: true });
-    return () => track.removeEventListener("scroll", onScroll);
-  }, []);
-
-  function scrollToIndex(index) {
-    const track = trackRef.current;
-    if (!track) {
-      return;
-    }
-
-    track.scrollTo({ left: index * track.clientWidth, behavior: "smooth" });
-    setActive(index);
-  }
-
-  function shift(direction) {
-    const next = Math.max(0, Math.min(heroSlides.length - 1, active + direction));
-    scrollToIndex(next);
-  }
-
   return (
     <section className="overflow-hidden">
-      <div className="section-shell py-4 sm:py-6">
-        <div className="relative overflow-hidden rounded-[2.25rem] border border-white/70 bg-brand-deep shadow-soft">
-          <div
-            ref={trackRef}
-            className="hide-scrollbar flex snap-x snap-mandatory overflow-x-auto scroll-smooth"
-          >
-            {heroSlides.map((slide) => (
-              <div key={slide.title} className="min-w-full snap-start">
-                <div className="grid gap-0 lg:grid-cols-[1.05fr_0.95fr]">
-                  <div className="flex flex-col justify-center gap-6 p-6 text-white sm:p-8 lg:p-12">
-                    <span className="eyebrow w-fit border-white/10 bg-white/10 text-brand-yellow">
-                      {slide.eyebrow}
-                    </span>
-                    <div className="space-y-4">
-                      <h1 className="max-w-2xl text-3xl font-extrabold leading-tight sm:text-5xl">
-                        {slide.title}
-                      </h1>
-                      <p className="max-w-2xl text-sm leading-7 text-white/75 sm:text-base sm:leading-8">
-                        {slide.copy}
-                      </p>
-                    </div>
-                    <div className="flex flex-col gap-3 sm:flex-row">
-                      <Link to={slide.primary.to} className="button-primary w-full sm:w-auto">
-                        {slide.primary.label}
-                      </Link>
-                      <Link to={slide.secondary.to} className="button-secondary w-full sm:w-auto">
-                        {slide.secondary.label}
-                      </Link>
-                    </div>
-                  </div>
-                  <div className="relative min-h-[260px] overflow-hidden lg:min-h-[520px]">
-                    <img
-                      src={slide.image}
-                      alt={slide.title}
-                      className="h-full w-full object-cover"
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-t from-brand-deep/85 via-brand-deep/25 to-transparent" />
-                    <div className="absolute bottom-4 left-4 right-4 grid gap-3 sm:grid-cols-2">
-                      <div className="rounded-[1.5rem] border border-white/10 bg-white/10 p-4 text-white backdrop-blur">
-                        <p className="text-xs uppercase tracking-[0.2em] text-brand-yellow">Nationwide delivery</p>
-                        <p className="mt-2 text-sm leading-6 text-white/80">Built for homes, offices, and shops that need power without delay.</p>
-                      </div>
-                      <div className="rounded-[1.5rem] border border-white/10 bg-white/10 p-4 text-white backdrop-blur">
-                        <p className="text-xs uppercase tracking-[0.2em] text-brand-yellow">Paystack secure payment</p>
-                        <p className="mt-2 text-sm leading-6 text-white/80">Installation guidance and after-sales help from SolarMart.</p>
-                      </div>
-                    </div>
-                  </div>
-                </div>
+      <div className="section-shell py-8 sm:py-10">
+        <div className="grid gap-8 overflow-hidden rounded-[2.5rem] border border-white/70 bg-brand-deep shadow-soft lg:grid-cols-[1.1fr_0.9fr]">
+          <div className="p-8 sm:p-12">
+            <span className="eyebrow w-fit rounded-full border border-white/20 bg-white/10 px-3 py-2 text-brand-yellow">
+              SolarMart official store
+            </span>
+            <h1 className="mt-6 max-w-3xl text-4xl font-extrabold leading-tight text-white sm:text-5xl lg:text-6xl">
+              Solar kits, batteries, inverters and panels — shipped across Nigeria.
+            </h1>
+            <p className="mt-6 max-w-2xl text-base leading-7 text-white/75 sm:text-lg">
+              Shop ready-made solar systems with clear pricing, fast support, and direct WhatsApp order confirmation.
+            </p>
+            <div className="mt-8 flex flex-col gap-3 sm:flex-row">
+              <Link to="/products" className="button-primary w-full sm:w-auto">
+                Shop catalogue
+              </Link>
+              <a
+                href={`https://wa.me/${company.whatsappNumber}?text=${whatsappMessage}`}
+                target="_blank"
+                rel="noreferrer"
+                className="button-secondary w-full sm:w-auto"
+              >
+                Order on WhatsApp
+              </a>
+            </div>
+            <div className="mt-10 grid gap-4 sm:grid-cols-2">
+              <div className="rounded-[1.75rem] border border-white/10 bg-white/10 p-5 text-white backdrop-blur">
+                <p className="font-semibold text-brand-yellow">Fast delivery</p>
+                <p className="mt-2 text-sm leading-6 text-white/80">Nationwide shipping and installation support for solar orders.</p>
               </div>
-            ))}
+              <div className="rounded-[1.75rem] border border-white/10 bg-white/10 p-5 text-white backdrop-blur">
+                <p className="font-semibold text-brand-yellow">WhatsApp shopping</p>
+                <p className="mt-2 text-sm leading-6 text-white/80">Confirm stock, pricing, and delivery directly with our team.</p>
+              </div>
+            </div>
           </div>
 
-          <div className="absolute bottom-4 right-4 flex items-center gap-2">
-            <button
-              type="button"
-              onClick={() => shift(-1)}
-              className="flex h-10 w-10 items-center justify-center rounded-full border border-white/15 bg-white/10 text-white backdrop-blur transition hover:bg-white/20"
-              aria-label="Previous slide"
-            >
-              ←
-            </button>
-            <button
-              type="button"
-              onClick={() => shift(1)}
-              className="flex h-10 w-10 items-center justify-center rounded-full border border-white/15 bg-white/10 text-white backdrop-blur transition hover:bg-white/20"
-              aria-label="Next slide"
-            >
-              →
-            </button>
-          </div>
-
-          <div className="absolute bottom-4 left-4 flex gap-2">
-            {heroSlides.map((slide, index) => (
-              <button
-                key={slide.title}
-                type="button"
-                onClick={() => scrollToIndex(index)}
-                className={`h-2.5 rounded-full transition ${
-                  index === active ? "w-8 bg-brand-yellow" : "w-2.5 bg-white/40"
-                }`}
-                aria-label={`Go to slide ${index + 1}`}
-              />
-            ))}
+          <div className="relative min-h-[320px] overflow-hidden bg-[radial-gradient(circle_at_top_right,_rgba(255,255,255,0.16),_transparent_45%)]">
+            <img
+              src="/solarmart-hero-1.svg"
+              alt="SolarMart store hero"
+              className="h-full w-full object-cover object-center"
+            />
           </div>
         </div>
       </div>
