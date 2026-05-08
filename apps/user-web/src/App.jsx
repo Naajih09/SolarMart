@@ -11,35 +11,12 @@ import {
   ProductDetailPage,
   ProductsPage,
   ScrollToTop,
-  SplashCard,
   StoreProvider,
   WhatsAppFloat,
 } from "@solarmart/shared";
 
 function App() {
   const [cartOpen, setCartOpen] = useState(false);
-  const [splashOpen, setSplashOpen] = useState(false);
-
-  useEffect(() => {
-    if (typeof window === "undefined") {
-      return undefined;
-    }
-
-    const dismissed = window.localStorage.getItem("solarmart-splash-dismissed") === "1";
-    if (dismissed) {
-      return undefined;
-    }
-
-    const timer = window.setTimeout(() => setSplashOpen(true), 350);
-    return () => window.clearTimeout(timer);
-  }, []);
-
-  function closeSplash() {
-    setSplashOpen(false);
-    if (typeof window !== "undefined") {
-      window.localStorage.setItem("solarmart-splash-dismissed", "1");
-    }
-  }
 
   return (
     <StoreProvider>
@@ -57,7 +34,6 @@ function App() {
             </main>
             <Footer />
             <MiniCartDrawer open={cartOpen} onClose={() => setCartOpen(false)} />
-            <SplashCard open={splashOpen} onClose={closeSplash} />
             <MobileStickyBar />
             <WhatsAppFloat />
           </div>
