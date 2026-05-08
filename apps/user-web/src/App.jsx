@@ -30,8 +30,12 @@ function App() {
         {showSplash ? (
           <div className="fixed inset-0 z-[90] flex items-center justify-center bg-white text-brand-deep">
             <div className="flex flex-col items-center gap-4 rounded-[2rem] border border-brand-slate/10 bg-white p-8 shadow-soft">
-              <div className="flex h-24 w-24 items-center justify-center rounded-full bg-brand-green text-4xl font-black text-white shadow-soft">
-                SM
+              <div className="flex h-24 w-24 items-center justify-center rounded-full bg-brand-green shadow-soft">
+                <img
+                  src="/solarmart-logo.svg"
+                  alt="SolarMart logo"
+                  className="h-16 w-16 object-contain"
+                />
               </div>
               <p className="text-sm uppercase tracking-[0.3em] text-brand-slate/60">SolarMart</p>
             </div>
