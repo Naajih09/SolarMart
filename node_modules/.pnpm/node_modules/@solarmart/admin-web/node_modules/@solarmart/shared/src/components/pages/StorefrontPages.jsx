@@ -1,11 +1,10 @@
 import { useEffect, useMemo, useState } from "react";
 import { Link, useNavigate, useParams, useLocation } from "react-router-dom";
 import { useStore } from "../../context/StoreContext";
-import { brands, products } from "../../store/catalog";
+import { products } from "../../store/catalog";
 import { company, formatNaira, getRecommendation, whatsappMessage } from "../../site";
 import {
   CategoryIcon,
-  FilterSidebar,
   HeroCarousel,
   HorizontalScroller,
   ProductCard,
@@ -22,46 +21,14 @@ function useProducts() {
   return { items, loading };
 }
 
-function normalize(text) {
-  return String(text || "").toLowerCase();
-}
-
 function inferPowerRating(product) {
-  const value = normalize(`${product.name} ${product.sku}`);
+  const value = String(`${product.name} ${product.sku}`.toLowerCase());
   if (value.includes("10kva")) return "10kVA";
   if (value.includes("5kva")) return "5kVA";
   if (value.includes("3kva")) return "3kVA";
   if (value.includes("550w")) return "550W";
   if (value.includes("410w")) return "410W";
   return "All";
-}
-
-function buildVisibleProducts(items, filters) {
-  const query = normalize(filters.q).trim();
-  const filtered = items.filter((product) => {
-    const haystack = normalize(
-      [product.name, product.shortDescription, product.description, product.brand, product.category, product.sku].join(" "),
-    );
-
-    const matchesQuery = !query || haystack.includes(query);
-    const matchesCategory = filters.category === "All" || product.category === filters.category;
-    const matchesBrand = filters.brand === "All" || product.brand === filters.brand;
-    const matchesPower = filters.powerRating === "All" || inferPowerRating(product) === filters.powerRating;
-    const matchesPrice = Number(product.price || 0) <= Number(filters.maxPrice || 0);
-
-    return matchesQuery && matchesCategory && matchesBrand && matchesPower && matchesPrice;
-  });
-
-  const sorted = [...filtered];
-  if (filters.sort === "price-low") {
-    sorted.sort((a, b) => Number(a.price || 0) - Number(b.price || 0));
-  } else if (filters.sort === "price-high") {
-    sorted.sort((a, b) => Number(b.price || 0) - Number(a.price || 0));
-  } else if (filters.sort === "popular") {
-    sorted.sort((a, b) => Number(b.rating || 0) - Number(a.rating || 0) || Number(b.stock || 0) - Number(a.stock || 0));
-  }
-
-  return sorted;
 }
 
 export function HomePage() {
@@ -209,93 +176,28 @@ export function HomePage() {
 }
 
 export function ProductsPage() {
-  const location = useLocation();
-  const [filters, setFilters] = useState({
-    q: "",
-    category: "All",
-    brand: "All",
-    powerRating: "All",
-    maxPrice: 6000000,
-    sort: "popular",
-  });
   const { items, loading } = useProducts();
-
-  useEffect(() => {
-    const params = new URLSearchParams(location.search);
-    const query = params.get("q") || "";
-    setFilters((current) => (current.q === query ? current : { ...current, q: query }));
-  }, [location.search]);
-
-  const maxPrice = useMemo(() => {
-    const ceiling = items.reduce((max, item) => Math.max(max, Number(item.price || 0)), 0);
-    return Math.max(ceiling, 6000000);
-  }, [items]);
-
-  useEffect(() => {
-    setFilters((current) =>
-      current.maxPrice === 6000000 && maxPrice !== 6000000
-        ? { ...current, maxPrice }
-        : current,
-    );
-  }, [maxPrice]);
-
-  const visibleProducts = useMemo(() => buildVisibleProducts(items, filters), [filters, items]);
 
   return (
     <section className="py-10 sm:py-12 lg:py-16">
       <div className="section-shell space-y-8">
         <div className="space-y-4">
-          <span className="eyebrow">Power solutions</span>
+          <span className="eyebrow">Shop all products</span>
           <h1 className="text-3xl font-extrabold text-brand-deep sm:text-5xl">
-            Browse SolarMart power solutions
+            Browse the full SolarMart catalogue
           </h1>
           <p className="max-w-3xl text-sm leading-7 text-brand-slate/75 sm:text-base">
-            Use the filters to find the best solar kit, inverter, battery, or accessory for your
-            budget and power demand.
+            Discover all available solar kits, inverters, batteries, panels, and accessories in one place.
           </p>
         </div>
 
-        <div className="grid gap-6 xl:grid-cols-[300px_1fr]">
-          <FilterSidebar
-            filters={filters}
-            onChange={(patch) => setFilters((current) => ({ ...current, ...patch }))}
-            brands={brands}
-            maxPrice={maxPrice}
-            powerOptions={["All", "3kVA", "5kVA", "10kVA", "410W", "550W"]}
-          />
-
-          <div className="space-y-5">
-            <div className="flex flex-col gap-3 rounded-[2rem] border border-white/70 bg-white/80 p-4 shadow-soft sm:flex-row sm:items-center sm:justify-between">
-              <label className="flex flex-1 items-center gap-3 rounded-full border border-brand-slate/10 bg-brand-cream px-4 py-3">
-                <span className="text-lg text-brand-slate/50">⌕</span>
-                <input
-                  value={filters.q}
-                  onChange={(event) => setFilters((current) => ({ ...current, q: event.target.value }))}
-                  placeholder="Search products, brands, or SKUs"
-                  className="w-full bg-transparent text-sm outline-none"
-                />
-              </label>
-              <select
-                value={filters.sort}
-                onChange={(event) => setFilters((current) => ({ ...current, sort: event.target.value }))}
-                className="rounded-full border border-brand-slate/10 bg-white px-4 py-3 text-sm font-semibold outline-none"
-              >
-                <option value="popular">Sort: popularity</option>
-                <option value="price-low">Sort: price low to high</option>
-                <option value="price-high">Sort: price high to low</option>
-                <option value="newest">Sort: newest</option>
-              </select>
-            </div>
-
-            <ProductGrid
-              items={visibleProducts}
-              loading={loading}
-              emptyTitle="No products match your filters"
-              emptyCopy="Adjust the filters or add more official SolarMart products from the admin dashboard."
-              gridClassName="grid gap-5 sm:grid-cols-2 2xl:grid-cols-3"
-            />
-          </div>
-        </div>
+        <ProductGrid
+          items={items}
+          loading={loading}
+          emptyTitle="No products available"
+          emptyCopy="Add products to your catalogue to show them here."
+          gridClassName="grid gap-5 sm:grid-cols-2 2xl:grid-cols-3"
+        />
       </div>
     </section>
   );
