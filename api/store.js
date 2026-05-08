@@ -197,7 +197,12 @@ export default async function handler(req, res) {
 
       const { customer, items, referralCode, createAccount, password } = body;
       const totals = computeTotals(items);
-      const callbackUrl = process.env.PAYSTACK_CALLBACK_URL || "https://solar-mart.vercel.app/checkout/success";
+      const appUrl = process.env.APP_URL?.replace(/\/$/, "");
+      const callbackUrl =
+        process.env.PAYSTACK_CALLBACK_URL ||
+        (appUrl ? `${appUrl}/checkout/success` : process.env.NODE_ENV === "development"
+          ? "http://localhost:5173/checkout/success"
+          : "https://solar-mart.vercel.app/checkout/success");
 
       if (createAccount) {
         if (!password || String(password).length < 8) {

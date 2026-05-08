@@ -25,6 +25,7 @@ export {
   ProductDetailPage,
   CartPage,
   CheckoutPage,
+  CheckoutSuccessPage,
 } from "./components/MarketplacePages";
 export { EmptyState } from "./components/pages/SharedPageParts";
 export { StoreProvider, useStore } from "./context/StoreContext";
