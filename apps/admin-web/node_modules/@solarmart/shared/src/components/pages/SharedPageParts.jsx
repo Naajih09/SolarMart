@@ -84,7 +84,7 @@ export function StatsCard({ label, value }) {
   );
 }
 
-export function OrderSummary({ subtotal, delivery, total }) {
+export function OrderSummary({ subtotal, delivery, total, actionTo = "/checkout", actionLabel = "Continue to checkout" }) {
   return (
     <aside className="glass-panel h-fit p-5 lg:sticky lg:top-24">
       <p className="text-lg font-bold text-brand-deep sm:text-xl">Order summary</p>
@@ -102,9 +102,11 @@ export function OrderSummary({ subtotal, delivery, total }) {
           <span>{formatNaira(total)}</span>
         </div>
       </div>
-      <Link to="/checkout" className="button-primary mt-6 w-full">
-        Continue to checkout
-      </Link>
+      {actionTo && actionLabel ? (
+        <Link to={actionTo} className="button-primary mt-6 w-full">
+          {actionLabel}
+        </Link>
+      ) : null}
     </aside>
   );
 }

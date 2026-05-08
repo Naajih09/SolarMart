@@ -3,12 +3,14 @@ import { Link, useNavigate, useParams, useSearchParams } from "react-router-dom"
 import { useStore } from "../../context/StoreContext";
 import { EmptyState, OrderSummary, CheckoutField } from "./SharedPageParts";
 import { CheckoutStepper } from "../commerce-ui";
+import { apiFetch } from "../../lib/api";
 import { company, formatNaira } from "../../site";
 
 export function CheckoutPage() {
-  const { cart, totals } = useStore();
+  const { cart, totals, referralCode } = useStore();
   const [status, setStatus] = useState({ type: "", message: "" });
   const [loading, setLoading] = useState(false);
+  const [paystackLoading, setPaystackLoading] = useState(false);
   const [form, setForm] = useState({
     fullName: "",
     phone: "",
@@ -33,6 +35,36 @@ export function CheckoutPage() {
       setStatus({ type: "error", message: error.message || "Unable to open WhatsApp." });
     } finally {
       setLoading(false);
+    }
+  }
+
+  async function handlePaystack(event) {
+    event.preventDefault();
+    setPaystackLoading(true);
+    setStatus({ type: "", message: "" });
+
+    const formElement = event.target.closest("form");
+    if (formElement && !formElement.reportValidity()) {
+      setPaystackLoading(false);
+      return;
+    }
+
+    try {
+      const body = {
+        customer: form,
+        items: cart,
+        referralCode,
+      };
+      const response = await apiFetch("/api/store?action=checkout", {
+        method: "POST",
+        body: JSON.stringify(body),
+      });
+      setStatus({ type: "success", message: "Redirecting to secure Paystack payment." });
+      window.location.href = response.paymentUrl;
+    } catch (error) {
+      setStatus({ type: "error", message: error.message || "Unable to start Paystack payment." });
+    } finally {
+      setPaystackLoading(false);
     }
   }
 
@@ -73,11 +105,24 @@ export function CheckoutPage() {
                 {status.message}
               </p>
             ) : null}
-            <button type="submit" disabled={loading} className="button-primary w-full disabled:opacity-60">
-              {loading ? "Processing..." : "Place order via WhatsApp"}
-            </button>
+            <div className="grid gap-3">
+              <button type="submit" disabled={loading || paystackLoading} className="button-secondary w-full disabled:opacity-60">
+                {loading ? "Preparing WhatsApp..." : "Confirm via WhatsApp"}
+              </button>
+              <button
+                type="button"
+                onClick={handlePaystack}
+                disabled={loading || paystackLoading}
+                className="button-primary w-full disabled:opacity-60"
+              >
+                {paystackLoading ? "Redirecting to Paystack..." : "Pay with Card"}
+              </button>
+            </div>
+            <p className="text-sm leading-6 text-brand-slate/70">
+              Use secure Paystack checkout or confirm your order instantly on WhatsApp.
+            </p>
           </form>
-          <OrderSummary subtotal={totals.subtotal} delivery={totals.delivery} total={totals.total} />
+          <OrderSummary subtotal={totals.subtotal} delivery={totals.delivery} total={totals.total} actionTo={null} actionLabel={null} />
         </div>
       </div>
     </section>

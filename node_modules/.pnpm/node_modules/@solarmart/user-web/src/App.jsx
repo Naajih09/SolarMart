@@ -17,10 +17,26 @@ import {
 
 function App() {
   const [cartOpen, setCartOpen] = useState(false);
+  const [showSplash, setShowSplash] = useState(true);
+
+  useEffect(() => {
+    const splashTimer = window.setTimeout(() => setShowSplash(false), 550);
+    return () => window.clearTimeout(splashTimer);
+  }, []);
 
   return (
     <StoreProvider>
       <div className="min-h-screen bg-brand-cream pb-32 text-brand-slate md:pb-0">
+        {showSplash ? (
+          <div className="fixed inset-0 z-[90] flex items-center justify-center bg-white text-brand-deep">
+            <div className="flex flex-col items-center gap-4 rounded-[2rem] border border-brand-slate/10 bg-white p-8 shadow-soft">
+              <div className="flex h-24 w-24 items-center justify-center rounded-full bg-brand-green text-4xl font-black text-white shadow-soft">
+                SM
+              </div>
+              <p className="text-sm uppercase tracking-[0.3em] text-brand-slate/60">SolarMart</p>
+            </div>
+          </div>
+        ) : null}
         <ScrollToTop />
         <Navbar onOpenCart={() => setCartOpen(true)} />
         <main>
