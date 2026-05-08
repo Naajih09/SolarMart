@@ -201,7 +201,7 @@ export default async function handler(req, res) {
       const callbackUrl =
         process.env.PAYSTACK_CALLBACK_URL ||
         (appUrl ? `${appUrl}/checkout/success` : process.env.NODE_ENV === "development"
-          ? "http://localhost:5173/checkout/success"
+          ? "http://localhost:5174/checkout/success"
           : "https://solar-mart.vercel.app/checkout/success");
 
       if (createAccount) {
