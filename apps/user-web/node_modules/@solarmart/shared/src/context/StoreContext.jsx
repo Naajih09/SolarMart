@@ -98,6 +98,11 @@ export function StoreProvider({ children }) {
 
   function clearCart() {
     setCart([]);
+    try {
+      window.localStorage.removeItem(CART_KEY);
+    } catch {
+      // ignore localStorage removal errors
+    }
   }
 
   const totals = useMemo(() => {
