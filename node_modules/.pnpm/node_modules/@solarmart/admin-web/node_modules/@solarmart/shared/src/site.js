@@ -1,9 +1,9 @@
 export const company = {
   name: "SolarMart",
   tagline: "Modern solar store for homes, offices, and approved partners",
-  phone: "09074260871",
-  email: "Naajihibnsiraj@gmail.com",
-  whatsappNumber: "2349074260871",
+  phone: "08037125037",
+  email: "info@solarmart.ng",
+  whatsappNumber: "2348037125037",
   address: "Lagos, Nigeria",
 };
 
