@@ -6,7 +6,6 @@ import { formatNaira, getRecommendation } from "../../site";
 import {
   CategoryIcon,
   FilterSidebar,
-  HeroCarousel,
   HorizontalScroller,
   ProductCard,
   SectionHeader,
@@ -43,8 +42,6 @@ export function HomePage() {
 
   return (
     <>
-      <HeroCarousel />
-
       <section className="py-4 sm:py-6">
         <div className="section-shell space-y-5">
           <SectionHeader
