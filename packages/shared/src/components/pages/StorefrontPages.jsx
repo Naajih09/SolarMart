@@ -145,7 +145,7 @@ export function ProductsPage() {
             SolarMart catalogue
           </h1>
           <p className="max-w-2xl text-sm leading-6 text-brand-slate/70">
-            Pick a product, order on WhatsApp, or continue to secure payment.
+            Pick a product, add it to cart, or order directly on WhatsApp.
           </p>
         </div>
 

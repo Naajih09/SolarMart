@@ -1,4 +1,4 @@
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { useStore } from "../context/StoreContext";
 import { company, formatNaira, whatsappMessage } from "../site";
 
@@ -138,7 +138,6 @@ export function HorizontalScroller({
 
 export function ProductCard({ product, badge, compact = false, onQuickView }) {
   const { addToCart } = useStore();
-  const navigate = useNavigate();
   const resolvedBadge =
     badge ||
     product.badge ||
@@ -146,11 +145,6 @@ export function ProductCard({ product, badge, compact = false, onQuickView }) {
   const orderMessage = encodeURIComponent(
     `Hi, I want to order: ${product.name} - ${formatNaira(product.price)}`,
   );
-
-  function payNow() {
-    addToCart(product, 1);
-    navigate("/checkout");
-  }
 
   return (
     <article className="group flex h-full flex-col overflow-hidden rounded-2xl border border-brand-slate/10 bg-white shadow-sm transition duration-300 hover:-translate-y-0.5 hover:shadow-soft">
@@ -200,8 +194,8 @@ export function ProductCard({ product, badge, compact = false, onQuickView }) {
           >
             Order on WhatsApp
           </a>
-          <button type="button" onClick={payNow} className="button-primary min-h-12 w-full px-4">
-            Pay Now
+          <button type="button" onClick={() => addToCart(product)} className="button-primary min-h-12 w-full px-4">
+            Add to Cart
           </button>
         </div>
       </div>
@@ -300,7 +294,7 @@ export function FilterSidebar({ filters, onChange, maxPrice = 6000000, brands = 
 export function CheckoutStepper({ step = 1 }) {
   const steps = [
     { key: "shipping", label: "Shipping" },
-    { key: "payment", label: "Payment" },
+    { key: "confirm", label: "Confirm" },
     { key: "confirmation", label: "Confirmation" },
   ];
 
@@ -544,7 +538,7 @@ export function SplashCard({ open, onClose }) {
               <TrustBadge title="Installation available" copy="Book system setup with your order." />
               <TrustBadge title="Nationwide delivery" copy="Reach customers across Nigeria." />
               <TrustBadge title="Warranty included" copy="Buy with clearer after-sales confidence." />
-              <TrustBadge title="Paystack secure payment" copy="Checkout safely with trusted payments." />
+              <TrustBadge title="WhatsApp ordering" copy="Confirm stock, delivery, and payment with our team." />
             </div>
             <div className="flex flex-col gap-3 pt-2 sm:flex-row">
               <Link to="/products" onClick={onClose} className="button-primary w-full sm:w-auto">

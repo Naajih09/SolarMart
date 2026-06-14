@@ -1,16 +1,14 @@
 import { useEffect, useState } from "react";
-import { Link, useNavigate, useParams, useSearchParams } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import { useStore } from "../../context/StoreContext";
 import { EmptyState, OrderSummary, CheckoutField } from "./SharedPageParts";
 import { CheckoutStepper } from "../commerce-ui";
-import { apiFetch } from "../../lib/api";
 import { company, formatNaira } from "../../site";
 
 export function CheckoutPage() {
-  const { cart, totals, referralCode } = useStore();
+  const { cart, totals } = useStore();
   const [status, setStatus] = useState({ type: "", message: "" });
   const [loading, setLoading] = useState(false);
-  const [paystackLoading, setPaystackLoading] = useState(false);
   const [form, setForm] = useState({
     fullName: "",
     phone: "",
@@ -35,36 +33,6 @@ export function CheckoutPage() {
       setStatus({ type: "error", message: error.message || "Unable to open WhatsApp." });
     } finally {
       setLoading(false);
-    }
-  }
-
-  async function handlePaystack(event) {
-    event.preventDefault();
-    setPaystackLoading(true);
-    setStatus({ type: "", message: "" });
-
-    const formElement = event.target.closest("form");
-    if (formElement && !formElement.reportValidity()) {
-      setPaystackLoading(false);
-      return;
-    }
-
-    try {
-      const body = {
-        customer: form,
-        items: cart,
-        referralCode,
-      };
-      const response = await apiFetch("/api/store?action=checkout", {
-        method: "POST",
-        body: JSON.stringify(body),
-      });
-      setStatus({ type: "success", message: "Redirecting to secure Paystack payment." });
-      window.location.href = response.paymentUrl;
-    } catch (error) {
-      setStatus({ type: "error", message: error.message || "Unable to start Paystack payment." });
-    } finally {
-      setPaystackLoading(false);
     }
   }
 
@@ -106,20 +74,12 @@ export function CheckoutPage() {
               </p>
             ) : null}
             <div className="grid gap-3">
-              <button type="submit" disabled={loading || paystackLoading} className="button-secondary w-full disabled:opacity-60">
+              <button type="submit" disabled={loading} className="button-primary w-full disabled:opacity-60">
                 {loading ? "Preparing WhatsApp..." : "Confirm via WhatsApp"}
-              </button>
-              <button
-                type="button"
-                onClick={handlePaystack}
-                disabled={loading || paystackLoading}
-                className="button-primary w-full disabled:opacity-60"
-              >
-                {paystackLoading ? "Redirecting to Paystack..." : "Pay with Card"}
               </button>
             </div>
             <p className="text-sm leading-6 text-brand-slate/70">
-              Use secure Paystack checkout or confirm your order instantly on WhatsApp.
+              We will confirm stock, delivery, installation, and payment details on WhatsApp.
             </p>
           </form>
           <OrderSummary subtotal={totals.subtotal} delivery={totals.delivery} total={totals.total} actionTo={null} actionLabel={null} />
@@ -130,34 +90,7 @@ export function CheckoutPage() {
 }
 
 export function CheckoutSuccessPage() {
-  const [params] = useSearchParams();
   const navigate = useNavigate();
-  const { clearCart } = useStore();
-  const [state, setState] = useState({ loading: true, message: "Verifying payment..." });
-
-  useEffect(() => {
-    const reference = params.get("reference") || params.get("trxref");
-
-    if (!reference) {
-      setState({ loading: false, message: "Missing payment reference." });
-      return;
-    }
-
-    apiFetch("/api/store?action=verify", {
-      method: "POST",
-      body: JSON.stringify({ reference }),
-    })
-      .then((data) => {
-        clearCart();
-        setState({
-          loading: false,
-          message: `Payment verified. Order ${data.orderNumber} has been created successfully.`,
-        });
-      })
-      .catch((error) => {
-        setState({ loading: false, message: error.message });
-      });
-  }, [clearCart, params]);
 
   return (
     <section className="py-12 lg:py-16">
@@ -165,18 +98,18 @@ export function CheckoutSuccessPage() {
         <div className="mx-auto max-w-2xl space-y-6">
           <CheckoutStepper step={3} />
           <div className="section-card p-6 text-center sm:p-8">
-            <h1 className="text-3xl font-bold text-brand-deep">Checkout status</h1>
-            <p className="mt-4 text-base leading-7 text-brand-slate/75">{state.message}</p>
-            {!state.loading ? (
-              <div className="mt-6 flex flex-col gap-3 sm:flex-row sm:justify-center">
-                <button type="button" onClick={() => navigate("/dashboard")} className="button-primary">
-                  Go to dashboard
-                </button>
-                <Link to="/products" className="button-secondary">
-                  Continue shopping
-                </Link>
-              </div>
-            ) : null}
+            <h1 className="text-3xl font-bold text-brand-deep">Order sent to WhatsApp</h1>
+            <p className="mt-4 text-base leading-7 text-brand-slate/75">
+              Our team will confirm availability, delivery, installation, and payment details directly with you.
+            </p>
+            <div className="mt-6 flex flex-col gap-3 sm:flex-row sm:justify-center">
+              <button type="button" onClick={() => navigate("/products")} className="button-primary">
+                Continue shopping
+              </button>
+              <Link to="/cart" className="button-secondary">
+                Back to cart
+              </Link>
+            </div>
           </div>
         </div>
       </div>
