@@ -21,8 +21,8 @@ export const products = [
     availability: "In stock",
     stock: 9,
     images: [
-      "/solarmart-product-placeholder.svg",
-      "/solarmart-product-placeholder.svg",
+      "https://itelsolar.com/wp-content/uploads/2025/12/Itel-PowerCore-3K-Pro-3KW-24V-IP54-Smart-Inverter-2.56kWh-Lithium-Battery-1770W-High-Power-Solar-Kit.webp",
+      "https://itelsolar.com/wp-content/uploads/2025/12/Industrial-Grade-Protection-IP54-Rated-3KW-Inverter-2.56kWh-Lithium-Battery-solar-installed-setup.jpg",
     ],
     shortDescription: "A dependable starter kit for homes that need clean backup power.",
     description:
@@ -48,7 +48,7 @@ export const products = [
     availability: "In stock",
     stock: 14,
     images: [
-      "/solarmart-product-placeholder.svg",
+      "https://itelsolar.com/wp-content/uploads/2025/07/itel-6kW-Hybrid-Solar-Inverter-%E2%80%93-Dual-AC-Output-for-Homes-Clinics-48V-IP54-Rated-2.jpg",
     ],
     shortDescription: "Efficient inverter for medium energy demand and expandable solar systems.",
     description:
@@ -74,7 +74,7 @@ export const products = [
     availability: "In stock",
     stock: 18,
     images: [
-      "/solarmart-product-placeholder.svg",
+      "https://itelsolar.com/wp-content/uploads/2025/04/itel-5120Wh-Lithium-Battery-Wall-Mounted-48V-100Ah-5.12kWh-IPW-51100.webp",
     ],
     shortDescription: "Long-life storage battery for homes and business installations.",
     description:
@@ -100,7 +100,7 @@ export const products = [
     availability: "In stock",
     stock: 52,
     images: [
-      "/solarmart-product-placeholder.svg",
+      "https://itelsolar.com/wp-content/uploads/2025/04/iTel-550W-Solar-Panel-21.29-module-efficiency-with-144-N-Type-Mono-cells-11.jpg",
     ],
     shortDescription: "High-output panel for efficient rooftop and ground installations.",
     description:
@@ -126,7 +126,7 @@ export const products = [
     availability: "In stock",
     stock: 7,
     images: [
-      "/solarmart-product-placeholder.svg",
+      "https://itelsolar.com/wp-content/uploads/2025/08/iTel-8kWh-All-in-One-Solar-Power-Kit-3.6kW-Hybrid-Inverter-8%C3%97550W-Panels-%E2%80%93-with-Installation.jpg",
     ],
     shortDescription: "A balanced solar package for family homes and efficient office use.",
     description:
@@ -152,7 +152,7 @@ export const products = [
     availability: "Limited stock",
     stock: 4,
     images: [
-      "/solarmart-product-placeholder.svg",
+      "https://itelsolar.com/wp-content/uploads/2025/12/itelSolar-PowerMax-16K-The-Ultimate-16kWh-6kW-Whole-Home-Energy-System-with-Installation-6kw-Hybrid-inverter-16kwh-Lithium-Battery-12unit-of-590W-Panels-580x580.webp",
     ],
     shortDescription: "A larger system for demanding homes, offices, and commercial use.",
     description:
@@ -178,7 +178,7 @@ export const products = [
     availability: "In stock",
     stock: 21,
     images: [
-      "/solarmart-product-placeholder.svg",
+      "https://itelsolar.com/wp-content/uploads/2025/04/itel-410W-Monocrystalline-Solar-Panel-%E2%80%93-Rooftop-Solar-for-Homes-Shops-Offices-High-Efficiency-IP68-Rated-1.jpg",
     ],
     shortDescription: "Mounting kit for safe and tidy rooftop solar installation.",
     description:
