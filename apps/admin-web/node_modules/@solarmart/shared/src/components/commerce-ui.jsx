@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useStore } from "../context/StoreContext";
 import { company, formatNaira, whatsappMessage } from "../site";
 
@@ -64,21 +64,21 @@ export function CategoryIcon({ label, emoji, to }) {
 export function HeroCarousel() {
   return (
     <section className="overflow-hidden">
-      <div className="section-shell py-8 sm:py-10">
-        <div className="grid gap-8 overflow-hidden rounded-[2.5rem] border border-white/70 bg-brand-deep shadow-soft lg:grid-cols-[1.1fr_0.9fr]">
-          <div className="p-8 sm:p-12">
+      <div className="section-shell py-4 sm:py-6">
+        <div className="grid gap-0 overflow-hidden rounded-[1.75rem] border border-white/70 bg-brand-deep shadow-soft lg:grid-cols-[0.95fr_1.05fr]">
+          <div className="p-6 sm:p-8 lg:p-10">
             <span className="eyebrow w-fit rounded-full border border-white/20 bg-white/10 px-3 py-2 text-brand-yellow">
               SolarMart official store
             </span>
-            <h1 className="mt-6 max-w-3xl text-4xl font-extrabold leading-tight text-white sm:text-5xl lg:text-6xl">
+            <h1 className="mt-5 max-w-3xl text-3xl font-extrabold leading-tight text-white sm:text-5xl">
               Solar kits, batteries, inverters and panels — shipped across Nigeria.
             </h1>
-            <p className="mt-6 max-w-2xl text-base leading-7 text-white/75 sm:text-lg">
+            <p className="mt-4 max-w-xl text-sm leading-6 text-white/75 sm:text-base">
               Shop ready-made solar systems with clear pricing, fast support, and direct WhatsApp order confirmation.
             </p>
-            <div className="mt-8 flex flex-col gap-3 sm:flex-row">
+            <div className="mt-6 flex flex-col gap-3 sm:flex-row">
               <Link to="/products" className="button-primary w-full sm:w-auto">
-                Shop catalogue
+                Shop now
               </Link>
               <a
                 href={`https://wa.me/${company.whatsappNumber}?text=${whatsappMessage}`}
@@ -89,19 +89,9 @@ export function HeroCarousel() {
                 Order on WhatsApp
               </a>
             </div>
-            <div className="mt-10 grid gap-4 sm:grid-cols-2">
-              <div className="rounded-[1.75rem] border border-white/10 bg-white/10 p-5 text-white backdrop-blur">
-                <p className="font-semibold text-brand-yellow">Fast delivery</p>
-                <p className="mt-2 text-sm leading-6 text-white/80">Nationwide shipping and installation support for solar orders.</p>
-              </div>
-              <div className="rounded-[1.75rem] border border-white/10 bg-white/10 p-5 text-white backdrop-blur">
-                <p className="font-semibold text-brand-yellow">WhatsApp shopping</p>
-                <p className="mt-2 text-sm leading-6 text-white/80">Confirm stock, pricing, and delivery directly with our team.</p>
-              </div>
-            </div>
           </div>
 
-          <div className="relative min-h-[320px] overflow-hidden bg-[radial-gradient(circle_at_top_right,_rgba(255,255,255,0.16),_transparent_45%)]">
+          <div className="relative min-h-[260px] overflow-hidden bg-brand-cream sm:min-h-[340px]">
             <img
               src="/solarmart-hero-1.svg"
               alt="SolarMart store hero"
@@ -148,54 +138,71 @@ export function HorizontalScroller({
 
 export function ProductCard({ product, badge, compact = false, onQuickView }) {
   const { addToCart } = useStore();
+  const navigate = useNavigate();
   const resolvedBadge =
     badge ||
     product.badge ||
     (product.stock <= 4 ? "Limited stock" : product.rating >= 4.8 ? "Best seller" : "New");
+  const orderMessage = encodeURIComponent(
+    `Hi, I want to order: ${product.name} - ${formatNaira(product.price)}`,
+  );
+
+  function payNow() {
+    addToCart(product, 1);
+    navigate("/checkout");
+  }
 
   return (
-    <article className="group flex h-full flex-col overflow-hidden rounded-[2rem] border border-white/70 bg-white/90 shadow-soft transition duration-300 hover:-translate-y-1">
-      <div className="relative overflow-hidden">
+    <article className="group flex h-full flex-col overflow-hidden rounded-2xl border border-brand-slate/10 bg-white shadow-sm transition duration-300 hover:-translate-y-0.5 hover:shadow-soft">
+      <Link to={`/products/${product.slug}`} className="relative block overflow-hidden bg-brand-cream">
         {product.images?.[0] ? (
           <img
             src={product.images[0]}
             alt={product.name}
             className={`w-full object-cover transition duration-500 group-hover:scale-[1.03] ${
-              compact ? "aspect-[4/3]" : "aspect-[4/3]"
+              compact ? "aspect-square" : "aspect-square"
             }`}
           />
         ) : (
-          <div className="flex aspect-[4/3] items-center justify-center bg-brand-cream px-6 text-center text-sm font-semibold text-brand-slate/65">
+          <div className="flex aspect-square items-center justify-center bg-brand-cream px-6 text-center text-sm font-semibold text-brand-slate/65">
             Product image unavailable
           </div>
         )}
-        <div className="absolute left-4 top-4 flex items-center gap-2">
-          <span className="rounded-full bg-brand-deep px-3 py-1 text-xs font-semibold text-white">
+        <div className="absolute left-3 top-3 flex items-center gap-2">
+          <span className="rounded-full bg-white/95 px-3 py-1 text-xs font-semibold text-brand-deep shadow-sm">
             {resolvedBadge}
           </span>
         </div>
-      </div>
-      <div className="flex flex-1 flex-col space-y-4 p-4 sm:p-5">
-        <div className="space-y-2">
-          <p className="text-xs font-semibold uppercase tracking-[0.2em] text-brand-green">
+      </Link>
+      <div className="flex flex-1 flex-col gap-4 p-4">
+        <div className="min-w-0 space-y-2">
+          <p className="truncate text-xs font-semibold uppercase tracking-[0.16em] text-brand-green">
             {product.category}
           </p>
-          <h3 className="text-lg font-bold text-brand-deep">{product.name}</h3>
-          <p className="text-sm leading-6 text-brand-slate/75">{product.shortDescription}</p>
+          <Link to={`/products/${product.slug}`} className="block">
+            <h3 className="line-clamp-2 min-h-[3.25rem] text-lg font-extrabold leading-snug text-brand-deep">
+              {product.name}
+            </h3>
+          </Link>
         </div>
-        <div className="flex items-end justify-between gap-3">
-          <p className="text-lg font-extrabold text-brand-deep">{formatNaira(product.price)}</p>
-          <p className="text-xs font-semibold uppercase tracking-[0.18em] text-brand-slate/60">
+        <div className="flex items-center justify-between gap-3">
+          <p className="text-xl font-extrabold text-brand-deep">{formatNaira(product.price)}</p>
+          <p className="shrink-0 text-xs font-semibold text-brand-slate/60">
             {product.availability || "In stock"}
           </p>
         </div>
-        <div className="mt-auto grid gap-3">
-          <button type="button" onClick={() => addToCart(product)} className="button-primary w-full">
-            Add to cart
+        <div className="mt-auto grid gap-2 sm:grid-cols-2">
+          <a
+            href={`https://wa.me/${company.whatsappNumber}?text=${orderMessage}`}
+            target="_blank"
+            rel="noreferrer"
+            className="button-secondary min-h-12 w-full px-4 text-center"
+          >
+            Order on WhatsApp
+          </a>
+          <button type="button" onClick={payNow} className="button-primary min-h-12 w-full px-4">
+            Pay Now
           </button>
-          <Link to={`/products/${product.slug}`} className="button-secondary w-full">
-            View details
-          </Link>
         </div>
       </div>
     </article>
@@ -206,10 +213,10 @@ export function FilterSidebar({ filters, onChange, maxPrice = 6000000, brands = 
   const categories = ["All", "Solar Kits", "Inverters", "Batteries", "Solar Panels", "Accessories"];
 
   return (
-    <aside className="section-card space-y-5 p-5 lg:sticky lg:top-24">
+    <aside className="space-y-4 rounded-2xl border border-brand-slate/10 bg-white p-4 shadow-sm lg:sticky lg:top-24">
       <div>
-        <p className="text-sm font-semibold uppercase tracking-[0.2em] text-brand-green">Filters</p>
-        <h3 className="mt-2 text-xl font-bold text-brand-deep">Refine products</h3>
+        <p className="text-xs font-semibold uppercase tracking-[0.18em] text-brand-green">Filters</p>
+        <h3 className="mt-1 text-lg font-bold text-brand-deep">Refine</h3>
       </div>
 
       <div className="space-y-3">
@@ -223,7 +230,7 @@ export function FilterSidebar({ filters, onChange, maxPrice = 6000000, brands = 
               className={`rounded-full px-4 py-2 text-sm font-semibold transition ${
                 filters.category === category
                   ? "bg-brand-deep text-white"
-                  : "border border-brand-slate/10 bg-white/80 text-brand-slate hover:border-brand-green hover:text-brand-green"
+                  : "border border-brand-slate/10 bg-white text-brand-slate hover:border-brand-green hover:text-brand-green"
               }`}
             >
               {category}
@@ -237,7 +244,7 @@ export function FilterSidebar({ filters, onChange, maxPrice = 6000000, brands = 
         <select
           value={filters.brand}
           onChange={(event) => onChange({ brand: event.target.value })}
-          className="w-full rounded-2xl border border-brand-slate/10 bg-brand-cream px-4 py-3 outline-none focus:border-brand-green"
+          className="w-full rounded-xl border border-brand-slate/10 bg-brand-cream px-3 py-2.5 text-sm outline-none focus:border-brand-green"
         >
           <option value="All">All brands</option>
           {brands.map((brand) => (
@@ -253,7 +260,7 @@ export function FilterSidebar({ filters, onChange, maxPrice = 6000000, brands = 
         <select
           value={filters.powerRating}
           onChange={(event) => onChange({ powerRating: event.target.value })}
-          className="w-full rounded-2xl border border-brand-slate/10 bg-brand-cream px-4 py-3 outline-none focus:border-brand-green"
+          className="w-full rounded-xl border border-brand-slate/10 bg-brand-cream px-3 py-2.5 text-sm outline-none focus:border-brand-green"
         >
           {powerOptions.map((rating) => (
             <option key={rating} value={rating}>
@@ -282,7 +289,7 @@ export function FilterSidebar({ filters, onChange, maxPrice = 6000000, brands = 
       <button
         type="button"
         onClick={() => onChange({ category: "All", brand: "All", powerRating: "All", maxPrice })}
-        className="button-secondary w-full"
+        className="button-secondary w-full px-4"
       >
         Reset filters
       </button>

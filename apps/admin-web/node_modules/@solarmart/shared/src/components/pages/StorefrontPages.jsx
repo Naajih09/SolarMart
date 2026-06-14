@@ -1,10 +1,11 @@
 import { useEffect, useMemo, useState } from "react";
 import { Link, useNavigate, useParams, useLocation } from "react-router-dom";
 import { useStore } from "../../context/StoreContext";
-import { products } from "../../store/catalog";
-import { company, formatNaira, getRecommendation, whatsappMessage } from "../../site";
+import { brands, products } from "../../store/catalog";
+import { formatNaira, getRecommendation } from "../../site";
 import {
   CategoryIcon,
+  FilterSidebar,
   HeroCarousel,
   HorizontalScroller,
   ProductCard,
@@ -33,7 +34,7 @@ function inferPowerRating(product) {
 
 export function HomePage() {
   const { items, loading } = useProducts();
-  const featuredProducts = items.slice(0, 8);
+  const featuredProducts = items.slice(0, 12);
   const bestDeals = useMemo(
     () => [...items].sort((a, b) => Number(a.price || 0) - Number(b.price || 0)).slice(0, 8),
     [items],
@@ -47,9 +48,26 @@ export function HomePage() {
       <section className="py-4 sm:py-6">
         <div className="section-shell space-y-5">
           <SectionHeader
-            eyebrow="Quick browse"
-            title="Shop by category"
-            copy="Find solar kits, inverters, batteries, panels, and accessories in one place."
+            eyebrow="Shop now"
+            title="Popular solar products"
+            actionLabel="View all"
+            actionTo="/products"
+          />
+          <ProductGrid
+            items={featuredProducts}
+            loading={loading}
+            emptyTitle="No featured products yet"
+            emptyCopy="Add products to your catalogue to display them here."
+            gridClassName="grid gap-4 sm:grid-cols-2 lg:grid-cols-3"
+          />
+        </div>
+      </section>
+
+      <section className="py-4 sm:py-6">
+        <div className="section-shell space-y-5">
+          <SectionHeader
+            eyebrow="Categories"
+            title="Browse the store"
           />
           <div className="hide-scrollbar flex gap-3 overflow-x-auto pb-2">
             {storeCategories.map((item) => (
@@ -59,62 +77,9 @@ export function HomePage() {
         </div>
       </section>
 
-      <section className="py-4 sm:py-6">
-        <div className="section-shell space-y-5">
-          <SectionHeader
-            eyebrow="Top products"
-            title="Best-selling solar kits and components"
-            copy="Browse the most popular items that customers order first."
-            actionLabel="View catalogue"
-            actionTo="/products"
-          />
-          <ProductGrid
-            items={featuredProducts}
-            loading={loading}
-            emptyTitle="No featured products yet"
-            emptyCopy="Add products to your catalogue to display them here."
-            gridClassName="grid gap-5 sm:grid-cols-2 2xl:grid-cols-4"
-          />
-        </div>
-      </section>
-
-      <section className="py-4 sm:py-6">
-        <div className="section-shell space-y-5">
-          <SectionHeader
-            eyebrow="How it works"
-            title="Order solar in three easy steps"
-            copy="Browse, choose, and confirm your order with WhatsApp support."
-          />
-          <div className="grid gap-4 sm:grid-cols-3">
-            {[
-              {
-                title: "Browse products",
-                copy: "Select the right solar kit, inverter, or battery from our catalogue.",
-              },
-              {
-                title: "Add to cart",
-                copy: "Review your chosen products, then move to checkout with a single tap.",
-              },
-              {
-                title: "Confirm by WhatsApp",
-                copy: "Send your order link and get fast confirmation from our sales team.",
-              },
-            ].map((item) => (
-              <div key={item.title} className="rounded-[1.75rem] border border-brand-slate/10 bg-white/80 p-6 shadow-soft">
-                <p className="text-sm font-semibold uppercase tracking-[0.18em] text-brand-green">
-                  {item.title}
-                </p>
-                <p className="mt-4 text-sm leading-7 text-brand-slate/75">{item.copy}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
       <HorizontalScroller
-        eyebrow="Best seller deals"
-        title="Popular products customers choose"
-        copy="Ready to ship solar systems and components with strong value."
+        eyebrow="Best deals"
+        title="Popular picks"
         actionLabel="Shop all products"
         actionTo="/products"
         items={bestDeals}
@@ -122,82 +87,86 @@ export function HomePage() {
       />
 
       <HorizontalScroller
-        eyebrow="Recommended systems"
-        title="Solar kits for homes and small businesses"
-        copy="Browse our most trusted solar kits with fast delivery support."
+        eyebrow="Solar kits"
+        title="Ready-made systems"
         actionLabel="See kits"
         actionTo="/products?category=Solar%20Kits"
         items={recommendedKits}
         renderItem={(item) => <ProductCard product={item} compact />}
       />
-
-      <section className="py-4 sm:py-6">
-        <div className="section-shell grid gap-5 lg:grid-cols-[1.1fr_0.9fr]">
-          <div className="rounded-[2.25rem] bg-brand-deep p-6 text-white shadow-soft sm:p-8">
-            <span className="eyebrow border-white/10 bg-white/10 text-brand-yellow">Ready to order</span>
-            <h2 className="mt-4 text-3xl font-extrabold sm:text-4xl">
-              Confirm your order today with WhatsApp support.
-            </h2>
-            <p className="mt-4 max-w-2xl text-sm leading-7 text-white/75 sm:text-base">
-              Shop SolarMart products, add them to your cart, and complete your order with a quick WhatsApp message.
-            </p>
-            <div className="mt-6 flex flex-col gap-3 sm:flex-row">
-              <Link to="/products" className="button-primary w-full sm:w-auto">
-                Shop solar products
-              </Link>
-              <a
-                href={`https://wa.me/${company.whatsappNumber}?text=${whatsappMessage}`}
-                target="_blank"
-                rel="noreferrer"
-                className="button-secondary w-full sm:w-auto"
-              >
-                Order on WhatsApp
-              </a>
-            </div>
-          </div>
-          <div className="grid gap-4 sm:grid-cols-3 lg:grid-cols-1">
-            <TrustBadge
-              title="Warranty included"
-              copy="Clear product details and after-sales confidence."
-            />
-            <TrustBadge
-              title="Installation help"
-              copy="We support customers from order to setup."
-            />
-            <TrustBadge
-              title="Fast delivery"
-              copy="Nigeria-wide shipping for popular solar products."
-            />
-          </div>
-        </div>
-      </section>
     </>
   );
 }
 
 export function ProductsPage() {
   const { items, loading } = useProducts();
+  const location = useLocation();
+  const params = new URLSearchParams(location.search);
+  const initialCategory = params.get("category") || "All";
+  const maxPrice = useMemo(
+    () => Math.max(...items.map((item) => Number(item.price || 0)), 0),
+    [items],
+  );
+  const [filters, setFilters] = useState({
+    category: initialCategory,
+    brand: "All",
+    powerRating: "All",
+    maxPrice,
+  });
+
+  useEffect(() => {
+    setFilters((current) => ({
+      ...current,
+      category: initialCategory,
+      maxPrice,
+    }));
+  }, [initialCategory, maxPrice]);
+
+  function updateFilters(next) {
+    setFilters((current) => ({ ...current, ...next }));
+  }
+
+  const filteredItems = useMemo(
+    () =>
+      items.filter((product) => {
+        const matchesCategory = filters.category === "All" || product.category === filters.category;
+        const matchesBrand = filters.brand === "All" || product.brand === filters.brand;
+        const matchesPower = filters.powerRating === "All" || inferPowerRating(product) === filters.powerRating;
+        const matchesPrice = Number(product.price || 0) <= Number(filters.maxPrice || maxPrice);
+
+        return matchesCategory && matchesBrand && matchesPower && matchesPrice;
+      }),
+    [filters, items, maxPrice],
+  );
 
   return (
-    <section className="py-10 sm:py-12 lg:py-16">
-      <div className="section-shell space-y-8">
+    <section className="py-6 sm:py-8 lg:py-10">
+      <div className="section-shell space-y-6">
         <div className="space-y-4">
           <span className="eyebrow">Shop all products</span>
-          <h1 className="text-3xl font-extrabold text-brand-deep sm:text-5xl">
-            Browse the full SolarMart catalogue
+          <h1 className="text-3xl font-extrabold text-brand-deep sm:text-4xl">
+            SolarMart catalogue
           </h1>
-          <p className="max-w-3xl text-sm leading-7 text-brand-slate/75 sm:text-base">
-            Discover all available solar kits, inverters, batteries, panels, and accessories in one place.
+          <p className="max-w-2xl text-sm leading-6 text-brand-slate/70">
+            Pick a product, order on WhatsApp, or continue to secure payment.
           </p>
         </div>
 
-        <ProductGrid
-          items={items}
-          loading={loading}
-          emptyTitle="No products available"
-          emptyCopy="Add products to your catalogue to show them here."
-          gridClassName="grid gap-5 sm:grid-cols-2 2xl:grid-cols-3"
-        />
+        <div className="grid gap-5 lg:grid-cols-[260px_1fr]">
+          <FilterSidebar
+            filters={filters}
+            onChange={updateFilters}
+            maxPrice={maxPrice}
+            brands={brands}
+          />
+          <ProductGrid
+            items={filteredItems}
+            loading={loading}
+            emptyTitle="No products found"
+            emptyCopy="Try another category, brand, power rating, or price range."
+            gridClassName="grid gap-4 sm:grid-cols-2 xl:grid-cols-3"
+          />
+        </div>
       </div>
     </section>
   );
