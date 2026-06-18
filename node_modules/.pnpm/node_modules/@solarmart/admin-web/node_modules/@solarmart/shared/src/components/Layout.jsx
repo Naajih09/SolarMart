@@ -43,7 +43,7 @@ export function Navbar({ onOpenCart = () => {} }) {
       <div className="section-shell py-3 sm:py-4">
         <div className="flex items-center gap-3">
                 <Link to="/" className="flex min-w-0 items-center gap-3">
-          <img src="/solarmart-logo.svg" alt="SolarMart" className="h-10 w-auto sm:h-11" />
+          <img src="/solarmart-logo.jpg" alt="SolarMart" className="h-10 w-auto sm:h-11" />
         </Link>
 
         <form onSubmit={submitSearch} className="hidden flex-1 lg:block">
@@ -201,7 +201,6 @@ export function WhatsAppFloat() {
     </a>
   );
 }
-
 
 
 

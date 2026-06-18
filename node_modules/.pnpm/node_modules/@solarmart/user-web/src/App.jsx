@@ -33,7 +33,7 @@ function App() {
             <div className="flex flex-col items-center gap-6 rounded-[2rem] border border-brand-slate/10 bg-white p-8 shadow-soft">
               <div className="flex h-24 w-24 items-center justify-center rounded-full bg-brand-green shadow-soft">
                 <img
-                  src="/solarmart-logo.svg"
+                  src="/solarmart-logo.jpg"
                   alt="SolarMart logo"
                   className="h-16 w-16 object-contain"
                 />
