@@ -42,10 +42,12 @@ export function HomePage() {
 
   return (
     <>
-      <section className="py-4 sm:py-6">
-        <div className="section-shell space-y-5">
+      <HeroCarousel />
+
+      <section className="py-6 sm:py-8 lg:py-10">
+        <div className="section-shell space-y-6">
           <SectionHeader
-            eyebrow="Shop now"
+            eyebrow="Featured deals"
             title="Popular solar products"
             actionLabel="View all"
             actionTo="/products"
@@ -55,18 +57,15 @@ export function HomePage() {
             loading={loading}
             emptyTitle="No featured products yet"
             emptyCopy="Add products to your catalogue to display them here."
-            gridClassName="grid gap-4 sm:grid-cols-2 lg:grid-cols-3"
+            gridClassName="grid gap-4 sm:grid-cols-2 xl:grid-cols-4"
           />
         </div>
       </section>
 
-      <section className="py-4 sm:py-6">
-        <div className="section-shell space-y-5">
-          <SectionHeader
-            eyebrow="Categories"
-            title="Browse the store"
-          />
-          <div className="hide-scrollbar flex gap-3 overflow-x-auto pb-2">
+      <section className="py-6 sm:py-8 lg:py-10">
+        <div className="section-shell space-y-6">
+          <SectionHeader eyebrow="Browse categories" title="Shop top categories" />
+          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
             {storeCategories.map((item) => (
               <CategoryIcon key={item.label} {...item} />
             ))}

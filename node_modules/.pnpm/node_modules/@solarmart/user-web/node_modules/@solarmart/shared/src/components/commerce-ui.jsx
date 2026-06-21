@@ -63,18 +63,18 @@ export function CategoryIcon({ label, emoji, to }) {
 
 export function HeroCarousel() {
   return (
-    <section className="overflow-hidden">
-      <div className="section-shell py-4 sm:py-6">
-        <div className="grid gap-0 overflow-hidden rounded-[1.75rem] border border-white/70 bg-brand-deep shadow-soft lg:grid-cols-[0.95fr_1.05fr]">
+    <section className="overflow-hidden bg-slate-50 py-8 sm:py-10">
+      <div className="section-shell">
+        <div className="grid gap-6 overflow-hidden rounded-[2rem] border border-slate-200 bg-white shadow-sm lg:grid-cols-[0.95fr_1.05fr]">
           <div className="p-6 sm:p-8 lg:p-10">
-            <span className="eyebrow w-fit rounded-full border border-white/20 bg-white/10 px-3 py-2 text-brand-yellow">
-              SolarMart official store
+            <span className="eyebrow w-fit rounded-full border border-slate-200 bg-slate-100 px-3 py-2 text-slate-700">
+              SolarMart marketplace
             </span>
-            <h1 className="mt-5 max-w-3xl text-3xl font-extrabold leading-tight text-white sm:text-5xl">
-              Solar kits, batteries, inverters and panels — shipped across Nigeria.
+            <h1 className="mt-5 max-w-3xl text-3xl font-extrabold tracking-tight text-slate-900 sm:text-5xl">
+              Shop solar products with the clarity and convenience you expect.
             </h1>
-            <p className="mt-4 max-w-xl text-sm leading-6 text-white/75 sm:text-base">
-              Shop ready-made solar systems with clear pricing, fast support, and direct WhatsApp order confirmation.
+            <p className="mt-4 max-w-xl text-sm leading-7 text-slate-600 sm:text-base">
+              Find panels, batteries, inverters, and complete kits, then order directly with fast support and easy checkout.
             </p>
             <div className="mt-6 flex flex-col gap-3 sm:flex-row">
               <Link to="/products" className="button-primary w-full sm:w-auto">
@@ -89,9 +89,19 @@ export function HeroCarousel() {
                 Order on WhatsApp
               </a>
             </div>
+            <div className="mt-6 grid gap-3 sm:grid-cols-2">
+              {[
+                "Free delivery on larger orders",
+                "Easy returns and customer support",
+              ].map((text) => (
+                <div key={text} className="rounded-2xl border border-slate-200 bg-slate-50 p-4 text-sm text-slate-700">
+                  {text}
+                </div>
+              ))}
+            </div>
           </div>
 
-          <div className="relative min-h-[260px] overflow-hidden bg-brand-cream sm:min-h-[340px]">
+          <div className="relative min-h-[260px] overflow-hidden bg-slate-100 sm:min-h-[340px]">
             <img
               src="/solarmart-hero-1.svg"
               alt="SolarMart store hero"
@@ -147,8 +157,8 @@ export function ProductCard({ product, badge, compact = false, onQuickView }) {
   );
 
   return (
-    <article className="group flex h-full flex-col overflow-hidden rounded-2xl border border-brand-slate/10 bg-white shadow-sm transition duration-300 hover:-translate-y-0.5 hover:shadow-soft">
-      <Link to={`/products/${product.slug}`} className="relative block overflow-hidden bg-brand-cream">
+    <article className="group flex h-full flex-col overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm transition duration-300 hover:-translate-y-0.5 hover:shadow-md">
+      <Link to={`/products/${product.slug}`} className="relative block overflow-hidden bg-slate-100">
         {product.images?.[0] ? (
           <img
             src={product.images[0]}
@@ -158,32 +168,38 @@ export function ProductCard({ product, badge, compact = false, onQuickView }) {
             }`}
           />
         ) : (
-          <div className="flex aspect-square items-center justify-center bg-brand-cream px-6 text-center text-sm font-semibold text-brand-slate/65">
+          <div className="flex aspect-square items-center justify-center bg-slate-100 px-6 text-center text-sm font-semibold text-slate-500">
             Product image unavailable
           </div>
         )}
-        <div className="absolute left-3 top-3 flex items-center gap-2">
-          <span className="rounded-full bg-white/95 px-3 py-1 text-xs font-semibold text-brand-deep shadow-sm">
+        <div className="absolute left-3 top-3">
+          <span className="rounded-full bg-white/95 px-3 py-1 text-[11px] font-semibold text-slate-900 shadow-sm">
             {resolvedBadge}
           </span>
         </div>
       </Link>
-      <div className="flex flex-1 flex-col gap-4 p-4">
-        <div className="min-w-0 space-y-2">
-          <p className="truncate text-xs font-semibold uppercase tracking-[0.16em] text-brand-green">
-            {product.category}
-          </p>
-          <Link to={`/products/${product.slug}`} className="block">
-            <h3 className="line-clamp-2 min-h-[3.25rem] text-lg font-extrabold leading-snug text-brand-deep">
-              {product.name}
-            </h3>
-          </Link>
+      <div className="flex flex-1 flex-col gap-3 p-4">
+        <p className="truncate text-xs font-semibold uppercase tracking-[0.16em] text-slate-500">
+          {product.category}
+        </p>
+        <Link to={`/products/${product.slug}`} className="block">
+          <h3 className="line-clamp-2 min-h-[3.25rem] text-base font-semibold leading-snug text-slate-900">
+            {product.name}
+          </h3>
+        </Link>
+        <div className="flex items-center gap-2 text-sm text-slate-500">
+          {product.rating ? <span>⭐ {product.rating.toFixed(1)}</span> : <span>New arrival</span>}
+          <span className="h-1 w-1 rounded-full bg-slate-300" />
+          <span>{product.availability || "In stock"}</span>
         </div>
-        <div className="flex items-center justify-between gap-3">
-          <p className="text-xl font-extrabold text-brand-deep">{formatNaira(product.price)}</p>
-          <p className="shrink-0 text-xs font-semibold text-brand-slate/60">
-            {product.availability || "In stock"}
-          </p>
+        <div className="flex items-end justify-between gap-3">
+          <div>
+            <p className="text-xl font-extrabold text-brand-deep">{formatNaira(product.price)}</p>
+            <p className="text-xs text-slate-500">Free delivery on orders over ₦100,000</p>
+          </div>
+          <span className="rounded-full bg-amber-100 px-3 py-1 text-xs font-semibold text-amber-700">
+            {resolvedBadge}
+          </span>
         </div>
         <div className="mt-auto grid gap-2 sm:grid-cols-2">
           <a

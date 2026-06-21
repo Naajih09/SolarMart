@@ -8,8 +8,8 @@ html {
 
 body {
   overflow-x: hidden;
-  color: #1f3b2e;
-  background: linear-gradient(180deg, #f7fdf6 0%, #f1f9f1 100%);
+  color: #111827;
+  background: #f3f4f6;
 }
 
 body[data-theme="dark"] {

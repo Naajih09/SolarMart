@@ -39,69 +39,65 @@ export function Navbar({ onOpenCart = () => {} }) {
   }
 
   return (
-    <header className="sticky top-0 z-50 border-b border-white/40 bg-brand-cream/80 backdrop-blur-2xl">
-      <div className="section-shell py-3 sm:py-4">
-        <div className="flex items-center gap-3">
-                <Link to="/" className="flex min-w-0 items-center gap-3">
-          <img src="/solarmart-logo.jpg" alt="SolarMart" className="h-10 w-auto sm:h-11" />
-        </Link>
+    <header className="sticky top-0 z-50 border-b border-slate-200 bg-white/95 shadow-sm backdrop-blur-xl">
+      <div className="section-shell">
+        <div className="flex flex-col gap-3 py-3 lg:flex-row lg:items-center">
+          <div className="flex items-center gap-3">
+            <Link to="/" className="flex items-center gap-3">
+              <img src="/solarmart-logo.jpg" alt="SolarMart" className="h-10 w-auto sm:h-11" />
+              <span className="text-xl font-black tracking-tight text-brand-deep">SolarMart</span>
+            </Link>
+            <div className="hidden rounded-full border border-slate-200 bg-slate-50 px-3 py-2 text-sm font-medium text-slate-600 lg:flex">
+              Deliver to <span className="ml-2 font-semibold text-slate-900">Nigeria</span>
+            </div>
+          </div>
 
-        <form onSubmit={submitSearch} className="hidden flex-1 lg:block">
-          <label className="flex items-center gap-3 rounded-full border border-white/80 bg-white/90 px-4 py-3 shadow-[0_10px_24px_rgba(15,23,42,0.08)]">
-            <span className="text-lg text-brand-slate/50">⌕</span>
-            <input
-              value={query}
-              onChange={(event) => setQuery(event.target.value)}
-              placeholder="Search products, kits, brands..."
-              className="w-full bg-transparent text-sm outline-none placeholder:text-brand-slate/45"
-            />
-            <button type="submit" className="button-primary px-4 py-2 text-sm">
-              Search
-            </button>
-          </label>
-        </form>
+          <form onSubmit={submitSearch} className="order-3 w-full lg:order-2 lg:mx-6 lg:max-w-2xl">
+            <label className="flex items-center gap-3 rounded-full border border-slate-300 bg-slate-50 px-4 py-3 shadow-sm focus-within:border-brand-green">
+              <span className="text-xl text-slate-400">⌕</span>
+              <input
+                value={query}
+                onChange={(event) => setQuery(event.target.value)}
+                placeholder="Search products, kits, brands..."
+                className="w-full bg-transparent text-sm text-slate-900 outline-none placeholder:text-slate-400"
+              />
+              <button type="submit" className="button-primary rounded-full px-5 py-2 text-sm">
+                Search
+              </button>
+            </label>
+          </form>
 
-                                <div className="ml-auto flex items-center gap-2 lg:hidden">
-          <button
-            type="button"
-            onClick={onOpenCart}
-            className="relative inline-flex h-11 w-11 items-center justify-center rounded-full border border-brand-deep/10 bg-brand-deep text-white shadow-[0_10px_24px_rgba(15,23,42,0.08)]"
-            aria-label="Open cart"
-          >
-            <span className="text-base" aria-hidden="true">🛒</span>
-            {totals.count ? (
-              <span className="absolute -right-1 -top-1 flex h-5 min-w-5 items-center justify-center rounded-full bg-brand-yellow px-1 text-[10px] font-bold text-brand-deep">
-                {totals.count}
-              </span>
-            ) : null}
-          </button>
+          <div className="order-2 flex items-center gap-3 lg:order-3">
+            <NavLink
+              to="/products"
+              className="hidden rounded-full border border-slate-200 bg-slate-50 px-4 py-2 text-sm font-semibold text-slate-700 transition hover:bg-slate-100 lg:inline-flex"
+            >
+              Today's Deals
+            </NavLink>
+            <NavLink
+              to="/cart"
+              className="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-slate-50 px-4 py-2 text-sm font-semibold text-slate-700 transition hover:bg-slate-100"
+            >
+              <span aria-hidden="true">🛒</span>
+              Cart ({totals.count})
+            </NavLink>
+            <a
+              href={`https://wa.me/${company.whatsappNumber}?text=${whatsappMessage}`}
+              target="_blank"
+              rel="noreferrer"
+              className="inline-flex items-center gap-2 rounded-full border border-brand-green/10 bg-white px-4 py-2 text-sm font-semibold text-brand-deep transition hover:bg-brand-green/10 hover:text-brand-green"
+            >
+              WhatsApp
+            </a>
+          </div>
         </div>
 
-        <div className="ml-auto hidden items-center gap-2 lg:flex">
-          <button
-            type="button"
-            onClick={onOpenCart}
-            className="inline-flex items-center gap-2 rounded-full border border-brand-deep/10 bg-brand-deep px-4 py-2 text-sm font-semibold text-white shadow-[0_10px_24px_rgba(15,23,42,0.08)] transition hover:bg-brand-green"
-          >
-            🛒 Cart ({totals.count})
-          </button>
-          <a
-            href={`https://wa.me/${company.whatsappNumber}?text=${whatsappMessage}`}
-            target="_blank"
-            rel="noreferrer"
-            className="inline-flex items-center gap-2 rounded-full border border-brand-green/10 bg-white px-4 py-2 text-sm font-semibold text-brand-deep transition hover:bg-brand-green/10 hover:text-brand-green"
-          >
-            WhatsApp
-          </a>
-        </div>
-        </div>
-
-        <div className="hide-scrollbar mt-3 flex items-center gap-2 overflow-x-auto pb-1">
+        <div className="hide-scrollbar flex gap-2 overflow-x-auto pb-3 pt-2">
           <NavLink
             to="/"
             className={({ isActive }) =>
               `rounded-full px-4 py-2 text-sm font-semibold transition ${
-                isActive ? "bg-brand-deep text-white" : "border border-white/80 bg-white/80 text-brand-slate hover:border-brand-green hover:text-brand-green"
+                isActive ? "bg-brand-deep text-white" : "border border-slate-200 bg-slate-50 text-slate-700 hover:bg-slate-100"
               }`
             }
           >
@@ -111,33 +107,32 @@ export function Navbar({ onOpenCart = () => {} }) {
             to="/products"
             className={({ isActive }) =>
               `rounded-full px-4 py-2 text-sm font-semibold transition ${
-                isActive ? "bg-brand-deep text-white" : "border border-white/80 bg-white/80 text-brand-slate hover:border-brand-green hover:text-brand-green"
+                isActive ? "bg-brand-deep text-white" : "border border-slate-200 bg-slate-50 text-slate-700 hover:bg-slate-100"
               }`
             }
           >
             Shop All
           </NavLink>
           <NavLink
-            to="/cart"
-            className={({ isActive }) =>
-              `rounded-full px-4 py-2 text-sm font-semibold transition ${
-                isActive ? "bg-brand-deep text-white" : "border border-white/80 bg-white/80 text-brand-slate hover:border-brand-green hover:text-brand-green"
-              }`
-            }
+            to="/products?category=Solar%20Kits"
+            className="rounded-full border border-slate-200 bg-slate-50 px-4 py-2 text-sm font-semibold text-slate-700 transition hover:bg-slate-100"
           >
-            Cart
+            Solar Kits
           </NavLink>
-          <a
-            href={`https://wa.me/${company.whatsappNumber}?text=${whatsappMessage}`}
-            target="_blank"
-            rel="noreferrer"
-            className="rounded-full border border-brand-green/10 bg-white/80 px-4 py-2 text-sm font-semibold text-brand-deep transition hover:border-brand-green hover:text-brand-green"
+          <NavLink
+            to="/products?category=Inverters"
+            className="rounded-full border border-slate-200 bg-slate-50 px-4 py-2 text-sm font-semibold text-slate-700 transition hover:bg-slate-100"
           >
-            WhatsApp
-          </a>
+            Inverters
+          </NavLink>
+          <NavLink
+            to="/products?category=Batteries"
+            className="rounded-full border border-slate-200 bg-slate-50 px-4 py-2 text-sm font-semibold text-slate-700 transition hover:bg-slate-100"
+          >
+            Batteries
+          </NavLink>
         </div>
       </div>
-
     </header>
   );
 }
