@@ -45,6 +45,21 @@ export function HomePage() {
       <section className="py-6 sm:py-8 lg:py-10">
         <div className="section-shell space-y-6">
           <SectionHeader
+            eyebrow="Browse categories"
+            title="Shop top categories"
+            copy="Tap a category to see products right away."
+          />
+          <div className="hide-scrollbar flex gap-3 overflow-x-auto pb-2 sm:grid sm:grid-cols-2 lg:grid-cols-5">
+            {storeCategories.map((item) => (
+              <CategoryIcon key={item.label} {...item} />
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <section className="py-6 sm:py-8 lg:py-10">
+        <div className="section-shell space-y-6">
+          <SectionHeader
             eyebrow="Featured deals"
             title="Popular solar products"
             actionLabel="View all"
@@ -57,17 +72,6 @@ export function HomePage() {
             emptyCopy="Add products to your catalogue to display them here."
             gridClassName="grid gap-4 sm:grid-cols-2 xl:grid-cols-4"
           />
-        </div>
-      </section>
-
-      <section className="py-6 sm:py-8 lg:py-10">
-        <div className="section-shell space-y-6">
-          <SectionHeader eyebrow="Browse categories" title="Shop top categories" />
-          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
-            {storeCategories.map((item) => (
-              <CategoryIcon key={item.label} {...item} />
-            ))}
-          </div>
         </div>
       </section>
 

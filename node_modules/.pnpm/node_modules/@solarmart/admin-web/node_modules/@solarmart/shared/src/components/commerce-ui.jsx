@@ -51,7 +51,7 @@ export function CategoryIcon({ label, emoji, to }) {
   return (
     <Link
       to={to}
-      className="group flex min-w-[104px] flex-col items-center gap-3 rounded-[1.5rem] border border-white/70 bg-white/85 px-4 py-4 text-center shadow-soft transition hover:-translate-y-0.5 hover:border-brand-green/25 hover:text-brand-green"
+      className="group flex min-w-[150px] flex-col items-center gap-3 rounded-[1.5rem] border border-white/70 bg-white/85 px-4 py-4 text-center shadow-soft transition hover:-translate-y-0.5 hover:border-brand-green/25 hover:text-brand-green sm:min-w-0"
     >
       <span className="flex h-12 w-12 items-center justify-center rounded-2xl bg-brand-green/10 text-xl text-brand-green transition group-hover:bg-brand-green group-hover:text-white">
         {emoji}
