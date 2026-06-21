@@ -42,8 +42,6 @@ export function HomePage() {
 
   return (
     <>
-      <HeroCarousel />
-
       <section className="py-6 sm:py-8 lg:py-10">
         <div className="section-shell space-y-6">
           <SectionHeader
