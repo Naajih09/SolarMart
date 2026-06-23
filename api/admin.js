@@ -41,7 +41,7 @@ export function normalizeProductInput(input = {}) {
     availability: String(input.availability || (stock > 0 ? "In stock" : "Out of stock")).trim(),
     images,
     shortDescription: String(input.shortDescription || "").trim(),
-    description: String(input.description || input.shortDescription || "").trim(),
+    description: String(input.description || input.fullDescription || input.shortDescription || "").trim(),
     features: Array.isArray(input.features) ? input.features.filter(Boolean) : [],
     variants: Array.isArray(input.variants) ? input.variants.filter(Boolean) : [],
     relatedIds: Array.isArray(input.relatedIds) ? input.relatedIds.filter(Boolean) : [],

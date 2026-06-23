@@ -7,6 +7,65 @@ let pool;
 let schemaReady = false;
 let adminReady = false;
 
+const starterProductImages = {
+  "SM-KIT-3KVA-001": [
+    "https://itelsolar.com/wp-content/uploads/2025/12/Itel-PowerCore-3K-Pro-3KW-24V-IP54-Smart-Inverter-2.56kWh-Lithium-Battery-1770W-High-Power-Solar-Kit.webp",
+    "https://itelsolar.com/wp-content/uploads/2025/12/Industrial-Grade-Protection-IP54-Rated-3KW-Inverter-2.56kWh-Lithium-Battery-solar-installed-setup.jpg",
+  ],
+  "SM-KIT-3KVA": [
+    "https://itelsolar.com/wp-content/uploads/2025/12/Itel-PowerCore-3K-Pro-3KW-24V-IP54-Smart-Inverter-2.56kWh-Lithium-Battery-1770W-High-Power-Solar-Kit.webp",
+    "https://itelsolar.com/wp-content/uploads/2025/12/Industrial-Grade-Protection-IP54-Rated-3KW-Inverter-2.56kWh-Lithium-Battery-solar-installed-setup.jpg",
+  ],
+  "SM-KIT-5KVA-001": [
+    "https://itelsolar.com/wp-content/uploads/2025/08/iTel-8kWh-All-in-One-Solar-Power-Kit-3.6kW-Hybrid-Inverter-8%C3%97550W-Panels-%E2%80%93-with-Installation.jpg",
+  ],
+  "SM-KIT-5KVA": [
+    "https://itelsolar.com/wp-content/uploads/2025/08/iTel-8kWh-All-in-One-Solar-Power-Kit-3.6kW-Hybrid-Inverter-8%C3%97550W-Panels-%E2%80%93-with-Installation.jpg",
+  ],
+  "SM-KIT-10KVA-001": [
+    "https://itelsolar.com/wp-content/uploads/2025/12/itelSolar-PowerMax-16K-The-Ultimate-16kWh-6kW-Whole-Home-Energy-System-with-Installation-6kw-Hybrid-inverter-16kwh-Lithium-Battery-12unit-of-590W-Panels-580x580.webp",
+  ],
+  "SM-KIT-10KVA": [
+    "https://itelsolar.com/wp-content/uploads/2025/12/itelSolar-PowerMax-16K-The-Ultimate-16kWh-6kW-Whole-Home-Energy-System-with-Installation-6kw-Hybrid-inverter-16kwh-Lithium-Battery-12unit-of-590W-Panels-580x580.webp",
+  ],
+  "SM-INV-35KVA-001": [
+    "https://itelsolar.com/wp-content/uploads/2025/07/itel-6kW-Hybrid-Solar-Inverter-%E2%80%93-Dual-AC-Output-for-Homes-Clinics-48V-IP54-Rated-2.jpg",
+  ],
+  "SM-INV-5KVA-001": [
+    "https://itelsolar.com/wp-content/uploads/2025/07/itel-6kW-Hybrid-Solar-Inverter-%E2%80%93-Dual-AC-Output-for-Homes-Clinics-48V-IP54-Rated-2.jpg",
+  ],
+  "GRW-INV-5KVA": [
+    "https://itelsolar.com/wp-content/uploads/2025/07/itel-6kW-Hybrid-Solar-Inverter-%E2%80%93-Dual-AC-Output-for-Homes-Clinics-48V-IP54-Rated-2.jpg",
+  ],
+  "SM-BAT-5KWH-001": [
+    "https://itelsolar.com/wp-content/uploads/2025/04/itel-5120Wh-Lithium-Battery-Wall-Mounted-48V-100Ah-5.12kWh-IPW-51100.webp",
+  ],
+  "SM-BAT-5KWH": [
+    "https://itelsolar.com/wp-content/uploads/2025/04/itel-5120Wh-Lithium-Battery-Wall-Mounted-48V-100Ah-5.12kWh-IPW-51100.webp",
+  ],
+  "SM-BAT-10KWH-001": [
+    "https://itelsolar.com/wp-content/uploads/2025/12/itelSolar-PowerMax-16K-The-Ultimate-16kWh-6kW-Whole-Home-Energy-System-with-Installation-6kw-Hybrid-inverter-16kwh-Lithium-Battery-12unit-of-590W-Panels-580x580.webp",
+  ],
+  "SM-PNL-550W-001": [
+    "https://itelsolar.com/wp-content/uploads/2025/04/iTel-550W-Solar-Panel-21.29-module-efficiency-with-144-N-Type-Mono-cells-11.jpg",
+  ],
+  "JNK-PNL-550W": [
+    "https://itelsolar.com/wp-content/uploads/2025/04/iTel-550W-Solar-Panel-21.29-module-efficiency-with-144-N-Type-Mono-cells-11.jpg",
+  ],
+  "SM-PNL-410W-001": [
+    "https://itelsolar.com/wp-content/uploads/2025/04/itel-410W-Monocrystalline-Solar-Panel-%E2%80%93-Rooftop-Solar-for-Homes-Shops-Offices-High-Efficiency-IP68-Rated-1.jpg",
+  ],
+  "SM-ACC-MRK-001": [
+    "https://itelsolar.com/wp-content/uploads/2025/04/itel-410W-Monocrystalline-Solar-Panel-%E2%80%93-Rooftop-Solar-for-Homes-Shops-Offices-High-Efficiency-IP68-Rated-1.jpg",
+  ],
+  "SM-ACC-RMK": [
+    "https://itelsolar.com/wp-content/uploads/2025/04/itel-410W-Monocrystalline-Solar-Panel-%E2%80%93-Rooftop-Solar-for-Homes-Shops-Offices-High-Efficiency-IP68-Rated-1.jpg",
+  ],
+  "SM-ACC-DCB-001": [
+    "https://itelsolar.com/wp-content/uploads/2025/04/itel-410W-Monocrystalline-Solar-Panel-%E2%80%93-Rooftop-Solar-for-Homes-Shops-Offices-High-Efficiency-IP68-Rated-1.jpg",
+  ],
+};
+
 function getPool() {
   if (!process.env.DATABASE_URL) {
     throw new Error("DATABASE_URL is not configured.");
@@ -149,6 +208,24 @@ async function ensureUsersAndCommerceSchema() {
       updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
     );
   `);
+
+  await repairStarterProductImages();
+}
+
+async function repairStarterProductImages() {
+  for (const [sku, images] of Object.entries(starterProductImages)) {
+    await query(
+      `UPDATE products
+       SET images = $2::jsonb,
+           updated_at = NOW()
+       WHERE sku = $1
+         AND (
+           images = '[]'::jsonb
+           OR images @> '["/solarmart-product-placeholder.svg"]'::jsonb
+         )`,
+      [sku, JSON.stringify(images)],
+    );
+  }
 }
 
 export async function ensureSchema() {
