@@ -57,6 +57,17 @@ async function ensureUsersAndCommerceSchema() {
       created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
     );
 
+    CREATE TABLE IF NOT EXISTS vendors (
+      id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+      business_name TEXT NOT NULL,
+      email TEXT NOT NULL UNIQUE,
+      phone TEXT,
+      status TEXT NOT NULL DEFAULT 'pending_review',
+      paystack_subaccount_id TEXT,
+      commission_rate NUMERIC(5,2),
+      created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+    );
+
     CREATE TABLE IF NOT EXISTS products (
       id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
       slug TEXT NOT NULL UNIQUE,
@@ -78,6 +89,12 @@ async function ensureUsersAndCommerceSchema() {
       created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
       updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
     );
+
+    ALTER TABLE products
+      ADD COLUMN IF NOT EXISTS vendor_id UUID REFERENCES vendors(id) ON DELETE SET NULL,
+      ADD COLUMN IF NOT EXISTS approval_status TEXT NOT NULL DEFAULT 'approved',
+      ADD COLUMN IF NOT EXISTS rejection_reason TEXT,
+      ADD COLUMN IF NOT EXISTS submitted_at TIMESTAMPTZ;
 
     CREATE TABLE IF NOT EXISTS orders (
       id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -227,5 +244,12 @@ export function mapProductRow(row) {
     features: row.features || [],
     variants: row.variants || [],
     relatedIds: row.related_ids || [],
+    vendorId: row.vendor_id || null,
+    vendorName: row.vendor_business_name || row.business_name || null,
+    approvalStatus: row.approval_status || "approved",
+    rejectionReason: row.rejection_reason || "",
+    submittedAt: row.submitted_at || null,
+    createdAt: row.created_at || null,
+    updatedAt: row.updated_at || null,
   };
 }

@@ -11,6 +11,7 @@ export function DashboardPage() {
   const { user, loading, logout } = useAuth();
   const [orders, setOrders] = useState([]);
   const [affiliates, setAffiliates] = useState([]);
+  const [vendors, setVendors] = useState([]);
   const [adminProducts, setAdminProducts] = useState([]);
   const [adminMessage, setAdminMessage] = useState("");
   const [importing, setImporting] = useState(false);
@@ -27,15 +28,17 @@ export function DashboardPage() {
   });
 
   async function loadAdminData() {
-    const [ordersData, affiliatesData, productsData] = await Promise.all([
+    const [ordersData, affiliatesData, productsData, vendorsData] = await Promise.all([
       apiFetch("/api/admin?action=orders"),
       apiFetch("/api/admin?action=affiliates"),
       apiFetch("/api/admin?action=products"),
+      apiFetch("/api/admin?action=vendors"),
     ]);
 
     setOrders(ordersData.orders || []);
     setAffiliates(affiliatesData.affiliates || []);
     setAdminProducts(productsData.products || []);
+    setVendors(vendorsData.vendors || []);
   }
 
   useEffect(() => {
@@ -56,6 +59,41 @@ export function DashboardPage() {
         current.map((item) => (item.id === id ? { ...item, status: "approved" } : item)),
       );
       setAdminMessage("Affiliate approved.");
+    } catch (error) {
+      setAdminMessage(error.message);
+    }
+  }
+
+  async function updateVendorStatus(id, status) {
+    try {
+      await apiFetch("/api/admin?action=vendors", {
+        method: "PATCH",
+        body: JSON.stringify({ id, status }),
+      });
+      await loadAdminData();
+      setAdminMessage(`Vendor ${status.replace("_", " ")}.`);
+    } catch (error) {
+      setAdminMessage(error.message);
+    }
+  }
+
+  async function updateProductApproval(productId, approvalStatus) {
+    const rejectionReason =
+      approvalStatus === "rejected"
+        ? window.prompt("Why is this product being rejected?")
+        : "";
+
+    if (approvalStatus === "rejected" && !rejectionReason) {
+      return;
+    }
+
+    try {
+      await apiFetch("/api/admin?action=products", {
+        method: "PATCH",
+        body: JSON.stringify({ id: productId, approvalStatus, rejectionReason }),
+      });
+      await loadAdminData();
+      setAdminMessage(`Product ${approvalStatus}.`);
     } catch (error) {
       setAdminMessage(error.message);
     }
@@ -141,6 +179,11 @@ export function DashboardPage() {
   }
 
   if (user.role === "admin") {
+    const pendingProducts = adminProducts
+      .filter((item) => item.approvalStatus === "pending")
+      .sort((a, b) => new Date(a.submittedAt || a.createdAt || 0) - new Date(b.submittedAt || b.createdAt || 0));
+    const pendingVendors = vendors.filter((item) => item.status === "pending_review");
+
     return (
       <section className="py-12 lg:py-16">
         <div className="section-shell space-y-8">
@@ -178,6 +221,10 @@ export function DashboardPage() {
                     <p className="text-xs uppercase tracking-[0.18em] text-brand-yellow">Partners</p>
                     <p className="mt-2 text-2xl font-bold">{affiliates.length}</p>
                   </div>
+                  <div className="rounded-[1.5rem] border border-white/10 bg-white/10 p-4">
+                    <p className="text-xs uppercase tracking-[0.18em] text-brand-yellow">Vendors pending</p>
+                    <p className="mt-2 text-2xl font-bold">{pendingVendors.length}</p>
+                  </div>
                   <div className="rounded-[1.5rem] border border-white/10 bg-white/10 p-4 sm:col-span-2 lg:col-span-1">
                     <p className="text-xs uppercase tracking-[0.18em] text-brand-yellow">Live store mode</p>
                     <p className="mt-2 text-sm leading-6 text-white/75">
@@ -191,7 +238,88 @@ export function DashboardPage() {
           <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
             <StatsCard label="Products" value={adminProducts.length} />
             <StatsCard label="Orders" value={orders.length} />
-            <StatsCard label="Partners" value={affiliates.length} />
+            <StatsCard label="Pending products" value={pendingProducts.length} />
+          </div>
+          <div className="grid gap-6 xl:grid-cols-2">
+            <div className="section-card p-6">
+              <p className="text-lg font-semibold text-brand-deep">Product approval queue</p>
+              <p className="mt-2 text-sm leading-6 text-brand-slate/70">
+                Vendor products stay hidden until an admin approves them.
+              </p>
+              <div className="mt-4 space-y-3">
+                {pendingProducts.length ? (
+                  pendingProducts.map((item) => (
+                    <div key={item.dbId || item.id} className="rounded-2xl bg-brand-cream p-4">
+                      <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+                        <div>
+                          <p className="font-semibold text-brand-deep">{item.name}</p>
+                          <p className="mt-1 text-sm text-brand-slate/70">
+                            {item.vendorName ? `Sold by ${item.vendorName}` : "SolarMart product"} · {formatNaira(item.price)}
+                          </p>
+                        </div>
+                        <div className="flex gap-2">
+                          <button
+                            type="button"
+                            onClick={() => updateProductApproval(item.dbId || item.id, "approved")}
+                            className="rounded-full bg-brand-deep px-4 py-2 text-sm font-semibold text-white"
+                          >
+                            Approve
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => updateProductApproval(item.dbId || item.id, "rejected")}
+                            className="rounded-full border border-brand-slate/10 bg-white px-4 py-2 text-sm font-semibold text-brand-deep"
+                          >
+                            Reject
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  ))
+                ) : (
+                  <p className="text-sm leading-7 text-brand-slate/75">No products waiting for review.</p>
+                )}
+              </div>
+            </div>
+
+            <div className="section-card p-6">
+              <p className="text-lg font-semibold text-brand-deep">Vendor applications</p>
+              <p className="mt-2 text-sm leading-6 text-brand-slate/70">
+                Approve vendors before their approved products can appear on the storefront.
+              </p>
+              <div className="mt-4 space-y-3">
+                {vendors.length ? (
+                  vendors.slice(0, 6).map((item) => (
+                    <div key={item.id} className="rounded-2xl bg-brand-cream p-4">
+                      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                        <div>
+                          <p className="font-semibold text-brand-deep">{item.business_name}</p>
+                          <p className="text-sm text-brand-slate/70">{item.email} · {item.status}</p>
+                        </div>
+                        <div className="flex gap-2">
+                          <button
+                            type="button"
+                            onClick={() => updateVendorStatus(item.id, "approved")}
+                            className="rounded-full bg-brand-deep px-4 py-2 text-sm font-semibold text-white"
+                          >
+                            Approve
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => updateVendorStatus(item.id, "suspended")}
+                            className="rounded-full border border-brand-slate/10 bg-white px-4 py-2 text-sm font-semibold text-brand-deep"
+                          >
+                            Suspend
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  ))
+                ) : (
+                  <p className="text-sm leading-7 text-brand-slate/75">No vendor applications yet.</p>
+                )}
+              </div>
+            </div>
           </div>
           <AdminTable
             title="Recent orders"
@@ -289,8 +417,11 @@ export function DashboardPage() {
                       <div>
                         <p className="font-semibold text-brand-deep">{item.name}</p>
                         <p className="text-sm text-brand-slate/70">
-                          {item.category} · {formatNaira(item.price)}
+                          {item.category} · {formatNaira(item.price)} · {item.approvalStatus || "approved"}
                         </p>
+                        {item.rejectionReason ? (
+                          <p className="mt-1 text-xs text-red-600">Rejected: {item.rejectionReason}</p>
+                        ) : null}
                       </div>
                       <button
                         type="button"

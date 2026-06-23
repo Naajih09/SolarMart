@@ -21,6 +21,7 @@ export function ProductGrid({
   emptyTitle = "No products yet",
   emptyCopy = "No products are available right now. Please check back soon or contact support for help.",
   gridClassName = "grid gap-4 sm:grid-cols-2 xl:grid-cols-4",
+  imageOnly = false,
 }) {
   if (loading) {
     return <ProductSkeletonGrid gridClassName={gridClassName} />;
@@ -38,7 +39,7 @@ export function ProductGrid({
   return (
     <div className={gridClassName}>
       {items.map((product) => (
-        <ProductCard key={product.id} product={product} />
+        <ProductCard key={product.id} product={product} imageOnly={imageOnly} />
       ))}
     </div>
   );

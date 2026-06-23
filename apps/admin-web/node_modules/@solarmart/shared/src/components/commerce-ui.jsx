@@ -1,4 +1,5 @@
 import { Link } from "react-router-dom";
+import { useState } from "react";
 import { useStore } from "../context/StoreContext";
 import { company, formatNaira, whatsappMessage } from "../site";
 
@@ -146,7 +147,7 @@ export function HorizontalScroller({
   );
 }
 
-export function ProductCard({ product, badge, compact = false, onQuickView }) {
+export function ProductCard({ product, badge, compact = false, onQuickView, imageOnly = false }) {
   const { addToCart } = useStore();
   const resolvedBadge =
     badge ||
@@ -155,19 +156,64 @@ export function ProductCard({ product, badge, compact = false, onQuickView }) {
   const orderMessage = encodeURIComponent(
     `Hi, I want to order: ${product.name} - ${formatNaira(product.price)}`,
   );
+  const [imageOnlyLoaded, setImageOnlyLoaded] = useState(false);
+  const [imgLoaded, setImgLoaded] = useState(false);
+
+  if (imageOnly) {
+
+    return (
+      <article className="group overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
+        <Link to={`/products/${product.slug}`} className="block overflow-hidden relative">
+          {!imageOnlyLoaded ? (
+            <div className="absolute inset-0 flex items-center justify-center bg-gradient-to-br from-slate-200 to-slate-100">
+              <div className="h-10 w-10 rounded-full bg-slate-300 animate-pulse" />
+            </div>
+          ) : null}
+
+          {product.images?.[0] ? (
+            <img
+              src={product.images[0]}
+              alt={product.name}
+              loading="lazy"
+              decoding="async"
+              onLoad={() => setImageOnlyLoaded(true)}
+              className={`w-full h-full min-h-[160px] object-cover transition duration-300 ${imageOnlyLoaded ? "opacity-100" : "opacity-0"}`}
+            />
+          ) : (
+            <div className="flex h-40 items-center justify-center bg-slate-100 text-sm text-slate-500">
+              Product image unavailable
+            </div>
+          )}
+          {product.vendorId && product.vendorName ? (
+            <span className="absolute bottom-3 left-3 max-w-[calc(100%-1.5rem)] truncate rounded-full bg-white/95 px-3 py-1 text-[11px] font-semibold text-slate-900 shadow-sm">
+              Sold by {product.vendorName}
+            </span>
+          ) : null}
+        </Link>
+      </article>
+    );
+  }
 
   return (
     <article className="group flex h-full flex-col overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm transition duration-300 hover:-translate-y-0.5 hover:shadow-md">
       <Link to={`/products/${product.slug}`} className="relative block overflow-hidden bg-slate-100">
-        {product.images?.[0] ? (
-          <img
-            src={product.images[0]}
-            alt={product.name}
-            className={`w-full object-cover transition duration-500 group-hover:scale-[1.03] ${
-              compact ? "aspect-square" : "aspect-square"
-            }`}
-          />
-        ) : (
+          {product.images?.[0] ? (
+            <>
+              {!imgLoaded ? (
+                <div className="absolute inset-0 flex items-center justify-center bg-gradient-to-br from-slate-200 to-slate-100">
+                  <div className="h-8 w-8 rounded-full bg-slate-300 animate-pulse" />
+                </div>
+              ) : null}
+              <img
+                src={product.images[0]}
+                alt={product.name}
+                loading="lazy"
+                decoding="async"
+                onLoad={() => setImgLoaded(true)}
+                className={`w-full object-cover transition duration-500 group-hover:scale-[1.03] ${compact ? "aspect-square" : "aspect-square"} ${imgLoaded ? "opacity-100" : "opacity-0"}`}
+              />
+            </>
+          ) : (
           <div className="flex aspect-square items-center justify-center bg-slate-100 px-6 text-center text-sm font-semibold text-slate-500">
             Product image unavailable
           </div>
@@ -182,6 +228,11 @@ export function ProductCard({ product, badge, compact = false, onQuickView }) {
         <p className="truncate text-xs font-semibold uppercase tracking-[0.16em] text-slate-500">
           {product.category}
         </p>
+        {product.vendorId && product.vendorName ? (
+          <p className="truncate text-xs font-semibold text-brand-green">
+            Sold by {product.vendorName}
+          </p>
+        ) : null}
         <Link to={`/products/${product.slug}`} className="block">
           <h3 className="line-clamp-2 min-h-[3.25rem] text-base font-semibold leading-snug text-slate-900">
             {product.name}

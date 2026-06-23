@@ -1,7 +1,8 @@
 import { useEffect, useMemo, useState } from "react";
 import { Link, useNavigate, useParams, useLocation } from "react-router-dom";
 import { useStore } from "../../context/StoreContext";
-import { brands, products } from "../../store/catalog";
+import { brands as fallbackBrands, products as fallbackProducts } from "../../store/catalog";
+import { apiFetch } from "../../lib/api";
 import { formatNaira, getRecommendation } from "../../site";
 import {
   CategoryIcon,
@@ -15,8 +16,33 @@ import {
 import { DetailCard, EmptyState, OrderSummary, ProductGrid } from "./SharedPageParts";
 
 function useProducts() {
-  const [items] = useState(products);
-  const [loading] = useState(false);
+  const [items, setItems] = useState(fallbackProducts);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    let active = true;
+
+    apiFetch("/api/store?action=products")
+      .then((data) => {
+        if (active && Array.isArray(data.products) && data.products.length) {
+          setItems(data.products);
+        }
+      })
+      .catch(() => {
+        if (active) {
+          setItems(fallbackProducts);
+        }
+      })
+      .finally(() => {
+        if (active) {
+          setLoading(false);
+        }
+      });
+
+    return () => {
+      active = false;
+    };
+  }, []);
 
   return { items, loading };
 }
@@ -111,6 +137,10 @@ export function ProductsPage() {
     powerRating: "All",
     maxPrice,
   });
+  const brandOptions = useMemo(
+    () => Array.from(new Set([...fallbackBrands, ...items.map((item) => item.brand).filter(Boolean)])),
+    [items],
+  );
 
   useEffect(() => {
     setFilters((current) => ({
@@ -155,14 +185,15 @@ export function ProductsPage() {
             filters={filters}
             onChange={updateFilters}
             maxPrice={maxPrice}
-            brands={brands}
+            brands={brandOptions}
           />
           <ProductGrid
             items={filteredItems}
             loading={loading}
             emptyTitle="No products found"
             emptyCopy="Try another category, brand, power rating, or price range."
-            gridClassName="grid gap-4 sm:grid-cols-2 xl:grid-cols-3"
+            gridClassName="grid gap-4 grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4"
+            imageOnly={true}
           />
         </div>
       </div>
@@ -180,9 +211,31 @@ export function ProductDetailPage() {
   const [tab, setTab] = useState("description");
 
   useEffect(() => {
-    const found = products.find((item) => item.slug === slug);
-    setProduct(found || null);
-    setRelated(products.filter((item) => item.slug !== slug).slice(0, 4));
+    let active = true;
+    const fallback = fallbackProducts.find((item) => item.slug === slug);
+
+    setProduct(fallback || null);
+    setRelated(fallbackProducts.filter((item) => item.slug !== slug).slice(0, 4));
+
+    apiFetch(`/api/store?action=products&id=${encodeURIComponent(slug)}`)
+      .then((data) => {
+        if (active) {
+          setProduct(data.product || fallback || null);
+        }
+      })
+      .catch(() => null);
+
+    apiFetch("/api/store?action=products")
+      .then((data) => {
+        if (active && Array.isArray(data.products)) {
+          setRelated(data.products.filter((item) => item.slug !== slug).slice(0, 4));
+        }
+      })
+      .catch(() => null);
+
+    return () => {
+      active = false;
+    };
   }, [slug]);
 
   if (!product) {
@@ -266,6 +319,9 @@ export function ProductDetailPage() {
             <span className="eyebrow">{product.category}</span>
             <div className="space-y-3">
               <h1 className="text-3xl font-extrabold text-brand-deep sm:text-4xl">{product.name}</h1>
+              {product.vendorId && product.vendorName ? (
+                <p className="text-sm font-semibold text-brand-green">Sold by {product.vendorName}</p>
+              ) : null}
               <p className="text-sm leading-7 text-brand-slate/75 sm:text-base">
                 {product.shortDescription}
               </p>

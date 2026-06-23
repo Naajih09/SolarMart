@@ -62,3 +62,18 @@ export function useTheme() {
 
   return context;
 }
+
+export function ThemeToggle({ compact = false }) {
+  const { isDark, toggleTheme } = useTheme();
+
+  return (
+    <button
+      type="button"
+      onClick={toggleTheme}
+      className="rounded-full border border-white/15 bg-white/10 px-4 py-2 text-sm font-semibold text-white transition hover:bg-white/15"
+      aria-label="Toggle theme"
+    >
+      {compact ? (isDark ? "Light" : "Dark") : isDark ? "Switch to light mode" : "Switch to dark mode"}
+    </button>
+  );
+}
