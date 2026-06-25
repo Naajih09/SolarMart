@@ -118,6 +118,7 @@ async function ensureUsersAndCommerceSchema() {
 
     CREATE TABLE IF NOT EXISTS vendors (
       id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+      user_id UUID REFERENCES users(id) ON DELETE CASCADE,
       business_name TEXT NOT NULL,
       email TEXT NOT NULL UNIQUE,
       phone TEXT,
@@ -126,6 +127,13 @@ async function ensureUsersAndCommerceSchema() {
       commission_rate NUMERIC(5,2),
       created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
     );
+
+    ALTER TABLE vendors
+      ADD COLUMN IF NOT EXISTS user_id UUID REFERENCES users(id) ON DELETE CASCADE;
+
+    CREATE UNIQUE INDEX IF NOT EXISTS vendors_user_id_unique
+      ON vendors(user_id)
+      WHERE user_id IS NOT NULL;
 
     CREATE TABLE IF NOT EXISTS products (
       id UUID PRIMARY KEY DEFAULT gen_random_uuid(),

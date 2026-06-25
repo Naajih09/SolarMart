@@ -50,6 +50,26 @@ export function AuthProvider({ children }) {
     return data;
   }
 
+  async function vendorLogin(credentials) {
+    const data = await apiFetch("/api/auth?action=vendor-login", {
+      method: "POST",
+      body: JSON.stringify(credentials),
+    });
+
+    if (data.token) {
+      setToken(data.token);
+    }
+    setUser(data.user || null);
+    return data;
+  }
+
+  async function vendorRegister(payload) {
+    return apiFetch("/api/auth?action=vendor-register", {
+      method: "POST",
+      body: JSON.stringify(payload),
+    });
+  }
+
   async function logout() {
     try {
       await apiFetch("/api/auth?action=logout", {
@@ -68,6 +88,8 @@ export function AuthProvider({ children }) {
       isAuthenticated: Boolean(user),
       login,
       register,
+      vendorLogin,
+      vendorRegister,
       logout,
       setUser,
     }),
