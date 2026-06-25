@@ -26,8 +26,14 @@ export {
   CartPage,
   CheckoutPage,
   CheckoutSuccessPage,
+  AuthPage,
+  DashboardPage,
 } from "./components/MarketplacePages";
 export { EmptyState } from "./components/pages/SharedPageParts";
 export { StoreProvider, useStore } from "./context/StoreContext";
 export { apiFetch, getToken, setToken } from "./lib/api";
 export { company, formatNaira, getRecommendation, whatsappMessage } from "./site";
+
+export { ThemeProvider, ThemeToggle, useTheme } from "./context/ThemeContext";
+
+export { AuthProvider, useAuth } from "./context/AuthContext";

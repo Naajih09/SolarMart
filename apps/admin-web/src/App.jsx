@@ -1,13 +1,15 @@
 import { Link, Navigate, Route, Routes } from "react-router-dom";
 import {
   AuthPage,
+  AuthProvider,
   DashboardPage,
   EmptyState,
   ScrollToTop,
   company,
+  ThemeProvider,
+  ThemeToggle,
+  useAuth,
 } from "@solarmart/shared";
-import { AuthProvider, useAuth } from "../../../packages/shared/src/context/AuthContext";
-import { ThemeProvider, ThemeToggle } from "../../../packages/shared/src/context/ThemeContext";
 
 function AdminNavbar() {
   const { user, isAuthenticated, logout } = useAuth();
