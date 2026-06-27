@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Link, useNavigate, useParams } from "react-router-dom";
+import { Link, useNavigate, useParams, useSearchParams } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
 import { useStore } from "../../context/StoreContext";
 import { EmptyState, OrderSummary, CheckoutField } from "./SharedPageParts";
@@ -120,16 +120,40 @@ export function CheckoutSuccessPage() {
 
 export function AuthPage({ mode, context = "store" }) {
   const navigate = useNavigate();
-  const { isAuthenticated, login, register } = useAuth();
+  const [searchParams, setSearchParams] = useSearchParams();
+  const { isAuthenticated, login, register, vendorRegister } = useAuth();
+  const initialRole = searchParams.get("role");
+  const [role, setRole] = useState(
+    ["customer", "vendor", "installer"].includes(initialRole) ? initialRole : "customer",
+  );
   const [form, setForm] = useState({
     fullName: "",
+    businessName: "",
     email: "",
     phone: "",
     password: "",
+    location: "",
   });
   const [message, setMessage] = useState("");
   const isRegister = mode === "register";
   const isAdminContext = context === "admin";
+  const roleOptions = [
+    {
+      id: "customer",
+      title: "Customer",
+      copy: "Buy solar products and manage your account.",
+    },
+    {
+      id: "vendor",
+      title: "Vendor",
+      copy: "Apply to sell solar products on SolarMart.",
+    },
+    {
+      id: "installer",
+      title: "Installer",
+      copy: "Apply to join the installation network.",
+    },
+  ];
 
   useEffect(() => {
     if (isAuthenticated) {
@@ -143,6 +167,32 @@ export function AuthPage({ mode, context = "store" }) {
 
     try {
       if (isRegister) {
+        if (role === "vendor") {
+          const data = await vendorRegister({
+            businessName: form.businessName,
+            email: form.email,
+            phone: form.phone,
+            password: form.password,
+          });
+          setMessage(data.message || "Vendor application submitted for review.");
+          setForm({
+            fullName: "",
+            businessName: "",
+            email: "",
+            phone: "",
+            password: "",
+            location: "",
+          });
+          return;
+        }
+
+        if (role === "installer") {
+          const text = `Hello ${company.name}, I want to register as an installer. Name: ${form.fullName}. Phone: ${form.phone}. Email: ${form.email}. Location: ${form.location}.`;
+          window.location.href = `https://wa.me/${company.whatsappNumber}?text=${encodeURIComponent(text)}`;
+          setMessage("Opening WhatsApp to submit your installer application.");
+          return;
+        }
+
         await register(form);
       } else {
         await login({
@@ -162,34 +212,75 @@ export function AuthPage({ mode, context = "store" }) {
       <div className="section-shell">
         <div className="mx-auto max-w-xl section-card p-5 sm:p-8">
           <span className="eyebrow">
-            {isRegister ? "Customer Register" : isAdminContext ? "Admin Login" : "Customer Login"}
+            {isRegister ? "Create account" : isAdminContext ? "Admin Login" : "Customer Login"}
           </span>
           <h1 className="mt-4 text-3xl font-bold text-brand-deep">
             {isRegister
-              ? "Create your SolarMart customer account"
+              ? "Join SolarMart"
               : isAdminContext
                 ? "Sign in to the SolarMart admin workspace"
                 : "Sign in to your SolarMart account"}
           </h1>
           <p className="mt-3 text-base leading-7 text-brand-slate/75">
             {isRegister
-              ? "Create an account to manage orders, speed up checkout, and track your purchases."
+              ? "Choose the role that matches what you want to do on SolarMart."
               : isAdminContext
                 ? "Use your approved admin account to manage products, orders, and partner applications."
                 : "Access your orders, account details, and store activity."}
           </p>
           <form className="mt-6 space-y-4" onSubmit={handleSubmit}>
             {isRegister ? (
+              <div className="grid gap-3 sm:grid-cols-3">
+                {roleOptions.map((item) => (
+                  <button
+                    key={item.id}
+                    type="button"
+                    onClick={() => {
+                      setRole(item.id);
+                      setSearchParams({ role: item.id });
+                      setMessage("");
+                    }}
+                    className={`rounded-2xl border p-4 text-left transition ${
+                      role === item.id
+                        ? "border-brand-green bg-brand-green/10 text-brand-deep"
+                        : "border-brand-slate/10 bg-brand-cream text-brand-slate hover:border-brand-green/40"
+                    }`}
+                  >
+                    <span className="block text-sm font-bold">{item.title}</span>
+                    <span className="mt-2 block text-xs leading-5 text-brand-slate/70">{item.copy}</span>
+                  </button>
+                ))}
+              </div>
+            ) : null}
+            {isRegister && role === "vendor" ? (
+              <CheckoutField label="Business name" value={form.businessName} onChange={(value) => setForm((current) => ({ ...current, businessName: value }))} required />
+            ) : null}
+            {isRegister && role !== "vendor" ? (
               <CheckoutField label="Full name" value={form.fullName} onChange={(value) => setForm((current) => ({ ...current, fullName: value }))} required />
             ) : null}
             <CheckoutField label="Email" type="email" value={form.email} onChange={(value) => setForm((current) => ({ ...current, email: value }))} required />
             {isRegister ? (
               <CheckoutField label="Phone" value={form.phone} onChange={(value) => setForm((current) => ({ ...current, phone: value }))} />
             ) : null}
-            <CheckoutField label="Password" type="password" value={form.password} onChange={(value) => setForm((current) => ({ ...current, password: value }))} required />
-            {message ? <p className="text-sm text-red-600">{message}</p> : null}
+            {isRegister && role === "installer" ? (
+              <CheckoutField label="City / State" value={form.location} onChange={(value) => setForm((current) => ({ ...current, location: value }))} required />
+            ) : null}
+            {role !== "installer" || !isRegister ? (
+              <CheckoutField label="Password" type="password" minLength={8} value={form.password} onChange={(value) => setForm((current) => ({ ...current, password: value }))} required />
+            ) : null}
+            {message ? (
+              <p className={`text-sm ${message.toLowerCase().includes("error") || message.toLowerCase().includes("invalid") ? "text-red-600" : "text-brand-green"}`}>
+                {message}
+              </p>
+            ) : null}
             <button type="submit" className="button-primary w-full">
-              {isRegister ? "Create account" : "Login"}
+              {isRegister
+                ? role === "vendor"
+                  ? "Submit vendor application"
+                  : role === "installer"
+                    ? "Apply as installer"
+                    : "Create customer account"
+                : "Login"}
             </button>
             {!isAdminContext ? (
               <p className="text-center text-sm text-brand-slate/70">
