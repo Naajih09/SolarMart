@@ -28,12 +28,11 @@ export {
   CheckoutSuccessPage,
   AuthPage,
   DashboardPage,
+  AffiliatePage,
 } from "./components/MarketplacePages";
 export { EmptyState } from "./components/pages/SharedPageParts";
+export { AuthProvider, useAuth } from "./context/AuthContext";
 export { StoreProvider, useStore } from "./context/StoreContext";
+export { ThemeProvider, ThemeToggle, useTheme } from "./context/ThemeContext";
 export { apiFetch, getToken, setToken } from "./lib/api";
 export { company, formatNaira, getRecommendation, whatsappMessage } from "./site";
-
-export { ThemeProvider, ThemeToggle, useTheme } from "./context/ThemeContext";
-
-export { AuthProvider, useAuth } from "./context/AuthContext";

@@ -39,6 +39,12 @@ export async function apiFetch(url, options = {}) {
   const data = await response.json().catch(() => ({}));
 
   if (!response.ok) {
+    if (response.status === 404 && String(resolvedUrl).includes("/api/")) {
+      throw new Error(
+        "API route not found. Set VITE_API_BASE_URL to the deployed SolarMart API origin for this app.",
+      );
+    }
+
     throw new Error(data.message || "Request failed.");
   }
 

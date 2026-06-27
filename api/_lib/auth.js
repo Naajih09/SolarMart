@@ -117,6 +117,32 @@ export async function requireAdmin(req) {
   return user;
 }
 
+export async function requireVendor(req) {
+  const user = await requireUser(req);
+  if (user.role !== "vendor") {
+    throw new Error("Forbidden");
+  }
+
+  const result = await query(
+    `SELECT id, user_id, business_name, email, phone, status, commission_rate, created_at
+     FROM vendors
+     WHERE user_id = $1
+     LIMIT 1`,
+    [user.id],
+  );
+
+  const vendor = result.rows[0];
+  if (!vendor) {
+    throw new Error("Vendor profile not found.");
+  }
+
+  if (vendor.status !== "approved") {
+    throw new Error(`Vendor account is ${vendor.status.replace("_", " ")}.`);
+  }
+
+  return { user, vendor };
+}
+
 export async function loginUser(email, password) {
   await ensureSchema();
   await ensureAdminUser();
@@ -142,5 +168,51 @@ export async function loginUser(email, password) {
     email: user.email,
     phone: user.phone,
     role: user.role,
+  };
+}
+
+export async function loginVendor(email, password) {
+  await ensureSchema();
+  const result = await query(
+    `SELECT
+       u.id, u.full_name, u.email, u.phone, u.role, u.password_hash,
+       v.id AS vendor_id, v.business_name, v.status AS vendor_status
+     FROM users u
+     LEFT JOIN vendors v ON v.user_id = u.id
+     WHERE u.email = $1
+     LIMIT 1`,
+    [String(email).toLowerCase()],
+  );
+
+  if (!result.rows.length) {
+    return null;
+  }
+
+  const user = result.rows[0];
+  const valid = await verifyPassword(password, user.password_hash);
+
+  if (!valid || user.role !== "vendor" || !user.vendor_id) {
+    return null;
+  }
+
+  if (user.vendor_status !== "approved") {
+    const error = new Error(
+      user.vendor_status === "suspended"
+        ? "Your vendor account is suspended. Contact SolarMart support."
+        : "Your vendor account is still pending review. We will notify you after approval.",
+    );
+    error.status = 403;
+    throw error;
+  }
+
+  return {
+    id: user.id,
+    fullName: user.full_name,
+    email: user.email,
+    phone: user.phone,
+    role: user.role,
+    vendorId: user.vendor_id,
+    businessName: user.business_name,
+    vendorStatus: user.vendor_status,
   };
 }

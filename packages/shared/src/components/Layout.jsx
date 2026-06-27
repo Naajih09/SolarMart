@@ -81,6 +81,18 @@ export function Navbar({ onOpenCart = () => {} }) {
               <span aria-hidden="true">🛒</span>
               Cart ({totals.count})
             </NavLink>
+            <NavLink
+              to="/login"
+              className="hidden rounded-full border border-slate-200 bg-slate-50 px-4 py-2 text-sm font-semibold text-slate-700 transition hover:bg-slate-100 sm:inline-flex"
+            >
+              Login
+            </NavLink>
+            <NavLink
+              to="/register"
+              className="rounded-full bg-brand-deep px-4 py-2 text-sm font-semibold text-white transition hover:bg-brand-green"
+            >
+              Register
+            </NavLink>
             <a
               href={`https://wa.me/${company.whatsappNumber}?text=${whatsappMessage}`}
               target="_blank"

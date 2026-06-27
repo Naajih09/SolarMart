@@ -145,7 +145,16 @@ export default async function handler(req, res) {
       const sort = getQueryParam(req, "sort");
       const id = getQueryParam(req, "id");
       if (id) {
-        const result = await query("SELECT * FROM products WHERE external_id = $1 OR slug = $1 LIMIT 1", [String(id)]);
+        const result = await query(
+          `SELECT p.*, v.business_name AS vendor_business_name
+           FROM products p
+           LEFT JOIN vendors v ON v.id = p.vendor_id
+           WHERE (p.external_id = $1 OR p.slug = $1)
+             AND p.approval_status = 'approved'
+             AND (p.vendor_id IS NULL OR v.status = 'approved')
+           LIMIT 1`,
+          [String(id)],
+        );
         if (!result.rows.length) {
           return res.status(404).json({ message: "Product not found" });
         }
@@ -154,27 +163,36 @@ export default async function handler(req, res) {
 
       const params = [];
       const conditions = [];
+      conditions.push("p.approval_status = 'approved'");
+      conditions.push("(p.vendor_id IS NULL OR v.status = 'approved')");
       if (category) {
         params.push(String(category));
-        conditions.push(`category = $${params.length}`);
+        conditions.push(`p.category = $${params.length}`);
       }
       if (q) {
         params.push(`%${String(q)}%`);
-        conditions.push(`(name ILIKE $${params.length} OR brand ILIKE $${params.length} OR category ILIKE $${params.length})`);
+        conditions.push(`(p.name ILIKE $${params.length} OR p.brand ILIKE $${params.length} OR p.category ILIKE $${params.length} OR v.business_name ILIKE $${params.length})`);
       }
       const orderBy =
-        sort === "price-low" ? "price ASC" :
-        sort === "price-high" ? "price DESC" :
-        sort === "rating" ? "rating DESC" :
-        "created_at DESC";
+        sort === "price-low" ? "p.price ASC" :
+        sort === "price-high" ? "p.price DESC" :
+        sort === "rating" ? "p.rating DESC" :
+        "p.created_at DESC";
       const whereClause = conditions.length ? `WHERE ${conditions.join(" AND ")}` : "";
-      const result = await query(`SELECT * FROM products ${whereClause} ORDER BY ${orderBy}`, params);
+      const result = await query(
+        `SELECT p.*, v.business_name AS vendor_business_name
+         FROM products p
+         LEFT JOIN vendors v ON v.id = p.vendor_id
+         ${whereClause}
+         ORDER BY CASE WHEN p.vendor_id IS NULL THEN 0 ELSE 1 END, ${orderBy}`,
+        params,
+      );
       return res.status(200).json({ products: result.rows.map(mapProductRow) });
     }
 
     if (req.method === "GET" && action === "metrics") {
       const [productCount, orderCount, affiliateCount] = await Promise.all([
-        query("SELECT COUNT(*)::int AS count FROM products"),
+        query("SELECT COUNT(*)::int AS count FROM products WHERE approval_status = 'approved'"),
         query("SELECT COUNT(*)::int AS count FROM orders WHERE payment_status = 'paid'"),
         query("SELECT COUNT(*)::int AS count FROM affiliates WHERE status = 'approved'"),
       ]);
