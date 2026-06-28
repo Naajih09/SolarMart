@@ -14,28 +14,28 @@ function AdminNavbar() {
 
   return (
     <header className="sticky top-0 z-50 border-b border-white/10 bg-brand-deep/95 text-white backdrop-blur-2xl">
-      <div className="section-shell flex items-center justify-between gap-4 py-4">
-        <div>
+      <div className="section-shell flex flex-col gap-3 py-4 sm:flex-row sm:items-center sm:justify-between">
+        <div className="min-w-0">
           <p className="text-lg font-bold tracking-tight">{company.name} Admin</p>
-          <p className="text-sm text-white/70">Products, orders, and partner operations in one workspace.</p>
+          <p className="hidden text-sm text-white/70 sm:block">Products, orders, and partner operations in one workspace.</p>
         </div>
-        <nav className="flex items-center gap-3">
+        <nav className="flex w-full flex-wrap items-center gap-2 sm:w-auto sm:justify-end sm:gap-3">
           <ThemeToggle compact />
-          <Link to="/dashboard" className="rounded-full border border-white/15 bg-white/5 px-4 py-2 text-sm font-semibold">
+          <Link to="/dashboard" className="rounded-full border border-white/15 bg-white/5 px-3 py-2 text-sm font-semibold sm:px-4">
             Dashboard
           </Link>
           {isAuthenticated ? (
             <button
               type="button"
               onClick={logout}
-              className="rounded-full bg-brand-yellow px-4 py-2 text-sm font-semibold text-brand-deep transition hover:-translate-y-0.5"
+              className="rounded-full bg-brand-yellow px-3 py-2 text-sm font-semibold text-brand-deep transition hover:-translate-y-0.5 sm:px-4"
             >
               Logout
             </button>
           ) : (
             <Link
               to="/login"
-              className="rounded-full bg-brand-yellow px-4 py-2 text-sm font-semibold text-brand-deep transition hover:-translate-y-0.5"
+              className="rounded-full bg-brand-yellow px-3 py-2 text-sm font-semibold text-brand-deep transition hover:-translate-y-0.5 sm:px-4"
             >
               Login
             </Link>

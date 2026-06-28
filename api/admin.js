@@ -238,7 +238,7 @@ export default async function handler(req, res) {
          SET approval_status = $2,
              rejection_reason = $3,
              updated_at = NOW()
-         WHERE id = $1 OR external_id = $1 OR slug = $1
+         WHERE id::text = $1 OR external_id = $1 OR slug = $1
          RETURNING *`,
         [String(identifier), approvalStatus, approvalStatus === "rejected" ? String(rejectionReason).trim() : null],
       );
@@ -277,7 +277,7 @@ export default async function handler(req, res) {
       }
 
       const deleted = await query(
-        "DELETE FROM products WHERE id = $1 OR external_id = $1 OR slug = $1 RETURNING id, name",
+        "DELETE FROM products WHERE id::text = $1 OR external_id = $1 OR slug = $1 RETURNING id, name",
         [String(identifier)],
       );
 

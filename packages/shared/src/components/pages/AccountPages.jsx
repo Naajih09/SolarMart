@@ -14,6 +14,7 @@ export function DashboardPage() {
   const [vendors, setVendors] = useState([]);
   const [adminProducts, setAdminProducts] = useState([]);
   const [adminMessage, setAdminMessage] = useState("");
+  const [approvalUpdating, setApprovalUpdating] = useState("");
   const [importing, setImporting] = useState(false);
   const [productForm, setProductForm] = useState({
     name: "",
@@ -78,6 +79,12 @@ export function DashboardPage() {
   }
 
   async function updateProductApproval(productId, approvalStatus) {
+    const identifier = String(productId || "").trim();
+    if (!identifier) {
+      setAdminMessage("Product id is missing. Reload the dashboard and try again.");
+      return;
+    }
+
     const rejectionReason =
       approvalStatus === "rejected"
         ? window.prompt("Why is this product being rejected?")
@@ -88,14 +95,27 @@ export function DashboardPage() {
     }
 
     try {
-      await apiFetch("/api/admin?action=products", {
+      setApprovalUpdating(identifier);
+      setAdminMessage("");
+      const data = await apiFetch("/api/admin?action=products", {
         method: "PATCH",
-        body: JSON.stringify({ id: productId, approvalStatus, rejectionReason }),
+        body: JSON.stringify({ id: identifier, approvalStatus, rejectionReason }),
       });
+      if (data.product) {
+        setAdminProducts((current) =>
+          current.map((item) =>
+            [item.dbId, item.id, item.slug].map((value) => String(value || "")).includes(identifier)
+              ? data.product
+              : item,
+          ),
+        );
+      }
       await loadAdminData();
       setAdminMessage(`Product ${approvalStatus}.`);
     } catch (error) {
       setAdminMessage(error.message);
+    } finally {
+      setApprovalUpdating("");
     }
   }
 
@@ -241,48 +261,55 @@ export function DashboardPage() {
             <StatsCard label="Pending products" value={pendingProducts.length} />
           </div>
           <div className="grid gap-6 xl:grid-cols-2">
-            <div className="section-card p-6">
+            <div className="section-card p-5 sm:p-6">
               <p className="text-lg font-semibold text-brand-deep">Product approval queue</p>
               <p className="mt-2 text-sm leading-6 text-brand-slate/70">
                 Vendor products stay hidden until an admin approves them.
               </p>
               <div className="mt-4 space-y-3">
                 {pendingProducts.length ? (
-                  pendingProducts.map((item) => (
-                    <div key={item.dbId || item.id} className="rounded-2xl bg-brand-cream p-4">
+                  pendingProducts.map((item) => {
+                    const productIdentifier = item.dbId || item.id || item.slug;
+                    const isUpdating = approvalUpdating === String(productIdentifier || "");
+
+                    return (
+                    <div key={productIdentifier} className="rounded-2xl bg-brand-cream p-4">
                       <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
-                        <div>
+                        <div className="min-w-0">
                           <p className="font-semibold text-brand-deep">{item.name}</p>
-                          <p className="mt-1 text-sm text-brand-slate/70">
+                          <p className="mt-1 break-words text-sm text-brand-slate/70">
                             {item.vendorName ? `Sold by ${item.vendorName}` : "SolarMart product"} · {formatNaira(item.price)}
                           </p>
                         </div>
-                        <div className="flex gap-2">
+                        <div className="flex flex-col gap-2 sm:flex-row">
                           <button
                             type="button"
-                            onClick={() => updateProductApproval(item.dbId || item.id, "approved")}
-                            className="rounded-full bg-brand-deep px-4 py-2 text-sm font-semibold text-white"
+                            onClick={() => updateProductApproval(productIdentifier, "approved")}
+                            disabled={isUpdating}
+                            className="w-full rounded-full bg-brand-deep px-4 py-2 text-sm font-semibold text-white disabled:opacity-60 sm:w-auto"
                           >
-                            Approve
+                            {isUpdating ? "Approving..." : "Approve"}
                           </button>
                           <button
                             type="button"
-                            onClick={() => updateProductApproval(item.dbId || item.id, "rejected")}
-                            className="rounded-full border border-brand-slate/10 bg-white px-4 py-2 text-sm font-semibold text-brand-deep"
+                            onClick={() => updateProductApproval(productIdentifier, "rejected")}
+                            disabled={isUpdating}
+                            className="w-full rounded-full border border-brand-slate/10 bg-white px-4 py-2 text-sm font-semibold text-brand-deep disabled:opacity-60 sm:w-auto"
                           >
                             Reject
                           </button>
                         </div>
                       </div>
                     </div>
-                  ))
+                    );
+                  })
                 ) : (
                   <p className="text-sm leading-7 text-brand-slate/75">No products waiting for review.</p>
                 )}
               </div>
             </div>
 
-            <div className="section-card p-6">
+            <div className="section-card p-5 sm:p-6">
               <p className="text-lg font-semibold text-brand-deep">Vendor applications</p>
               <p className="mt-2 text-sm leading-6 text-brand-slate/70">
                 Approve vendors before their approved products can appear on the storefront.
@@ -292,22 +319,22 @@ export function DashboardPage() {
                   vendors.slice(0, 6).map((item) => (
                     <div key={item.id} className="rounded-2xl bg-brand-cream p-4">
                       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-                        <div>
+                        <div className="min-w-0">
                           <p className="font-semibold text-brand-deep">{item.business_name}</p>
                           <p className="text-sm text-brand-slate/70">{item.email} · {item.status}</p>
                         </div>
-                        <div className="flex gap-2">
+                        <div className="flex flex-col gap-2 sm:flex-row">
                           <button
                             type="button"
                             onClick={() => updateVendorStatus(item.id, "approved")}
-                            className="rounded-full bg-brand-deep px-4 py-2 text-sm font-semibold text-white"
+                            className="w-full rounded-full bg-brand-deep px-4 py-2 text-sm font-semibold text-white sm:w-auto"
                           >
                             Approve
                           </button>
                           <button
                             type="button"
                             onClick={() => updateVendorStatus(item.id, "suspended")}
-                            className="rounded-full border border-brand-slate/10 bg-white px-4 py-2 text-sm font-semibold text-brand-deep"
+                            className="w-full rounded-full border border-brand-slate/10 bg-white px-4 py-2 text-sm font-semibold text-brand-deep sm:w-auto"
                           >
                             Suspend
                           </button>
@@ -342,7 +369,7 @@ export function DashboardPage() {
             ])}
           />
           <div className="grid gap-6 xl:grid-cols-3">
-            <div className="section-card p-6">
+            <div className="section-card p-5 sm:p-6">
               <p className="text-lg font-semibold text-brand-deep">Add official product</p>
               <p className="mt-2 text-sm leading-6 text-brand-slate/70">
                 Products now come only from the database. Add official store inventory here and it
@@ -408,15 +435,15 @@ export function DashboardPage() {
                 </button>
               </form>
             </div>
-            <div className="section-card p-6">
+            <div className="section-card p-5 sm:p-6">
               <p className="text-lg font-semibold text-brand-deep">Current catalogue</p>
               <div className="mt-4 space-y-3">
                 {adminProducts.length ? (
                   adminProducts.map((item) => (
                     <div key={item.dbId || item.id} className="flex flex-col gap-3 rounded-2xl bg-brand-cream p-4 sm:flex-row sm:items-center sm:justify-between">
-                      <div>
+                      <div className="min-w-0">
                         <p className="font-semibold text-brand-deep">{item.name}</p>
-                        <p className="text-sm text-brand-slate/70">
+                        <p className="break-words text-sm text-brand-slate/70">
                           {item.category} · {formatNaira(item.price)} · {item.approvalStatus || "approved"}
                         </p>
                         {item.rejectionReason ? (
@@ -431,7 +458,7 @@ export function DashboardPage() {
                             deleteProduct(item.dbId || item.id);
                           }
                         }}
-                        className="rounded-full border border-brand-slate/10 px-4 py-2 text-sm font-semibold text-brand-deep"
+                        className="w-full rounded-full border border-brand-slate/10 px-4 py-2 text-sm font-semibold text-brand-deep sm:w-auto"
                       >
                         Delete
                       </button>
@@ -452,15 +479,15 @@ export function DashboardPage() {
               </p>
               <div className="mt-4 space-y-3">
                 {affiliates.slice(0, 5).map((item) => (
-                  <div key={item.id} className="flex items-center justify-between rounded-2xl bg-brand-cream p-4">
-                    <div>
+                  <div key={item.id} className="flex flex-col gap-3 rounded-2xl bg-brand-cream p-4 sm:flex-row sm:items-center sm:justify-between">
+                    <div className="min-w-0">
                       <p className="font-semibold text-brand-deep">{item.full_name || item.code}</p>
-                      <p className="text-sm text-brand-slate/70">{item.status}</p>
+                      <p className="break-words text-sm text-brand-slate/70">{item.status}</p>
                     </div>
                     <button
                       type="button"
                       onClick={() => approveAffiliate(item.id)}
-                      className="button-secondary"
+                      className="button-secondary w-full sm:w-auto"
                     >
                       Approve
                     </button>

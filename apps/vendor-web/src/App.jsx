@@ -77,28 +77,28 @@ function VendorNavbar() {
 
   return (
     <header className="sticky top-0 z-50 border-b border-white/10 bg-brand-deep/95 text-white backdrop-blur-2xl">
-      <div className="section-shell flex items-center justify-between gap-4 py-4">
-        <div>
+      <div className="section-shell flex flex-col gap-3 py-4 sm:flex-row sm:items-center sm:justify-between">
+        <div className="min-w-0">
           <p className="text-lg font-bold tracking-tight">{company.name} Vendor</p>
           <p className="hidden text-sm text-white/70 sm:block">Products, approvals, and sales in one workspace.</p>
         </div>
-        <nav className="flex items-center gap-2 sm:gap-3">
+        <nav className="flex w-full flex-wrap items-center gap-2 sm:w-auto sm:justify-end sm:gap-3">
           <ThemeToggle compact />
-          <Link to="/dashboard" className="rounded-full border border-white/15 bg-white/5 px-4 py-2 text-sm font-semibold">
+          <Link to="/dashboard" className="rounded-full border border-white/15 bg-white/5 px-3 py-2 text-sm font-semibold sm:px-4">
             Dashboard
           </Link>
           {isAuthenticated ? (
             <button
               type="button"
               onClick={logout}
-              className="rounded-full bg-brand-yellow px-4 py-2 text-sm font-semibold text-brand-deep transition hover:-translate-y-0.5"
+              className="rounded-full bg-brand-yellow px-3 py-2 text-sm font-semibold text-brand-deep transition hover:-translate-y-0.5 sm:px-4"
             >
               Logout
             </button>
           ) : (
             <Link
               to="/login"
-              className="rounded-full bg-brand-yellow px-4 py-2 text-sm font-semibold text-brand-deep transition hover:-translate-y-0.5"
+              className="rounded-full bg-brand-yellow px-3 py-2 text-sm font-semibold text-brand-deep transition hover:-translate-y-0.5 sm:px-4"
             >
               Login
             </Link>
@@ -396,7 +396,7 @@ function VendorDashboard() {
               key={tab}
               type="button"
               onClick={() => setActiveTab(tab)}
-              className={`rounded-full px-4 py-2 text-sm font-semibold capitalize transition ${
+              className={`min-w-0 flex-1 rounded-full px-4 py-2 text-sm font-semibold capitalize transition sm:flex-none ${
                 activeTab === tab
                   ? "bg-brand-deep text-white"
                   : "border border-brand-slate/10 bg-white/80 text-brand-deep"
@@ -412,15 +412,15 @@ function VendorDashboard() {
             <div className="section-card p-5 sm:p-6">
               <p className="text-lg font-semibold text-brand-deep">Review snapshot</p>
               <div className="mt-4 space-y-3">
-                <div className="flex items-center justify-between rounded-2xl bg-brand-cream p-4">
+                  <div className="flex items-center justify-between gap-3 rounded-2xl bg-brand-cream p-4">
                   <span className="text-sm font-semibold text-brand-slate/75">Approved</span>
                   <span className="text-lg font-bold text-brand-deep">{dashboard.metrics.liveProducts}</span>
                 </div>
-                <div className="flex items-center justify-between rounded-2xl bg-brand-cream p-4">
+                  <div className="flex items-center justify-between gap-3 rounded-2xl bg-brand-cream p-4">
                   <span className="text-sm font-semibold text-brand-slate/75">Pending review</span>
                   <span className="text-lg font-bold text-brand-deep">{dashboard.metrics.pendingProducts}</span>
                 </div>
-                <div className="flex items-center justify-between rounded-2xl bg-brand-cream p-4">
+                  <div className="flex items-center justify-between gap-3 rounded-2xl bg-brand-cream p-4">
                   <span className="text-sm font-semibold text-brand-slate/75">Rejected</span>
                   <span className="text-lg font-bold text-brand-deep">{rejectedProducts.length}</span>
                 </div>
@@ -454,16 +454,16 @@ function VendorDashboard() {
                   dashboard.products.map((product) => (
                     <div key={product.dbId || product.id} className="rounded-2xl bg-brand-cream p-4">
                       <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
-                        <div>
+                        <div className="min-w-0">
                           <div className="flex flex-wrap items-center gap-2">
-                            <p className="font-semibold text-brand-deep">{product.name}</p>
+                            <p className="break-words font-semibold text-brand-deep">{product.name}</p>
                             <StatusBadge status={product.approvalStatus} />
                           </div>
-                          <p className="mt-1 text-sm text-brand-slate/70">
+                          <p className="mt-1 break-words text-sm text-brand-slate/70">
                             {product.category} · {formatNaira(product.price)} · Stock {product.stock}
                           </p>
                           {product.rejectionReason ? (
-                            <p className="mt-2 text-sm text-red-600">Rejected: {product.rejectionReason}</p>
+                            <p className="mt-2 break-words text-sm text-red-600">Rejected: {product.rejectionReason}</p>
                           ) : null}
                         </div>
                         <button
@@ -472,7 +472,7 @@ function VendorDashboard() {
                             setEditingProduct(product);
                             setActiveTab("products");
                           }}
-                          className="button-secondary"
+                          className="button-secondary w-full sm:w-auto"
                         >
                           Edit
                         </button>
@@ -495,12 +495,12 @@ function VendorDashboard() {
                 dashboard.orders.map((order) => (
                   <div key={order.id} className="rounded-2xl bg-brand-cream p-4">
                     <div className="flex flex-col gap-3 lg:flex-row lg:items-start lg:justify-between">
-                      <div>
-                        <p className="font-semibold text-brand-deep">{order.orderNumber}</p>
-                        <p className="mt-1 text-sm text-brand-slate/70">
+                      <div className="min-w-0">
+                        <p className="break-words font-semibold text-brand-deep">{order.orderNumber}</p>
+                        <p className="mt-1 break-words text-sm text-brand-slate/70">
                           {order.customerName} · {order.status} / {order.paymentStatus}
                         </p>
-                        <p className="mt-2 text-sm text-brand-slate/70">
+                        <p className="mt-2 break-words text-sm text-brand-slate/70">
                           {order.items.map((item) => `${item.quantity} x ${item.name}`).join("; ")}
                         </p>
                       </div>

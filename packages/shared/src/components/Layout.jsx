@@ -67,7 +67,7 @@ export function Navbar({ onOpenCart = () => {} }) {
             </label>
           </form>
 
-          <div className="order-2 flex items-center gap-3 lg:order-3">
+          <div className="order-2 flex min-w-0 flex-wrap items-center gap-2 sm:gap-3 lg:order-3 lg:flex-nowrap">
             <NavLink
               to="/products"
               className="hidden rounded-full border border-slate-200 bg-slate-50 px-4 py-2 text-sm font-semibold text-slate-700 transition hover:bg-slate-100 lg:inline-flex"
@@ -76,20 +76,20 @@ export function Navbar({ onOpenCart = () => {} }) {
             </NavLink>
             <NavLink
               to="/cart"
-              className="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-slate-50 px-4 py-2 text-sm font-semibold text-slate-700 transition hover:bg-slate-100"
+              className="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-slate-50 px-3 py-2 text-sm font-semibold text-slate-700 transition hover:bg-slate-100 sm:px-4"
             >
               <span aria-hidden="true">🛒</span>
               Cart ({totals.count})
             </NavLink>
             <NavLink
               to="/login"
-              className="hidden rounded-full border border-slate-200 bg-slate-50 px-4 py-2 text-sm font-semibold text-slate-700 transition hover:bg-slate-100 sm:inline-flex"
+              className="rounded-full border border-slate-200 bg-slate-50 px-3 py-2 text-sm font-semibold text-slate-700 transition hover:bg-slate-100 sm:inline-flex sm:px-4"
             >
               Login
             </NavLink>
             <NavLink
               to="/register"
-              className="rounded-full bg-brand-deep px-4 py-2 text-sm font-semibold text-white transition hover:bg-brand-green"
+              className="rounded-full bg-brand-deep px-3 py-2 text-sm font-semibold text-white transition hover:bg-brand-green sm:px-4"
             >
               Register
             </NavLink>
@@ -97,7 +97,7 @@ export function Navbar({ onOpenCart = () => {} }) {
               href={`https://wa.me/${company.whatsappNumber}?text=${whatsappMessage}`}
               target="_blank"
               rel="noreferrer"
-              className="inline-flex items-center gap-2 rounded-full border border-brand-green/10 bg-white px-4 py-2 text-sm font-semibold text-brand-deep transition hover:bg-brand-green/10 hover:text-brand-green"
+              className="inline-flex items-center gap-2 rounded-full border border-brand-green/10 bg-white px-3 py-2 text-sm font-semibold text-brand-deep transition hover:bg-brand-green/10 hover:text-brand-green sm:px-4"
             >
               WhatsApp
             </a>
